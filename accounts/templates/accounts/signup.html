@@ -10,9 +10,7 @@
   <div>
     <form action="" method="POST" class="form">
       {% csrf_token %}
-      {% bootstrap_form form %}
-      {% bootstrap_button button_type="submit" content="회원가입" button_class="btn btn-dark mt-4" %}
-      {% comment %} <!-- 아이디, 비빌번호 -->
+      <!-- 아이디, 비빌번호 -->
       <div class="card m-4">
         <h3 class="text-center">계정 정보</h3>
         {% for signup_field in signup_form %}
@@ -27,16 +25,17 @@
         {% for signup_field in signup_form %}
         {% if signup_field.name != "username" and signup_field.name != "password1" and signup_field.name != "password2" %}
         <div>{% bootstrap_field signup_field %}</div>
+        {% endif %}
+        {% endfor %}
         <div>
+          <p class="text-center mb-2">주소</p>
           <input type="text" id="sample6_postcode" placeholder="우편번호">
           <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
           <input type="text" id="sample6_address" placeholder="주소"><br>
           <input type="text" id="sample6_detailAddress" placeholder="상세주소">
           <input type="text" id="sample6_extraAddress" placeholder="참고항목">
         </div>
-        {% endif %}
-        {% endfor %}
-      </div> {% endcomment %}
+      </div>
       <!-- 왼료 버튼 -->
       <div class="d-flex mb-5">
         {% bootstrap_button button_type="submit" content="완료" style="width: 7rem;" %}

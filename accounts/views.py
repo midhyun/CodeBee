@@ -14,9 +14,9 @@ state_token = secrets.token_urlsafe(16)
 # Create your views here.
 def signup(request):
     if request.method == "POST":
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
+        signup_form = CustomUserCreationForm(request.POST)
+        if signup_form.is_valid():
+            user = signup_form.save(commit=False)
             phone = user.phone
             p1 = "".join(phone[:3])
             p2 = "".join(phone[3:7])
@@ -24,11 +24,11 @@ def signup(request):
             phone = "-".join([p1, p2, p3])
             user.save()
             user_login(request, user)
-            return redirect("articles:reviews")
+            return redirect("")
     else:
-        form = CustomUserCreationForm()
+        signup_form = CustomUserCreationForm()
     context = {
-        "form": form,
+        "signup_form": signup_form,
     }
     return render(request, "accounts/signup.html", context)
 
