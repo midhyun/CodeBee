@@ -10,9 +10,9 @@ class CustomUserCreationForm(UserCreationForm):
             "username",
             "last_name",
             "first_name",
-            "email",
-            "phone",
             "nickname",
+            "phone",
+            "email",
         )
         labels = {
             "nickname": "닉네임",
@@ -26,12 +26,12 @@ class CustomUserCreationForm(UserCreationForm):
             ),
             "last_name": forms.TextInput(
                 attrs={
-                    "placeholder": "이름",
+                    "placeholder": "성",
                 }
             ),
             "first_name": forms.TextInput(
                 attrs={
-                    "placeholder": "성",
+                    "placeholder": "이름",
                 }
             ),
             "phone": forms.TextInput(

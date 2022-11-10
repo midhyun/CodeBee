@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% load django_bootstrap5 %}
 
-{% block body %}
+{% block content %}
 
-<div class="container text-center w-50">
+<div class="container w-50">
   <div>
-    <h1>회원가입</h1>
+    <h1 class="text-center">회원가입</h1>
   </div>
   <div>
     <form action="" method="POST" class="form">
@@ -24,16 +24,14 @@
         <h3 class="text-center">인적 사항</h3>
         {% for signup_field in signup_form %}
         {% if signup_field.name != "username" and signup_field.name != "password1" and signup_field.name != "password2" %}
-        <div>{% bootstrap_field signup_field %}</div>
+        {% bootstrap_field signup_field %}
         {% endif %}
         {% endfor %}
         <div>
-          <p class="text-center mb-2">주소</p>
-          <input type="text" id="sample6_postcode" placeholder="우편번호">
-          <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
-          <input type="text" id="sample6_address" placeholder="주소"><br>
-          <input type="text" id="sample6_detailAddress" placeholder="상세주소">
-          <input type="text" id="sample6_extraAddress" placeholder="참고항목">
+          <p class="mb-2">주소</p>
+          <input class="" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+          <input class="" name="addr1" type="text" id="address" placeholder="주소" required><br>
+          <input class="" name="addr2" type="text" id="detailAddress" placeholder="상세주소" required>
         </div>
       </div>
       <!-- 왼료 버튼 -->
@@ -50,7 +48,7 @@
 
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
-    function sample6_execDaumPostcode() {
+    function execDaumPostcode() {
         new daum.Postcode({
             oncomplete: function(data) {
                 // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
@@ -79,23 +77,13 @@
                         extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
                     }
                     // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
-                    if(extraAddr !== ''){
-                        extraAddr = ' (' + extraAddr + ')';
-                    }
-                    // 조합된 참고항목을 해당 필드에 넣는다.
-                    document.getElementById("sample6_extraAddress").value = extraAddr;
-                
-                } else {
-                    document.getElementById("sample6_extraAddress").value = '';
                 }
-
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                document.getElementById('sample6_postcode').value = data.zonecode;
-                document.getElementById("sample6_address").value = addr;
+                document.getElementById("address").value = addr;
                 // 커서를 상세주소 필드로 이동한다.
-                document.getElementById("sample6_detailAddress").focus();
+                document.getElementById("detailAddress").focus();
             }
         }).open();
     }
 </script>
-{% endblock body %}
+{% endblock content %}

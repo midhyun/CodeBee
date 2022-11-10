@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>test</h1>
+{{ uid }}
+
+<a href="{% url 'accounts:logout' %}" class="btn btn-primary">로그아웃</a>
+
+{% endblock content %}
