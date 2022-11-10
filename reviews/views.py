@@ -53,3 +53,6 @@ def delete(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     study.delete()
     return redirect('reviews:index')
+
+def join(requset, user_pk):
+    return redirect('reviews:index')
