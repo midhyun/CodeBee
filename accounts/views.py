@@ -79,18 +79,18 @@ def kakao_callback(request):
     kakao_nickname = kakao_user_information["properties"]["nickname"]
     kakao_profile_image = kakao_user_information["properties"]["profile_image"]
 
-    if get_user_model().objects.filter(kakao_id=kakao_id).exists():
-        kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
-    else:
-        kakao_login_user = get_user_model()()
-        kakao_login_user.username = kakao_nickname
-        kakao_login_user.kakao_id = kakao_id
-        if kakao_profile_image:
-            kakao_login_user.social_profile_picture = kakao_profile_image
-        kakao_login_user.set_password(str(state_token))
-        kakao_login_user.save()
-        kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
-    user_login(request, kakao_user)
+    # if get_user_model().objects.filter(kakao_id=kakao_id).exists():
+    #     kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
+    # else:
+    #     kakao_login_user = get_user_model()()
+    #     kakao_login_user.username = kakao_nickname
+    #     kakao_login_user.kakao_id = kakao_id
+    #     if kakao_profile_image:
+    #         kakao_login_user.social_profile_picture = kakao_profile_image
+    #     kakao_login_user.set_password(str(state_token))
+    #     kakao_login_user.save()
+    #     kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
+    # user_login(request, kakao_user)
     return redirect(request.GET.get("next") or "main:index")
 
 
