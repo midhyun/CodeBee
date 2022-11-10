@@ -1,7 +1,7 @@
 import secrets
 import requests
 from .forms import CustomUserCreationForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login as user_login
 from django.contrib.auth import logout as user_logout
@@ -38,7 +38,7 @@ def login(request):
         login_form = AuthenticationForm(request, data=request.POST)
         if login_form.is_valid():
             user_login(request, login_form.get_user())
-            return redirect(request.GET.get("next") or "main:index")
+            return redirect(request.GET.get("next") or "reviews:index")
     else:
         login_form = AuthenticationForm()
     context = {
@@ -243,3 +243,12 @@ def github_callback(request):
         github_user = get_user_model().objects.get(github_id=github_id)
     user_login(request, github_user)
     return redirect(request.GET.get("next") or "main:index")
+    
+# test용도
+def index(request):
+    persons = get_user_model().objects.order_by("-pk")
+    return render(request, "accounts/index.html", {"persons": persons,})
+
+def detail(request, user_pk):
+    person = get_object_or_404(get_user_model(), pk=user_pk)
+    return render(request, "accounts/detail.html", {"person" : person,})
