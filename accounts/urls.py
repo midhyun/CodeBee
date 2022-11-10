@@ -19,4 +19,5 @@ urlpatterns = [
     path("login/github/", views.github_request, name="github"),
     path("login/github/callback/", views.github_callback),
     ### 소셜로그인 ###
+    path("test/", views.test, name="test"),
 ]

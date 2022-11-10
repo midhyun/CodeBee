@@ -11,17 +11,30 @@ from django.contrib.auth.decorators import login_required
 # 소셜 로그인에 필요한 토큰 생성
 state_token = secrets.token_urlsafe(16)
 
+# 테스트용 html 페이지
+def test(request):
+    context = {
+        "uid": request.user,
+    }
+    return render(request, "accounts/test.html", context)
+
+
 # Create your views here.
 def signup(request):
     if request.method == "POST":
         signup_form = CustomUserCreationForm(request.POST)
         if signup_form.is_valid():
             user = signup_form.save(commit=False)
-            phone = user.phone
-            p1 = "".join(phone[:3])
-            p2 = "".join(phone[3:7])
-            p3 = "".join(phone[7:])
-            phone = "-".join([p1, p2, p3])
+            # 주소
+            user.location = request.POST["addr1"] + " " + request.POST["addr2"]
+            # 휴대폰 번호
+            user.phone = (
+                request.POST["phone"][:3]
+                + "-"
+                + request.POST["phone"][3:7]
+                + "-"
+                + request.POST["phone"][7:]
+            )
             user.save()
             user_login(request, user)
             return redirect("accounts:login")
@@ -73,25 +86,24 @@ def kakao_callback(request):
     headers = {"Authorization": f"bearer ${access_token}"}
     kakao_user_api = "https://kapi.kakao.com/v2/user/me"
     kakao_user_information = requests.get(kakao_user_api, headers=headers).json()
-    print(kakao_user_information)  # 디버그용 코드 : 발견시 삭제 바람
 
     kakao_id = kakao_user_information["id"]
     kakao_nickname = kakao_user_information["properties"]["nickname"]
     kakao_profile_image = kakao_user_information["properties"]["profile_image"]
 
-    # if get_user_model().objects.filter(kakao_id=kakao_id).exists():
-    #     kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
-    # else:
-    #     kakao_login_user = get_user_model()()
-    #     kakao_login_user.username = kakao_nickname
-    #     kakao_login_user.kakao_id = kakao_id
-    #     if kakao_profile_image:
-    #         kakao_login_user.social_profile_picture = kakao_profile_image
-    #     kakao_login_user.set_password(str(state_token))
-    #     kakao_login_user.save()
-    #     kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
-    # user_login(request, kakao_user)
-    return redirect(request.GET.get("next") or "main:index")
+    if get_user_model().objects.filter(kakao_id=kakao_id).exists():
+        kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
+    else:
+        kakao_login_user = get_user_model()()
+        kakao_login_user.username = kakao_nickname
+        kakao_login_user.kakao_id = kakao_id
+        if kakao_profile_image:
+            kakao_login_user.social_profile_picture = kakao_profile_image
+        kakao_login_user.set_password(str(state_token))
+        kakao_login_user.save()
+        kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
+    user_login(request, kakao_user)
+    return redirect(request.GET.get("next") or "accounts:test")
 
 
 def naver_request(request):
@@ -121,9 +133,11 @@ def naver_callback(request):
     headers = {"Authorization": f"bearer {access_token}"}
     naver_call_user_api = "https://openapi.naver.com/v1/nid/me"
     naver_user_information = requests.get(naver_call_user_api, headers=headers).json()
-    print(naver_user_information)  # 디버그용 코드 : 발견시 삭제 바람
 
     naver_id = naver_user_information["response"]["id"]
+    naver_name = naver_user_information["response"]["name"]
+    naver_email = naver_user_information["response"]["email"]
+    naver_mobile = naver_user_information["response"]["mobile"]
     naver_nickname = naver_user_information["response"]["nickname"]
     naver_profile_image = naver_user_information["response"]["profile_image"]
 
@@ -131,15 +145,22 @@ def naver_callback(request):
         naver_user = get_user_model().objects.get(naver_id=naver_id)
     else:
         naver_login_user = get_user_model()()
-        naver_login_user.username = naver_nickname
         naver_login_user.naver_id = naver_id
+        naver_login_user.username = naver_name[0] + naver_name[1:]
+        naver_login_user.last_name = naver_name[0]
+        naver_login_user.first_name = naver_name[1:]
+        naver_login_user.nickname = naver_nickname
+        if naver_mobile:
+            naver_login_user.phone = naver_mobile
+        if naver_email:
+            naver_login_user.email = naver_email
         if naver_profile_image:
             naver_login_user.social_profile_picture = naver_profile_image
         naver_login_user.set_password(str(state_token))
         naver_login_user.save()
         naver_user = get_user_model().objects.get(naver_id=naver_id)
     user_login(request, naver_user)
-    return redirect(request.GET.get("next") or "main:index")
+    return redirect(request.GET.get("next") or "accounts:test")
 
 
 def google_request(request):
@@ -173,7 +194,6 @@ def google_callback(request):
     }
     google_call_user_api = "https://www.googleapis.com/oauth2/v3/userinfo"
     google_user_information = requests.get(google_call_user_api, params=params).json()
-    print(google_user_information)  # 디버그용 코드 : 발견시 삭제 바람
 
     googld_id = google_user_information["sub"]
     googld_name = google_user_information["name"]
@@ -184,7 +204,9 @@ def google_callback(request):
     else:
         google_login_user = get_user_model()()
         google_login_user.username = googld_name
-        google_login_user.email = googld_email
+        google_login_user.nickname = googld_name
+        if googld_email:
+            google_login_user.email = googld_email
         if googld_picture:
             google_login_user.social_profile_picture = googld_picture
         google_login_user.googld_id = googld_id
@@ -192,47 +214,45 @@ def google_callback(request):
         google_login_user.save()
         google_user = get_user_model().objects.get(googld_id=googld_id)
     user_login(request, google_user)
-    return redirect(request.GET.get("next") or "main:index")
+    return redirect(request.GET.get("next") or "accounts:test")
 
 
 def github_request(request):
-    github_api = "https://github.com/login/oauth/authorize"
     client_id = "481bbe1d16187fdb9f0e"  # 배포시 보안적용 해야함
-    redirect_uri = "http://localhost:8000/accounts/login/github/callback"
-    scope = "read:user user:email"
-    state_token = secrets.token_urlsafe(16)
-    return redirect(
-        f"{github_api}&client_id={client_id}&redirect_uri={redirect_uri}&state={state_token}&scope={scope}"
-    )
+    github_api = "https://github.com/login/oauth/authorize"
+    scope = "read:user"
+    return redirect(f"{github_api}?client_id={client_id}&scope={scope}")
 
 
 def github_callback(request):
     data = {
         "code": request.GET.get("code"),
-        "state": request.GET.get("state"),
         "client_id": "481bbe1d16187fdb9f0e",  # 배포시 보안적용 해야함
         "client_secret": "aaf7c5464bab25ff7a703f02a51b68803031fde3",  # 배포시 보안적용 해야함
-        "redirect_uri": "http://localhost:8000/accounts/login/google/callback",
+    }
+    headers = {
+        "accept": "application/json",
     }
     github_token_request_url = "https://github.com/login/oauth/access_token"
-    access_token = requests.post(github_token_request_url, data=data).json()[
-        "access_token"
-    ]
+    access_token = requests.post(
+        github_token_request_url, headers=headers, data=data
+    ).json()["access_token"]
 
-    headers = {"Authorization": f"bearer ${access_token}"}
     github_user_api = "https://api.github.com/user"
+    headers = {"Authorization": f"token {access_token}"}
     github_user_information = requests.get(github_user_api, headers=headers).json()
-    print(github_user_information)  # 디버그용 코드 : 발견시 삭제 바람
 
-    github_id = github_user_information["sub"]
-    github_name = github_user_information["name"]
+    github_id = github_user_information["id"]
+    github_name = github_user_information["login"]
     github_email = github_user_information["email"]
-    github_picture = github_user_information["picture"]
+    github_nickname = github_user_information["bio"]
+    github_picture = github_user_information["avatar_url"]
     if get_user_model().objects.filter(github_id=github_id).exists():
         github_user = get_user_model().objects.get(github_id=github_id)
     else:
         github_login_user = get_user_model()()
         github_login_user.username = github_name
+        github_login_user.nickname = github_nickname
         if github_email:
             github_login_user.email = github_email
         if github_picture:

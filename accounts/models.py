@@ -16,11 +16,11 @@ class User(AbstractUser):
     kakao_id = models.BigIntegerField(null=True, unique=True)
     naver_id = models.CharField(null=True, unique=True, max_length=100)
     googld_id = models.CharField(null=True, unique=True, max_length=50)
-    git_id = models.CharField(null=True, unique=True, max_length=100)
+    github_id = models.CharField(null=True, unique=True, max_length=100)
     profile_picture = ProcessedImageField(
         upload_to="profile_pictures/",
         blank=True,
-        processors=[ResizeToFill(120, 120)],
+        processors=[ResizeToFill(128, 128)],
         format="JPEG",
         options={
             "quality": 30,
