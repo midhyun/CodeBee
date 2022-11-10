@@ -3,6 +3,10 @@ from .forms import StudyForm
 from .models import Study
 
 # Create your views here.
+
+def home(request):
+    return render(request, 'home.html')
+
 def index(request):
     studies = Study.objects.order_by('-pk')
     context = {
@@ -42,5 +46,3 @@ def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     context = {'study' : study}
     return redirect('reviews:detail', study_pk)
-
-    
