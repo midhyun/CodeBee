@@ -1,0 +1,4 @@
+<a href="{% url 'reviews:create' %}">스터디 만들기</a>
+{% for study in studies %}
+<a href="">{{ study.title }}</a>
+{% endfor %}
