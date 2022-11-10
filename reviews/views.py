@@ -27,9 +27,16 @@ def create(request):
     context = {'study_form' : study_form}
     return render(request, 'reviews/form.html', context)
 
+def detail(request, study_pk):
+    study = Study.objects.get(pk=study_pk)
+    context = {
+        'study':study
+    }
+    return render(request, 'reviews/detail.html', context)
+
 def update(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    if request.user == study.user:
+    if request.user == study.host:
         if request.method == 'POST':
             study_form = StudyForm(request.POST, request.FILES, instance=study)
             if study_form.is_valid():
@@ -42,7 +49,7 @@ def update(request, study_pk):
     else:
         return redirect('reviews:detail', study_pk)
 
-def detail(request, study_pk):
+def delete(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    context = {'study' : study}
-    return redirect('reviews:detail', study_pk)
+    study.delete()
+    return redirect('reviews:index')
