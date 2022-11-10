@@ -22,3 +22,25 @@ def create(request):
         study_form = StudyForm()
     context = {'study_form' : study_form}
     return render(request, 'reviews/form.html', context)
+
+def update(request, study_pk):
+    study = Study.objects.get(pk=study_pk)
+    if request.user == study.user:
+        if request.method == 'POST':
+            study_form = StudyForm(request.POST, request.FILES, instance=study)
+            if study_form.is_valid():
+                study_form.save()
+                return redirect('reviews:detail', study_pk)
+        else:
+            study_form = StudyForm(instance=study)
+        context = {'study_form': study_form}
+        return render(request, 'reviews/form.html', context)
+    else:
+        return redirect('reviews:detail', study_pk)
+
+def detail(request, study_pk):
+    study = Study.objects.get(pk=study_pk)
+    context = {'study' : study}
+    return redirect('reviews:detail', study_pk)
+
+    
