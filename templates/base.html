@@ -26,6 +26,7 @@
 </head>
 
 <body>
+  <div style="height:68px"></div>
   <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
     <div class="container">
       <a class="navbar-brand" style="cursor: pointer;"><img src="{% static 'logo.png' %}" alt=""></a>
@@ -67,6 +68,13 @@
     </div>
     <div class="col-4 col-md-3"></div>
   </footer>
+  <script>
+    var bg = document.getElementById('bg')
+
+    window.addEventListener('scroll', () => {
+      bg.style.opacity = 1 - window.pageYOffset / 550 + ''
+    })
+  </script>
 </body>
 
 </html>
