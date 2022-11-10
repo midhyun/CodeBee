@@ -1,2 +1,6 @@
 {{ study.title }}
-<a href="{% url 'reviews:study_users' %}">유저목록</a>
+{% if request.user == host %}
+  {% for user in study.joined_user %}
+  <p>{{ user.nickname }}</p>
+  {% endfor %}
+{% endif %}

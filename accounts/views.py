@@ -24,7 +24,7 @@ def signup(request):
             phone = "-".join([p1, p2, p3])
             user.save()
             user_login(request, user)
-            return redirect("")
+            return redirect("accounts:login")
     else:
         signup_form = CustomUserCreationForm()
     context = {
@@ -50,7 +50,7 @@ def login(request):
 @login_required
 def logout(request):
     user_logout(request)
-    return redirect("main:index")
+    return redirect("accounts:login")
 
 
 def kakao_request(request):
