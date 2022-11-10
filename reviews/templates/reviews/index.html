@@ -1,4 +1,13 @@
+{% if request.user.is_authenticated %}
+<p>{{ request.user }}</p>
+{% else %}
+<p>로그인 해주세요</p>
+{% endif %}
 <a href="{% url 'reviews:create' %}">스터디 만들기</a>
 {% for study in studies %}
-<a href="">{{ study.title }}</a>
+<div>
+  <a href="{% url 'reviews:detail' study.pk %}">{{ study.title }}</a>
+  <a href="{% url 'reviews:update' study.pk %}">수정</a>
+  <a href="{% url 'reviews:delete' study.pk %}">삭제</a>
+</div>
 {% endfor %}
