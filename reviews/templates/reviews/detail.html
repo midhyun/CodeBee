@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
+{{ study.title }}
+<a href="{% url 'reviews:study_users' %}">유저목록</a>
+
 <div>
     <a id="review-{{ study.pk }}" type="button" onclick="getReview(this.id)">댓글보기</a> |
     <a id="review-create-{{ study.pk }}" type="button" onclick="getCreateReview(this.id)">댓글달기</a>
