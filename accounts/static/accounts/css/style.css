@@ -6,7 +6,7 @@
         rgba(20, 20, 20, 0.5) 50%,
         rgba(20, 20, 20, 0.75) 75%,
         rgba(20, 20, 20, 1) 100%
-      ), url('/static/image/bg.jpg');
+      ), url('/static/accounts/image/bg.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 20px 20px 0px 0px;

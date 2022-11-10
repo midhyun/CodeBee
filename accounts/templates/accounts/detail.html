@@ -1,22 +1,13 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
 
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- CSS only -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <title>Document</title>
-  </head>
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+{% endblock css %}
 
-  <body>
-    <div class="container">
-
-    <!-- 헤더 이미지 영역 -->
-      <header class="row head p-5 shadow-lg">
+{% block content %}
+<div>
+    <header class="row head p-5 shadow-lg">
         <div class="col-4">
             <div class="d-flex justify-content-center align-items-center h-100">
               {% if person.profile %}
@@ -44,6 +35,11 @@
           </p>
         </div>
       </header>
+</div>
+<div class="container">
+
+    <!-- 헤더 이미지 영역 -->
+
 
       <section class="board">
         <div class="tab-menu">
@@ -90,9 +86,6 @@
             참여한 스터디 목록입니다.
         </div>
       </section>
-
-      
-      
       
     </div>
     
@@ -111,10 +104,4 @@
             tab1.classList.remove('deactive')
             tab2.classList.add('deactive')
         });
-
-    </script>
-    <!-- JavaScript Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-  </body>
-
-</html>
+{% endblock content %}
