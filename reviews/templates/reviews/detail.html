@@ -1,0 +1,6 @@
+{{ study.title }}
+{% if request.user == host %}
+  {% for user in study.joined_user %}
+  <p>{{ user.nickname }}</p>
+  {% endfor %}
+{% endif %}
