@@ -11,9 +11,6 @@
   {% bootstrap_css %}{% bootstrap_javascript %}
   <title>CodeBee</title>
   <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
   <style>
     body {
       font-family: 'NanumSquareNeo';
@@ -26,7 +23,8 @@
 </head>
 
 <body>
-  <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
+  <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top"
+    style="background-color: #ffa9bf; opacity:0;">
     <div class="container">
       <a class="navbar-brand" style="cursor: pointer;"><img src="{% static 'logo.png' %}" alt=""></a>
       <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
@@ -67,6 +65,13 @@
     </div>
     <div class="col-4 col-md-3"></div>
   </footer>
+  <script>
+    var bg = document.getElementById('bg')
+
+    window.addEventListener('scroll', () => {
+      bg.style.opacity = 0 + +window.pageYOffset / 550 + ''
+    })
+  </script>
 </body>
 
 </html>
