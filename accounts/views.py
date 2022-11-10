@@ -1,5 +1,6 @@
 import secrets
 import requests
+from django.views import View
 from .forms import CustomUserCreationForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model
@@ -66,209 +67,209 @@ def logout(request):
     return redirect("accounts:login")
 
 
-def kakao_request(request):
-    kakao_api = "https://kauth.kakao.com/oauth/authorize?response_type=code"
-    redirect_uri = "http://localhost:8000/accounts/login/kakao/callback"
-    client_id = "9d90b5b2d651fe7e6adf2c2e261aaad3"  # 배포시 보안적용 해야함
-    return redirect(f"{kakao_api}&client_id={client_id}&redirect_uri={redirect_uri}")
+@login_required
+def update(request, pk):
+    user_logout(request)
+    return redirect("accounts:login")
 
 
-def kakao_callback(request):
-    data = {
-        "grant_type": "authorization_code",
-        "client_id": "9d90b5b2d651fe7e6adf2c2e261aaad3",  # 배포시 보안적용 해야함
-        "redirect_uri": "http://localhost:8000/accounts/login/kakao/callback",
-        "code": request.GET.get("code"),
-    }
-    kakao_token_api = "https://kauth.kakao.com/oauth/token"
-    access_token = requests.post(kakao_token_api, data=data).json()["access_token"]
-
-    headers = {"Authorization": f"bearer ${access_token}"}
-    kakao_user_api = "https://kapi.kakao.com/v2/user/me"
-    kakao_user_information = requests.get(kakao_user_api, headers=headers).json()
-
-    kakao_id = kakao_user_information["id"]
-    kakao_nickname = kakao_user_information["properties"]["nickname"]
-    kakao_profile_image = kakao_user_information["properties"]["profile_image"]
-
-    if get_user_model().objects.filter(kakao_id=kakao_id).exists():
-        kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
-    else:
-        kakao_login_user = get_user_model()()
-        kakao_login_user.username = kakao_nickname
-        kakao_login_user.kakao_id = kakao_id
-        if kakao_profile_image:
-            kakao_login_user.social_profile_picture = kakao_profile_image
-        kakao_login_user.set_password(str(state_token))
-        kakao_login_user.save()
-        kakao_user = get_user_model().objects.get(kakao_id=kakao_id)
-    user_login(request, kakao_user)
-    return redirect(request.GET.get("next") or "accounts:test")
-
-
-def naver_request(request):
-    naver_api = "https://nid.naver.com/oauth2.0/authorize?response_type=code"
-    client_id = "I9ScPHTpJ9smDz9KyjoX"  # 배포시 보안적용 해야함
-    redirect_uri = "http://localhost:8000/accounts/login/naver/callback"
-    state_token = secrets.token_urlsafe(16)
-    return redirect(
-        f"{naver_api}&client_id={client_id}&redirect_uri={redirect_uri}&state={state_token}"
-    )
-
-
-def naver_callback(request):
-    data = {
-        "grant_type": "authorization_code",
-        "client_id": "I9ScPHTpJ9smDz9KyjoX",  # 배포시 보안적용 해야함
-        "client_secret": "4QJHVHKrOp",  # 배포시 보안적용 해야함
-        "code": request.GET.get("code"),
-        "state": request.GET.get("state"),
-        "redirect_uri": "http://localhost:8000/accounts/login/naver/callback",
-    }
-    naver_token_request_url = "https://nid.naver.com/oauth2.0/token"
-    access_token = requests.post(naver_token_request_url, data=data).json()[
-        "access_token"
-    ]
-
-    headers = {"Authorization": f"bearer {access_token}"}
-    naver_call_user_api = "https://openapi.naver.com/v1/nid/me"
-    naver_user_information = requests.get(naver_call_user_api, headers=headers).json()
-
-    naver_id = naver_user_information["response"]["id"]
-    naver_name = naver_user_information["response"]["name"]
-    naver_email = naver_user_information["response"]["email"]
-    naver_mobile = naver_user_information["response"]["mobile"]
-    naver_nickname = naver_user_information["response"]["nickname"]
-    naver_profile_image = naver_user_information["response"]["profile_image"]
-
-    if get_user_model().objects.filter(naver_id=naver_id).exists():
-        naver_user = get_user_model().objects.get(naver_id=naver_id)
-    else:
-        naver_login_user = get_user_model()()
-        naver_login_user.naver_id = naver_id
-        naver_login_user.username = naver_name[0] + naver_name[1:]
-        naver_login_user.last_name = naver_name[0]
-        naver_login_user.first_name = naver_name[1:]
-        naver_login_user.nickname = naver_nickname
-        if naver_mobile:
-            naver_login_user.phone = naver_mobile
-        if naver_email:
-            naver_login_user.email = naver_email
-        if naver_profile_image:
-            naver_login_user.social_profile_picture = naver_profile_image
-        naver_login_user.set_password(str(state_token))
-        naver_login_user.save()
-        naver_user = get_user_model().objects.get(naver_id=naver_id)
-    user_login(request, naver_user)
-    return redirect(request.GET.get("next") or "accounts:test")
-
-
-def google_request(request):
-    google_api = "https://accounts.google.com/o/oauth2/v2/auth"
-    client_id = "925373116590-t4uf2ra8bkt25vegkjoskvi6054hd27u.apps.googleusercontent.com"  # 배포시 보안적용 해야함
-    redirect_uri = "http://localhost:8000/accounts/login/google/callback"
+def social_login_request(request, service_name):
     google_base_url = "https://www.googleapis.com/auth"
     google_email = "/userinfo.email"
     google_myinfo = "/userinfo.profile"
-    scope = f"{google_base_url}{google_email}+{google_base_url}{google_myinfo}"
-    return redirect(
-        f"{google_api}?client_id={client_id}&response_type=code&redirect_uri={redirect_uri}&scope={scope}"
-    )
-
-
-def google_callback(request):
-    data = {
-        "code": request.GET.get("code"),
-        "state": request.GET.get("state"),
-        "grant_type": "authorization_code",
-        "client_id": "925373116590-t4uf2ra8bkt25vegkjoskvi6054hd27u.apps.googleusercontent.com",  # 배포시 보안적용 해야함
-        "client_secret": "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",
-        "redirect_uri": "http://localhost:8000/accounts/login/google/callback",
+    services = {
+        "kakao": {
+            "base_url": "https://kauth.kakao.com/oauth/authorize",
+            "client_id": "9d90b5b2d651fe7e6adf2c2e261aaad3",
+            "redirect_uri": "http://localhost:8000/accounts/login/kakao/callback",
+            "response_type": "code",
+        },
+        "naver": {
+            "base_url": "https://nid.naver.com/oauth2.0/authorize",
+            "client_id": "I9ScPHTpJ9smDz9KyjoX",  # 배포시 보안적용 해야함
+            "redirect_uri": "http://localhost:8000/accounts/login/naver/callback",
+            "response_type": "code",
+            "state": secrets.token_urlsafe(16),
+        },
+        "google": {
+            "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
+            "client_id": "925373116590-t4uf2ra8bkt25vegkjoskvi6054hd27u.apps.googleusercontent.com",  # 배포시 보안적용 해야함
+            "redirect_uri": "http://localhost:8000/accounts/login/google/callback",
+            "response_type": "code",
+            "scope": f"{google_base_url}{google_email}+{google_base_url}{google_myinfo}",
+        },
+        "github": {
+            "base_url": "https://github.com/login/oauth/authorize",
+            "client_id": "481bbe1d16187fdb9f0e",  # 배포시 보안적용 해야함
+            "redirect_uri": "http://localhost:8000/accounts/login/github/callback",
+            "scope": "read:user",
+        },
     }
-    google_token_request_url = "https://oauth2.googleapis.com/token"
-    access_token = requests.post(google_token_request_url, data=data).json()[
-        "access_token"
-    ]
-    params = {
-        "access_token": f"{access_token}",
-    }
-    google_call_user_api = "https://www.googleapis.com/oauth2/v3/userinfo"
-    google_user_information = requests.get(google_call_user_api, params=params).json()
+    for k, v in services[service_name].items():
+        if k == "base_url":
+            res = f"{v}?"
+        else:
+            res += f"{k}={v}&"
+    return redirect(res)
 
-    googld_id = google_user_information["sub"]
-    googld_name = google_user_information["name"]
-    googld_email = google_user_information["email"]
-    googld_picture = google_user_information["picture"]
-    if get_user_model().objects.filter(googld_id=googld_id).exists():
-        google_user = get_user_model().objects.get(googld_id=googld_id)
+
+def social_login_callback(request, service_name):
+    services = {
+        "kakao": {
+            "data": {
+                "grant_type": "authorization_code",
+                "redirect_uri": "http://localhost:8000/accounts/login/kakao/callback",
+                "client_id": "9d90b5b2d651fe7e6adf2c2e261aaad3",  # 배포시 보안적용 해야함
+                "code": request.GET.get("code"),
+            },
+            "api": "https://kauth.kakao.com/oauth/token",
+            "user_api": "https://kapi.kakao.com/v2/user/me",
+        },
+        "naver": {
+            "data": {
+                "grant_type": "authorization_code",
+                "redirect_uri": "http://localhost:8000/accounts/login/naver/callback",
+                "client_id": "I9ScPHTpJ9smDz9KyjoX",  # 배포시 보안적용 해야함
+                "client_secret": "4QJHVHKrOp",  # 배포시 보안적용 해야함
+                "state": request.GET.get("state"),
+                "code": request.GET.get("code"),
+            },
+            "api": "https://nid.naver.com/oauth2.0/token",
+            "user_api": "https://openapi.naver.com/v1/nid/me",
+        },
+        "google": {
+            "data": {
+                "grant_type": "authorization_code",
+                "redirect_uri": "http://localhost:8000/accounts/login/google/callback",
+                "client_id": "925373116590-t4uf2ra8bkt25vegkjoskvi6054hd27u.apps.googleusercontent.com",  # 배포시 보안적용 해야함
+                "client_secret": "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",  # 배포시 보안적용 해야함
+                "state": request.GET.get("state"),
+                "code": request.GET.get("code"),
+            },
+            "api": "https://oauth2.googleapis.com/token",
+            "user_api": "https://www.googleapis.com/oauth2/v3/userinfo",
+        },
+        "github": {
+            "data": {
+                "redirect_uri": "http://localhost:8000/accounts/login/github/callback",
+                "client_id": "481bbe1d16187fdb9f0e",  # 배포시 보안적용 해야함
+                "client_secret": "aaf7c5464bab25ff7a703f02a51b68803031fde3",  # 배포시 보안적용 해야함
+                "code": request.GET.get("code"),
+            },
+            "api": "https://github.com/login/oauth/access_token",
+            "user_api": "https://api.github.com/user",
+        },
+    }
+    if service_name == "github":
+        headers = {
+            "accept": "application/json",
+        }
+        access_token = requests.post(
+            services[service_name]["api"],
+            data=services[service_name]["data"],
+            headers=headers,
+        ).json()["access_token"]
     else:
-        google_login_user = get_user_model()()
-        google_login_user.username = googld_name
-        google_login_user.nickname = googld_name
-        if googld_email:
-            google_login_user.email = googld_email
-        if googld_picture:
-            google_login_user.social_profile_picture = googld_picture
-        google_login_user.googld_id = googld_id
-        google_login_user.set_password(str(state_token))
-        google_login_user.save()
-        google_user = get_user_model().objects.get(googld_id=googld_id)
-    user_login(request, google_user)
+        access_token = requests.post(
+            services[service_name]["api"], data=services[service_name]["data"]
+        ).json()["access_token"]
+
+    payload = {
+        "kakao": {"Authorization": f"bearer ${access_token}"},
+        "naver": {"Authorization": f"bearer {access_token}"},
+        "google": {"access_token": f"{access_token}"},
+        "github": {"Authorization": f"token {access_token}"},
+    }
+
+    if service_name == "google":
+        params = payload[service_name]
+        u_info = requests.get(services[service_name]["user_api"], params=params).json()
+    else:
+        headers = payload[service_name]
+        u_info = requests.get(
+            services[service_name]["user_api"], headers=headers
+        ).json()
+    print(u_info)
+    if service_name == "kakao":
+        login_data = {
+            "kakao": {
+                "social_id": u_info["id"],
+                "username": u_info["properties"]["nickname"],
+                "social_profile_picture": u_info["properties"]["profile_image"],
+                "nickname": u_info["properties"]["nickname"],
+                "email": u_info["kakao_account"]["email"],
+                "phone": None,
+            },
+        }
+    elif service_name == "naver":
+        login_data = {
+            "naver": {
+                "social_id": u_info["response"]["id"],
+                "username": u_info["response"]["nickname"],
+                "social_profile_picture": u_info["response"]["profile_image"],
+                "nickname": u_info["response"]["name"],
+                "email": u_info["response"]["email"],
+                "phone": u_info["response"]["mobile"],
+            },
+        }
+    elif service_name == "google":
+        login_data = {
+            "google": {
+                "social_id": u_info["sub"],
+                "username": u_info["name"],
+                "social_profile_picture": u_info["picture"],
+                "nickname": u_info["name"],
+                "email": u_info["email"],
+                "phone": None,
+            },
+        }
+    else:
+        login_data = {
+            "github": {
+                "social_id": u_info["id"],
+                "username": u_info["bio"],
+                "social_profile_picture": u_info["avatar_url"],
+                "nickname": u_info["login"],
+                "email": u_info["email"],
+                "phone": None,
+            },
+        }
+    user_info = login_data[service_name]
+    if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
+        user = get_user_model().objects.get(social_id=user_info["social_id"])
+    else:
+        user = get_user_model()()
+        user.social_id = user_info["social_id"]
+        user.username = user_info["username"]
+        user.social_profile_picture = user_info["social_profile_picture"]
+        user.nickname = user_info["nickname"]
+        user.email = user_info["email"]
+        user.phone = user_info["phone"]
+        user.set_password(str(state_token))
+        user.save()
+        user = get_user_model().objects.get(social_id=user_info["social_id"])
+    user_login(request, user)
     return redirect(request.GET.get("next") or "accounts:test")
 
 
-def github_request(request):
-    client_id = "481bbe1d16187fdb9f0e"  # 배포시 보안적용 해야함
-    github_api = "https://github.com/login/oauth/authorize"
-    scope = "read:user"
-    return redirect(f"{github_api}?client_id={client_id}&scope={scope}")
-
-
-def github_callback(request):
-    data = {
-        "code": request.GET.get("code"),
-        "client_id": "481bbe1d16187fdb9f0e",  # 배포시 보안적용 해야함
-        "client_secret": "aaf7c5464bab25ff7a703f02a51b68803031fde3",  # 배포시 보안적용 해야함
-    }
-    headers = {
-        "accept": "application/json",
-    }
-    github_token_request_url = "https://github.com/login/oauth/access_token"
-    access_token = requests.post(
-        github_token_request_url, headers=headers, data=data
-    ).json()["access_token"]
-
-    github_user_api = "https://api.github.com/user"
-    headers = {"Authorization": f"token {access_token}"}
-    github_user_information = requests.get(github_user_api, headers=headers).json()
-
-    github_id = github_user_information["id"]
-    github_name = github_user_information["login"]
-    github_email = github_user_information["email"]
-    github_nickname = github_user_information["bio"]
-    github_picture = github_user_information["avatar_url"]
-    if get_user_model().objects.filter(github_id=github_id).exists():
-        github_user = get_user_model().objects.get(github_id=github_id)
-    else:
-        github_login_user = get_user_model()()
-        github_login_user.username = github_name
-        github_login_user.nickname = github_nickname
-        if github_email:
-            github_login_user.email = github_email
-        if github_picture:
-            github_login_user.social_profile_picture = github_picture
-        github_login_user.github_id = github_id
-        github_login_user.set_password(str(state_token))
-        github_login_user.save()
-        github_user = get_user_model().objects.get(github_id=github_id)
-    user_login(request, github_user)
-    return redirect(request.GET.get("next") or "main:index")
-    
 # test용도
 def index(request):
     persons = get_user_model().objects.order_by("-pk")
-    return render(request, "accounts/index.html", {"persons": persons,})
+    return render(
+        request,
+        "accounts/index.html",
+        {
+            "persons": persons,
+        },
+    )
+
 
 def detail(request, user_pk):
     person = get_object_or_404(get_user_model(), pk=user_pk)
-    return render(request, "accounts/detail.html", {"person" : person,})
+    return render(
+        request,
+        "accounts/detail.html",
+        {
+            "person": person,
+        },
+    )

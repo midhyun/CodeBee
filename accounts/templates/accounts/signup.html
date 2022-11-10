@@ -27,6 +27,7 @@
         {% bootstrap_field signup_field %}
         {% endif %}
         {% endfor %}
+        
         <div>
           <p class="mb-2">주소</p>
           <input class="" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
@@ -37,8 +38,7 @@
       <!-- 왼료 버튼 -->
       <div class="d-flex mb-5">
         {% bootstrap_button button_type="submit" content="완료" style="width: 7rem;" %}
-        {% comment %} <a href="{% url '' %}" class="btn btn-primary ms-auto" style="width: 7rem;">돌아가기</a> {% endcomment
-        %}
+        <a href="{% url '' %}" class="btn btn-primary ms-auto" style="width: 7rem;">돌아가기</a>
       </div>
     </form>
   </div>
