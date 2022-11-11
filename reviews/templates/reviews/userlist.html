@@ -1,11 +1,53 @@
-{% for user in users %}
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+  <!-- 스터디 이름, 모집여부 -->
+  <p class="my-5">
+    <span style="font-size: 3rem">{{study.title}}</span>
+    {% if study.accepted_set.count == study.limits %}
+      <span class="ms-3 text-danger">모집마감</span>
+    {% else %}
+      <span class="ms-3 text-primary">모집중</span>
+    {% endif %}
+  </p>
+  <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
+  <div class="ms-3 mb-5 row">
+    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
+    <a class="btn btn-outline-primary col-1 me-5" href="">후기</a>
+  </div>
+  <!-- 스터디 정보 -->
+  <div class="mb-5 p-3 border border-3 border-warning">
+    <div class="mb-3">
+      <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+      {% if study.host == user %}
+      <a class="btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
+      <a class="btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
+      {% else %}
+      <a href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴</a>
+      {% endif %}
+    </div>
+    {% for member in members %}
+    <p>{{ member.users }} | {{ member.joined }}
+      {% if member.joined == False %}
+      <!-- 신청확인 -->
+      {% if user == study.host %}
+      <a href="{% url 'reviews:study_accepted' study.pk member.users.id %}">승락</a>
+      <a href="{% url 'reviews:study_kick' study.pk member.users.id %}">거부</a>
+      {% else%}
+      <span>가입 대기중입니다.</span>
+      {% endif %}
+      <!-- 가입 되어있음. -->
+      {% else %}
+      <span>{{ member.joindate }} 가입됨</span>
+      {% if user == study.host %}
+      <a href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
+      {% endif %}
+      {% endif %} 
+    </p>
+    {% endfor %}
 
-<p>{{ user.users }} | {{ user.joined }}
-  {% if user.joined == False %}
-  <a href="{% url 'reviews:study_accepted' study.pk user.users.id %}">승락</a>
-  {% else %}
-  <span>가입됨</span>
-  <a href="{% url 'reviews:study_kick' study.pk user.users.id %}">강퇴</a>
-  {% endif %} 
-</p>
-{% endfor %}
+    </div>
+  </div>
+{% endblock %}

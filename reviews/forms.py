@@ -20,7 +20,7 @@ class StudyForm(forms.ModelForm):
             'tag',
             'content',
             'image',
-            'deadline'
+            'deadline',
         ]
         labels = {
             'title': "스터디명",
