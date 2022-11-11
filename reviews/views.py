@@ -21,6 +21,12 @@ def create(request):
         study_form = StudyForm(request.POST, request.FILES)
         if study_form.is_valid():
             study = study_form.save(commit=False)
+            study.categorie = request.POST['categorie']
+            study.study_type = request.POST['study_type']
+            study.location_type = request.POST['location_type']
+            study.location = request.POST['location']
+            study.X = request.POST['X']
+            study.Y = request.POST['Y']
             study.host = request.user
             study.save()
             Aform = Accepted(joined=True,study=study,users=study.host)
