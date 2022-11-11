@@ -11,7 +11,7 @@ class Study(models.Model):
     host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default='')
     title = models.CharField(max_length=30)
     content = models.TextField()
-    tag = models.CharField(max_length=20, blank=True)
+    tag = models.CharField(max_length=50, blank=True)
     categorie = models.CharField(max_length=30)
     study_type = models.CharField(max_length=30)
     deadline = models.DateField()
