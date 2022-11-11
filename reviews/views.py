@@ -19,6 +19,7 @@ def index(request):
 def create(request):
     if request.method =='POST':
         study_form = StudyForm(request.POST, request.FILES)
+        print(request.POST)
         if study_form.is_valid():
             study = study_form.save(commit=False)
             study.categorie = request.POST['categorie']

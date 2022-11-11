@@ -26,7 +26,7 @@ class StudyForm(forms.ModelForm):
             'title': "스터디명",
             'limits': '최대 참여',
             'tag': '태그',
-            'content': '규칙 및 소개',
+            'content': '스터디 주제',
             'image': '이미지',
             'deadline': '모집 마감일',
         }
