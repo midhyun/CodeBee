@@ -7,34 +7,34 @@
 
 {% block content %}
 <div>
-    <header class="row head p-5 shadow-lg">
-        <div class="col-4">
-            <div class="d-flex justify-content-center align-items-center h-100">
-              {% if person.profile %}
-              <img src="https://dummyimage.com/120/000/fff" alt="" class="rounded-circle border border-5">
-              {% else %}
-              <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
-              {% endif %}
-            </div>
-        </div>
+  <header class="row head p-5 shadow-lg">
+    <div class="col-4">
+      <div class="d-flex justify-content-center align-items-center h-100">
+        {% if person.profile %}
+        <img src="https://dummyimage.com/120/000/fff" alt="" class="rounded-circle border border-5">
+        {% else %}
+        <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
+        {% endif %}
+      </div>
+    </div>
 
-        <!-- 이름, 이메일, 깃허브 -->
-        <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
-          <p class="fw-bold">
-            {{ person.nickname }}
-          </p>
-          <p>
-            {% if person.email %}
-              {{ person.email }}
-            {% else %}
-              이메일이 존재하지 않습니다.
-            {% endif %}
-          </p>
-          <p>
-            깃허브
-          </p>
-        </div>
-      </header>
+    <!-- 이름, 이메일, 깃허브 -->
+    <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
+      <p class="fw-bold">
+        {{ person.nickname }}
+      </p>
+      <p>
+        {% if person.email %}
+        {{ person.email }}
+        {% else %}
+        이메일이 존재하지 않습니다.
+        {% endif %}
+      </p>
+      <p>
+        깃허브
+      </p>
+    </div>
+  </header>
 </div>
 <div class="container">
 
@@ -72,19 +72,13 @@
                 <hr>
 
 
-            </div>
-            참여중입니다.
-            </div>
-
-
-
-
         </div>
-        <div id="tab-2" class="tab_2 deactive">
-            참여한 스터디 목록입니다.
-        </div>
-      </section>
-      
+        참여중입니다.
+      </div>
+
+
+
+
     </div>
     
     <script>
