@@ -20,19 +20,21 @@ function studytype_change() {
     }
     }
 
-function locationtype_change() {
-    if (document.studyform.studytypeselect.options[document.studyform.studytypeselect.selectedIndex].value == '0') {
-        var temp = document.querySelector('.map_wrap')
-        var btnonline = document.getElementById('button-addon2')
-        btnonline.style.display = 'inline'
-        temp.classList.toggle('hide')
+function locationtype_change(target) {
+    var temp = document.getElementById('map_wrap')
+    var btnonline = document.getElementById('button-addon2')
+    var input = document.getElementById('id_addr')
+    if (target.value == '0') {
+        input.placeholder = '직접 입력하거나 지도를 클릭해 마커를 표시하세요.'
+        btnonline.type = 'button'
+        temp.classList.remove('hide')
     } else {
-        var temp2 = document.querySelector('.map_wrap')
-        var btnonline2 = document.getElementById('button-addon2')
-        var input = document.getElementById('id_addr')
-        btnonline2.style.display = 'none'
+        // var temp2 = document.getElementById('map_wrap')
+        // var btnonline2 = document.getElementById('button-addon2')
+        // var input2 = document.getElementById('id_addr')
         input.placeholder = '온라인에서 활동할 주소를 입력해 주세요.'
-        temp2.classList.toggle('hide')
+        btnonline.type = 'hidden'
+        temp.classList.add('hide')
     }
     }
 var enteraddress = document.querySelector('[name="location"]')
@@ -145,16 +147,16 @@ function displayPlaces(places) {
         // mouseout 했을 때는 인포윈도우를 닫습니다
         (function(marker, title) {
             kakao.maps.event.addListener(marker, 'click', function() {
-                console.log(title)
-                document.studyform.X.value = placePosition['La']
-                document.studyform.Y.value = placePosition['Ma']
+                var markposition = marker.getPosition()
+                document.studyform.X.value = markposition['La']
+                document.studyform.Y.value = markposition['Ma']
                 document.studyform.location.value = title
                 displayInfowindow(marker, title);
             });
 
             itemEl.click =  function () {
-                document.studyform.X.value = places[i].x
-                document.studyform.Y.value = places[i].y
+                document.studyform.X.value = markposition['La']
+                document.studyform.Y.value = markposition['Ma']
                 document.studyform.location.value = title
                 displayInfowindow(marker, title);
             };
@@ -276,8 +278,9 @@ var geocoder = new kakao.maps.services.Geocoder();
 var marker_add = new kakao.maps.Marker({
     position: map.getCenter()
 });
-
+marker_add.setZIndex(3);
 marker_add.setMap(map);
+
 kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
     function searchAddrFromCoords(coords, callback) {
     geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
