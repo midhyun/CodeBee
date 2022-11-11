@@ -10,9 +10,9 @@ class CustomUserCreationForm(UserCreationForm):
             "username",
             "last_name",
             "first_name",
-            "email",
-            "phone",
             "nickname",
+            "phone",
+            "email",
         )
         labels = {
             "nickname": "닉네임",
