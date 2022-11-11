@@ -1,6 +1,8 @@
 from django.shortcuts import render,redirect
 from .forms import StudyForm, AcceptedForm
 from .models import Study, Accepted
+from accounts.models import User
+
 
 # Create your views here.
 
@@ -39,7 +41,8 @@ def detail(request, study_pk):
 def userlist(request, study_pk):
     users = Accepted.objects.filter(study_id=study_pk)
     context = {
-        'users':users
+        'users':users,
+        'study':Study.objects.get(pk=study_pk)
     }
     return render(request, 'reviews/userlist.html', context)
     
@@ -81,3 +84,26 @@ def join(requset, study_pk, user_pk):
             Aform.save()
             print('가입 신청')
             return redirect('reviews:index')
+    else:
+        return redirect('reviews:index')
+
+def study_accepted(requeset, study_id, users_id):
+    study = Study.objects.get(id=study_id)
+    user = User.objects.get(id=users_id)
+    aform = Accepted.objects.get(users=user, study=study)
+    if requeset.user == study.host:
+        aform.joined = True
+        aform.save()
+        return redirect('reviews:userlist', study_id)
+    else:
+        return redirect('reviews:userlist', study_id)
+
+def study_kick(requeset, study_id, users_id):
+    study = Study.objects.get(id=study_id)
+    user = User.objects.get(id=users_id)
+    aform = Accepted.objects.get(users=user, study=study)
+    if requeset.user == study.host and user != study.host:
+        aform.delete()
+        return redirect('reviews:userlist', study_id)
+    else:
+        return redirect('reviews:userlist', study_id)

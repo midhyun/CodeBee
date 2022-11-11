@@ -1,3 +1,11 @@
 {% for user in users %}
-<p>{{ user.users }} | {{ user.joined }} <a href="">승락</a></p>
+
+<p>{{ user.users }} | {{ user.joined }}
+  {% if user.joined == False %}
+  <a href="{% url 'reviews:study_accepted' study.pk user.users.id %}">승락</a>
+  {% else %}
+  <span>가입됨</span>
+  <a href="{% url 'reviews:study_kick' study.pk user.users.id %}">강퇴</a>
+  {% endif %} 
+</p>
 {% endfor %}
