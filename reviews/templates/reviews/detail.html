@@ -1,9 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 {{ study.title }}
+{{ study.host }}
+<a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
 {% if request.user == host %}
-{% for user in study.joined_user %}
-<p>{{ user.nickname }}</p>
-{% endfor %}
 {% endif %}
-{% endblock content %}
+
