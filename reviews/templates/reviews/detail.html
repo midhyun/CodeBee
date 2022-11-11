@@ -1,10 +1,56 @@
 {% extends 'base.html' %}
 {% block content %}
-<a href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
-{{ study.title }}
-{{ study.host }}
-<a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
-{% if request.user == host %}
-{% endif %}
+<div class="container">
+  <!-- 스터디 이름, 모집여부 -->
+  <p class="my-5">
+    <span style="font-size: 3rem">{{study.title}}</span>
+    {% if study.accepted_set.count == study.limits %}
+      <span class="ms-3 text-danger">모집마감</span>
+    {% else %}
+      <span class="ms-3 text-primary">모집중</span>
+    {% endif %}
+  </p>
+  <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
+  <div class="ms-3 mb-5 row">
+    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
+    <a class="btn btn-outline-primary col-1 me-5" href="">후기</a>
+  </div>
+  <!-- 스터디 정보 -->
+  <div class=" mb-5 p-3 border border-3 border-warning">
+    <div class="mb-3">
+      <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+      {% if study.host == user %}
+      <a class="btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
+      <a class="btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
+      {% else %}
+      <a href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴</a>
+      {% endif %}
+    </div>
+      {% if post.image %}
+      <img src="{{ study.image.url }}" alt="">
+      {% endif %}
+      <p>스터디장: {{ study.host }}</p>
+      <p>스터디 소개</p>
+      <p>{{ study.content }}</p>
+      <p>제한 인원: {{ study.accepted_set.count}} / {{ study.limits }}</p>
+      <p>
+        {% if study.accepted_set.count == study.limits %}
+        <span>모집마감</span>
+        {% else %}
+        <span>가입 마감일: {{ study.deadline }}</span>
+        {% endif %}
+      </p>
+      <p>
+        {% if study.location_type == False %}
+        <span>모임장소: {{ study.location }}</span>
+        {% elif study.location_type == True %}
+        <span>온라인으로 진행됩니다.</span>
+        {% endif %}
+      </p>
+    </div>
 
+    </div>
+  </div>
 {% endblock %}

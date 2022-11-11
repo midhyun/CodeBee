@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
+from datetime import datetime
 
 # Create your models here.
 class Study(models.Model):
@@ -27,3 +28,4 @@ class Accepted(models.Model):
     joined = models.BooleanField(default=False)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     users = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default='')
+    joindate = models.DateTimeField(auto_now=True)

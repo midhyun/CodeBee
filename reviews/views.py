@@ -40,9 +40,10 @@ def detail(request, study_pk):
 
 def userlist(request, study_pk):
     users = Accepted.objects.filter(study_id=study_pk)
+    study = Study.objects.filter(pk=study_pk)
     context = {
-        'users':users,
-        'study':Study.objects.get(pk=study_pk)
+        'members':users,
+        'study':Study.objects.get(pk=study_pk),
     }
     return render(request, 'reviews/userlist.html', context)
     
@@ -105,5 +106,9 @@ def study_kick(requeset, study_id, users_id):
     if requeset.user == study.host and user != study.host:
         aform.delete()
         return redirect('reviews:userlist', study_id)
+    elif requeset.user == user and user != study.host:
+        aform.delete()
+        return redirect('reviews:index')
     else:
         return redirect('reviews:userlist', study_id)
+    
