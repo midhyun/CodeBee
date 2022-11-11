@@ -4,6 +4,7 @@ from imagekit.models import ProcessedImageField, ImageSpecField
 from imagekit.processors import ResizeToFill
 from django.core.validators import MinValueValidator, MaxValueValidator
 
+
 # Create your models here.
 class Study(models.Model):
     limits = models.IntegerField(default=4, validators=[MinValueValidator(2)])
@@ -29,7 +30,14 @@ class Study(models.Model):
         options={"quality": 80},
     )
 
+
 class Accepted(models.Model):
     joined = models.BooleanField(default=False) # False 신청상태, True 승인상태
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
     users = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default='')
+
+
+class Review(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    content = models.TextField()
+    date = models.DateField()
