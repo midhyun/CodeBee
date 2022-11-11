@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
 {% block content %}
+<a href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
 {{ study.title }}
 {{ study.host }}
 <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
