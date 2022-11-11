@@ -5,6 +5,10 @@ LOCATION_TYPE_CHOICE = (
     ('false', '오프라인'),
     ('true', '온라인')
 )
+STUDY_TYPE_CHOICE =(
+    ('장기', '그룹(주기적인 활동)'),
+    ('단기', '당일(1회성)')
+)
 
 class StudyForm(forms.ModelForm):
     class Meta:
@@ -27,14 +31,15 @@ class StudyForm(forms.ModelForm):
             'tag': '태그',
             'content': '규칙 및 소개',
             'categorie': '공부과목',
-            'study_type': '진행방법',
+            'study_type': '장기/단기',
             'location_type': '모임형태',
             'location': '장소',
             'image': '이미지',
             'deadline': '모집 마감일',
         }
         widgets = {
-            'location_type': forms.Select(choices=LOCATION_TYPE_CHOICE)
+            'location_type': forms.Select(choices=LOCATION_TYPE_CHOICE),
+            'study_type' : forms.Select(choices=STUDY_TYPE_CHOICE),
         }
 
 class AcceptedForm(forms.ModelForm):
