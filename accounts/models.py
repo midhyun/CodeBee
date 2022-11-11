@@ -1,3 +1,4 @@
+from random import randint
 from django.db import models
 from imagekit.processors import ResizeToFill
 from imagekit.models import ProcessedImageField
@@ -13,18 +14,17 @@ def input_only_number(value):
 
 # Create your models here.
 class User(AbstractUser):
-    kakao_id = models.BigIntegerField(null=True, unique=True)
-    naver_id = models.CharField(null=True, unique=True, max_length=100)
-    googld_id = models.CharField(null=True, unique=True, max_length=50)
-    git_id = models.CharField(null=True, unique=True, max_length=100)
+    social_id = models.CharField(null=True, max_length=100)
     profile_picture = ProcessedImageField(
         upload_to="profile_pictures/",
         blank=True,
-        processors=[ResizeToFill(120, 120)],
+        null=True,
+        processors=[ResizeToFill(128, 128)],
         format="JPEG",
         options={
             "quality": 30,
         },
+        
     )
     # url 형식으로 받아와야 함
     social_profile_picture = models.CharField(null=True, max_length=150)
@@ -32,6 +32,7 @@ class User(AbstractUser):
         max_length=13,
         validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
         blank=True,
+        null=True,
     )
     # 닉네임 20자 제한
     nickname = models.CharField(max_length=20)
