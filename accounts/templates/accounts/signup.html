@@ -23,8 +23,7 @@
       <div class="card m-4">
         <h3 class="text-center">인적 사항</h3>
         {% for signup_field in signup_form %}
-        {% if signup_field.name != "username" and signup_field.name != "password1" and signup_field.name != "password2"
-        %}
+        {% if signup_field.name != "username" and signup_field.name != "password1" and signup_field.name != "password2" %}
         <div>{% bootstrap_field signup_field %}</div>
         {% endif %}
         {% endfor %}
@@ -40,8 +39,7 @@
       <!-- 왼료 버튼 -->
       <div class="d-flex mb-5">
         {% bootstrap_button button_type="submit" content="완료" style="width: 7rem;" %}
-        {% comment %} <a href="{% url '' %}" class="btn btn-primary ms-auto" style="width: 7rem;">돌아가기</a> {% endcomment
-        %}
+        {% comment %} <a href="{% url '' %}" class="btn btn-primary ms-auto" style="width: 7rem;">돌아가기</a> {% endcomment %}
       </div>
     </form>
   </div>

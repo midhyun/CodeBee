@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
-from .forms import StudyForm
-from .models import Study
+from .forms import StudyForm, AcceptedForm
+from .models import Study, Accepted
 
 # Create your views here.
 
@@ -21,6 +21,8 @@ def create(request):
             study = study_form.save(commit=False)
             study.host = request.user
             study.save()
+            Aform = Accepted(joined=True,study=study,users=study.host)
+            Aform.save()
             return redirect('reviews:index')
     else:
         study_form = StudyForm()
@@ -54,5 +56,9 @@ def delete(request, study_pk):
     study.delete()
     return redirect('reviews:index')
 
-def join(requset, user_pk):
-    return redirect('reviews:index')
+# def join(requset, study_pk, user_pk):
+#     study = Study.objects.get(pk=study_pk)
+#     accepted = Accepted.objects.filter(study_id=study_pk)
+#     if study.limits > len(accepted):
+
+#     return redirect('reviews:index')
