@@ -1,5 +1,5 @@
 from django import forms
-from .models import Review,Study
+from .models import Review,Study, Accepted
 
 
 LOCATION_TYPE_CHOICE = (
@@ -37,6 +37,12 @@ class StudyForm(forms.ModelForm):
         widgets = {
             'location_type': forms.Select(choices=LOCATION_TYPE_CHOICE)
         }
+
+class AcceptedForm(forms.ModelForm):
+    class Meta:
+        model = Accepted
+        fields = ['joined']
+
 
 class ReviewForm(forms.ModelForm):
     class Meta:

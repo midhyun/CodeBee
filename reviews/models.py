@@ -23,7 +23,6 @@ class Study(models.Model):
         blank=True,
         format="JPEG",
     )
-    joined_user = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="joined")
 
 
 class Accepted(models.Model):

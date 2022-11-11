@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
+{% load django_bootstrap5 %}
 {% block content %}
 {{ study.title }}
+{{ study.host }}
+<a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+{% if request.user == host %}
+{% endif %}
 {% if request.user == host %}
 {% for user in study.joined_user %}
 <p>{{ user.nickname }}</p>
@@ -76,19 +81,19 @@
             data: new FormData(reviewForm)
         })
             .then(response => {
-                const reviewsList = document.querySelector(`#review-list-${response.data.comments_data[0].review_pk}`)
+                const reviewsList  = document.querySelector(`#review-list-${response.data.comments_data[0].review_pk}`)
                 reviewsList.textContent = "";
                 for (let i = 0; i < response.data.comments_data.length; i++) {
                     if (response.data.comments_data[i].request_user_pk === response.data.comments_data[i].user_pk) {
                         reviewsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getCreateReview(this.id)">수정</button>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
-            <div id="comment-${response.data.comments_data[i].comment_pk}-update-form" class="display-none">
-            <input id="comment-${response.data.comments_data[i].comment_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
+            <button id="review-${response.data.comments_data[i].review_pk}-update" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].review_pk}" class="btn btn-outline-success" onclick="getCreateReview(this.id)">수정</button>
+            <button id="review-${response.data.comments_data[i].review_pk}-delete" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].review_pk}" class="btn btn-outline-danger" onclick="deleteReview(this.id)">삭제</button>
+            <div id="review-${response.data.comments_data[i].review_pk}-update-form" class="display-none">
+            <input id="review-${response.data.comments_data[i].review_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
+            <button id="review-${response.data.comments_data[i].review_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateReview(this.id)">확인</button>
             </div><br>`)
                     } else {
-                        reviewsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span><br>`)
+                        reviewsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].date} </span><br>`)
                     }
 
                 }
@@ -122,14 +127,14 @@
                 for (let i = 0; i < response.data.comments_data.length; i++) {
                     if (response.data.comments_data[i].request_user_pk === response.data.comments_data[i].user_pk) {
                         commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
-            <div id="comment-${response.data.comments_data[i].comment_pk}-update-form" class="display-none">
-            <input id="comment-${response.data.comments_data[i].comment_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
+            <button id="review-${response.data.comments_data[i].review_pk}-update" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].review_pk}" class="btn btn-outline-success" onclick="getCreateReview(this.id)">수정</button>
+            <button id="review-${response.data.comments_data[i].review_pk}-delete" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].review_pk}" class="btn btn-outline-danger" onclick="deleteReview(this.id)">삭제</button>
+            <div id="review-${response.data.comments_data[i].review_pk}-update-form" class="display-none">
+            <input id="review-${response.data.comments_data[i].review_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
+            <button id="review-${response.data.comments_data[i].review_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateReview(this.id)">확인</button>
             </div><br>`)
                     } else {
-                        commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span><br>`)
+                        commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].date} </span><br>`)
                     }
 
                 }
@@ -151,14 +156,14 @@
                     for (let i = 0; i < response.data.comments_data.length; i++) {
                         if (response.data.comments_data[i].request_user_pk === response.data.comments_data[i].user_pk) {
                             commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
-            <div id="comment-${response.data.comments_data[i].comment_pk}-update-form" class="display-none">
-            <input id="comment-${response.data.comments_data[i].comment_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
+            <button id="review-${response.data.comments_data[i].review_pk}-update" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].review_pk}" class="btn btn-outline-success" onclick="getCreateReview(this.id)">수정</button>
+            <button id="review-${response.data.comments_data[i].review_pk}-delete" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].review_pk}" class="btn btn-outline-danger" onclick="deleteReview(this.id)">삭제</button>
+            <div id="review-${response.data.comments_data[i].review_pk}-update-form" class="display-none">
+            <input id="review-${response.data.comments_data[i].review_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
+            <button id="review-${response.data.comments_data[i].review_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].study_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateReview(this.id)">확인</button>
             </div><br>`)
                         } else {
-                            commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span><br>`)
+                            commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].date} </span><br>`)
                         }
 
                     }
