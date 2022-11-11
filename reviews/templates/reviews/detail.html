@@ -1,6 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
 {{ study.title }}
 {% if request.user == host %}
-  {% for user in study.joined_user %}
-  <p>{{ user.nickname }}</p>
-  {% endfor %}
+{% for user in study.joined_user %}
+<p>{{ user.nickname }}</p>
+{% endfor %}
 {% endif %}
+{% endblock content %}

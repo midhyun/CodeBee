@@ -1,10 +1,14 @@
+{% extends 'base.html' %}
 {% load django_bootstrap5 %}
-
-<form action="" method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
-  {% bootstrap_form study_form %}
-  <div class="d-grid gap-2">
-    <button type="submit" class="btn" style="background-color: rgb(245, 132, 12); color: white;">등록
-    </button>
-  </div>
-</form>
+{% block content %}
+<div class="container">
+  <form action="" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% bootstrap_form study_form %}
+    <div class="d-grid gap-2">
+      <button type="submit" class="btn" style="background-color: rgb(245, 132, 12); color: white;">등록
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock content %}
