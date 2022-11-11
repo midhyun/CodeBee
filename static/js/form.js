@@ -35,7 +35,7 @@ function locationtype_change() {
         temp2.classList.toggle('hide')
     }
     }
-var enteraddress = document.querySelector('[name="addr"]')
+var enteraddress = document.querySelector('[name="location"]')
 enteraddress.addEventListener('keydown', function (event) {
     if (event.keyCode === 13) {
     document.getElementById('button-addon2').click();
@@ -148,14 +148,14 @@ function displayPlaces(places) {
                 console.log(title)
                 document.studyform.X.value = placePosition['La']
                 document.studyform.Y.value = placePosition['Ma']
-                document.studyform.addr.value = title
+                document.studyform.location.value = title
                 displayInfowindow(marker, title);
             });
 
             itemEl.click =  function () {
                 document.studyform.X.value = places[i].x
                 document.studyform.Y.value = places[i].y
-                document.studyform.addr.value = title
+                document.studyform.location.value = title
                 displayInfowindow(marker, title);
             };
 
@@ -292,7 +292,7 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
         detailAddr += '<div>지번 주소 : ' + result[0].address.address_name + '</div>';
         marker_add.setPosition(mouseEvent.latLng);
         marker_add.setMap(map);
-        document.studyform.addr.value = result[0].road_address.address_name
+        document.studyform.location.value = result[0].road_address.address_name
 
     }
     });
