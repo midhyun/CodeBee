@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
-from .forms import StudyForm, AcceptedForm
-from .models import Study, Accepted
+from .forms import StudyForm, ReviewForm,AcceptedForm
+from .models import Study,Review,Accepted
 from accounts.models import User
 
 
@@ -19,8 +19,15 @@ def index(request):
 def create(request):
     if request.method =='POST':
         study_form = StudyForm(request.POST, request.FILES)
+        print(request.POST)
         if study_form.is_valid():
             study = study_form.save(commit=False)
+            study.categorie = request.POST['categorie']
+            study.study_type = request.POST['study_type']
+            study.location_type = request.POST['location_type']
+            study.location = request.POST['location']
+            study.X = request.POST['X']
+            study.Y = request.POST['Y']
             study.host = request.user
             study.save()
             Aform = Accepted(joined=True,study=study,users=study.host)
@@ -33,10 +40,12 @@ def create(request):
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    context = {
-        'study':study
-    }
-    return render(request, 'reviews/detail.html', context)
+    reviews = Review.objects.all().order_by('-pk')
+    review_form = ReviewForm()
+    context = {'study' : study,
+               'reviews' : reviews,
+               'review_form': review_form}
+    return render(request,'reviews/detail.html', context)
 
 def userlist(request, study_pk):
     users = Accepted.objects.filter(study_id=study_pk)
@@ -46,7 +55,7 @@ def userlist(request, study_pk):
         'study':Study.objects.get(pk=study_pk),
     }
     return render(request, 'reviews/userlist.html', context)
-    
+
 
 def update(request, study_pk):
     study = Study.objects.get(pk=study_pk)

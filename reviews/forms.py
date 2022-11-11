@@ -1,5 +1,6 @@
 from django import forms
-from .models import Study, Accepted
+from .models import Review,Study, Accepted
+
 
 LOCATION_TYPE_CHOICE = (
     ('false', '오프라인'),
@@ -18,10 +19,6 @@ class StudyForm(forms.ModelForm):
             'limits',
             'tag',
             'content',
-            'categorie',
-            'study_type',
-            'location_type',
-            'location',
             'image',
             'deadline',
         ]
@@ -29,11 +26,7 @@ class StudyForm(forms.ModelForm):
             'title': "스터디명",
             'limits': '최대 참여',
             'tag': '태그',
-            'content': '규칙 및 소개',
-            'categorie': '공부과목',
-            'study_type': '장기/단기',
-            'location_type': '모임형태',
-            'location': '장소',
+            'content': '스터디 주제',
             'image': '이미지',
             'deadline': '모집 마감일',
         }
@@ -46,3 +39,19 @@ class AcceptedForm(forms.ModelForm):
     class Meta:
         model = Accepted
         fields = ['joined']
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        exclude = (
+            "review",
+            "user",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["content"].widget.attrs = {
+            "placeholder": "댓글을 작성해 주세요",
+        }
+        self.fields["content"].help_text = None
