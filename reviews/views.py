@@ -79,7 +79,7 @@ def delete(request, study_pk):
 
 
 
-def join(requset, study_pk, user_pk):
+def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
     accepted = Accepted.objects.filter(study_id=study_pk)
     users = Accepted.objects.filter(users_id=user_pk)
@@ -90,32 +90,32 @@ def join(requset, study_pk, user_pk):
                 print('이미 가입되어 있습니다.')
                 return redirect('reviews:index')
         else:
-            Aform = Accepted(joined=False,study=study,users=requset.user)
+            Aform = Accepted(joined=False,study=study,users=request.user)
             Aform.save()
             print('가입 신청')
             return redirect('reviews:index')
     else:
         return redirect('reviews:index')
 
-def study_accepted(requeset, study_id, users_id):
+def study_accepted(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
     user = User.objects.get(id=users_id)
     aform = Accepted.objects.get(users=user, study=study)
-    if requeset.user == study.host:
+    if request.user == study.host:
         aform.joined = True
         aform.save()
         return redirect('reviews:userlist', study_id)
     else:
         return redirect('reviews:userlist', study_id)
 
-def study_kick(requeset, study_id, users_id):
+def study_kick(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
     user = User.objects.get(id=users_id)
     aform = Accepted.objects.get(users=user, study=study)
-    if requeset.user == study.host and user != study.host:
+    if request.user == study.host and user != study.host:
         aform.delete()
         return redirect('reviews:userlist', study_id)
-    elif requeset.user == user and user != study.host:
+    elif request.user == user and user != study.host:
         aform.delete()
         return redirect('reviews:index')
     else:
