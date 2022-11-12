@@ -20,7 +20,6 @@ class StudyForm(forms.ModelForm):
             'tag',
             'content',
             'image',
-            'deadline',
         ]
         labels = {
             'title': "스터디명",
@@ -28,7 +27,6 @@ class StudyForm(forms.ModelForm):
             'tag': '태그',
             'content': '스터디 주제',
             'image': '이미지',
-            'deadline': '모집 마감일',
         }
         widgets = {
             'location_type': forms.Select(choices=LOCATION_TYPE_CHOICE),

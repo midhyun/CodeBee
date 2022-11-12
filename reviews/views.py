@@ -40,10 +40,8 @@ def create(request):
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    reviews = Review.objects.all().order_by('-pk')
     review_form = ReviewForm()
     context = {'study' : study,
-               'reviews' : reviews,
                'review_form': review_form}
     return render(request,'reviews/detail.html', context)
 
