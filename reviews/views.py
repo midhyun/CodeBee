@@ -30,7 +30,6 @@ def create(request):
             study.study_type = request.POST['study_type']
             study.location_type = request.POST['location_type']
             study.location = request.POST['location']
-            study.deadline = request.POST['deadline']
             study.X = request.POST['X']
             study.Y = request.POST['Y']
             study.host = request.user
@@ -107,13 +106,12 @@ def join(request, study_pk, user_pk):
                 print('이미 가입되어 있습니다.')
                 return redirect('reviews:detail', study_pk)
         else:
-            Aform = Accepted(joined=False, study=study, users=request.user)
+            Aform = Accepted(joined=False,study=study,users=request.user)
             Aform.save()
             print('가입 신청')
             return redirect('reviews:detail', study_pk)
     else:
         return redirect('reviews:detail', study_pk)
-
 
 def study_accepted(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
