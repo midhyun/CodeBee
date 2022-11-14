@@ -6,7 +6,7 @@
   <!-- 스터디 이름, 모집여부 -->
   <div class="my-5">
     <span style="font-size: 3rem">{{study.title}}</span>
-    {% if study.accepted_set.count == study.limits %}
+    {% if cnt == study.limits %}
       <span class="ms-3 text-danger">모집마감</span>
     {% else %}
       <span class="ms-3 text-primary">모집중</span>
@@ -46,7 +46,7 @@
       <p>스터디장: {{ study.host }}</p>
       <p>스터디 소개</p>
       <p>{{ study.content }}</p>
-      <p>제한 인원: {{ study.accepted_set.count}} / {{ study.limits }}</p>
+      <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
       <p>
         {% if study.accepted_set.count == study.limits %}
         <span>모집마감</span>
@@ -72,26 +72,26 @@
   <script>
     var X = {{ study.X }}
     var Y = {{ study.Y }}
-    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-        mapOption = { 
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
             center: new kakao.maps.LatLng(`${Y}`,`${X}`), // 지도의 중심좌표
             level: 3 // 지도의 확대 레벨
         };
-    
+
     var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-    
-    // 마커가 표시될 위치입니다 
-    var markerPosition  = new kakao.maps.LatLng(`${Y}`,`${X}`); 
-    
+
+    // 마커가 표시될 위치입니다
+    var markerPosition  = new kakao.maps.LatLng(`${Y}`,`${X}`);
+
     // 마커를 생성합니다
     var marker = new kakao.maps.Marker({
         position: markerPosition
     });
-    
+
     // 마커가 지도 위에 표시되도록 설정합니다
     marker.setMap(map);
-    
+
     // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
-    // marker.setMap(null);    
+    // marker.setMap(null);
     </script>
     {% endblock %}
