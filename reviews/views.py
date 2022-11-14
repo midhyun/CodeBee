@@ -66,6 +66,15 @@ def update(request, study_pk):
             study_form = StudyForm(request.POST, request.FILES, instance=study)
             if study_form.is_valid():
                 study = study_form.save(commit=False)
+                study.categorie = request.POST['categorie']
+                study.study_type = request.POST['study_type']
+                study.location_type = request.POST['location_type']
+                study.location = request.POST['location']
+                study.X = request.POST['X']
+                study.Y = request.POST['Y']
+                study.deadline = request.POST['deadline']
+                study.host = request.user
+                study.save()
                 study_form.save()
                 return redirect('reviews:detail', study_pk)
         else:
