@@ -6,7 +6,7 @@
   <!-- 스터디 이름, 모집여부 -->
   <div class="my-5">
     <span style="font-size: 3rem">{{study.title}}</span>
-    {% if study.accepted_set.count == study.limits %}
+    {% if cnt == study.limits %}
       <span class="ms-3 text-danger">모집마감</span>
     {% else %}
       <span class="ms-3 text-primary">모집중</span>
@@ -46,7 +46,7 @@
       <p>스터디장: {{ study.host }}</p>
       <p>스터디 소개</p>
       <p>{{ study.content }}</p>
-      <p>제한 인원: {{ study.accepted_set.count}} / {{ study.limits }}</p>
+      <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
       <p>
         {% if study.accepted_set.count == study.limits %}
         <span>모집마감</span>

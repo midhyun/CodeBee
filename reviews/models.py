@@ -14,7 +14,7 @@ class Study(models.Model):
     tag = models.CharField(max_length=50, blank=True)
     categorie = models.CharField(max_length=30)
     study_type = models.CharField(max_length=30)
-    deadline = models.DateTimeField()
+    deadline = models.DateTimeField(auto_now=False)
     location_type = models.BooleanField(default=False) # False 오프라인, True 온라인
     location = models.CharField(max_length=50, blank=True)
     X = models.CharField(max_length=20, null=True)
