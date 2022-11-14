@@ -4,7 +4,7 @@ from .models import Study,Review,Accepted
 from accounts.models import User
 import requests
 import json
-
+from django.contrib import messages
 # Create your views here.
 
 def home(request):
@@ -87,22 +87,57 @@ def delete(request, study_pk):
     study.delete()
     return redirect('reviews:index')
 
-
-
 def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
     accepted = Accepted.objects.filter(study_id=study_pk)
     users = Accepted.objects.filter(users_id=user_pk)
-    print(users)
+    token = study.host.token
     if study.limits > len(accepted):
         for joined in users:
             if joined in accepted:
-                print('이미 가입되어 있습니다.')
+                messages.warning(request, '이미 가입되어 있습니다.')
                 return redirect('reviews:detail', study_pk)
         else:
             Aform = Accepted(joined=False,study=study,users=request.user)
             Aform.save()
-            print('가입 신청')
+            try: image_url = study.image.url
+            except: image_url = ''
+            data = {"template_object": json.dumps({
+            "object_type": "feed",
+            "content": {
+                "title": f"{request.user}님의 스터디 가입신청!",
+                "description": "신청을 승인해주세요!",
+                "image_url": f"http://localhost:8000{image_url}",
+                "image_width": 800,
+                "image_height": 563,
+                "link": {
+                    "web_url": "http://localhost:8000/",
+                    "mobile_web_url": "http://localhost:8000/",
+                    "android_execution_params": "contentId=100",
+                    "ios_execution_params": "contentId=100"
+                }
+            },
+            "buttons": [
+                {
+                    "title": "웹으로 이동",
+                    "link": {
+                        "web_url": "http://www.daum.net",
+                        "mobile_web_url": "http://m.daum.net"
+                    }
+                },
+                {
+                    "title": "앱으로 이동",
+                    "link": {
+                        "android_execution_params": "contentId=100",
+                        "ios_execution_params": "contentId=100"
+                    }
+                }
+            ]
+            })}
+            headers={"Authorization" : "Bearer " + token}
+            response = requests.post(url, headers=headers, data=data)
+            print(str(response.json()))
+            messages.success(request, '가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.')
             return redirect('reviews:detail', study_pk)
     else:
         return redirect('reviews:detail', study_pk)
@@ -135,10 +170,12 @@ url="https://kapi.kakao.com/v2/api/talk/memo/default/send"
 
 def gathering(request, study_pk):
     accepted = Accepted.objects.filter(study_id=study_pk, joined=1)
+    study = Study.objects.get(pk=study_pk)
+    message = request.POST["message"]
     data={
     "template_object": json.dumps({
         "object_type":"text",
-        "text":"요원이 거의 모였어요 준비하세요!",
+        "text": f"{study.host.username}으로부터의 메시지 \n {message}",
         "link":{
             "web_url":"www.naver.com",
             "mobile_url":"www.naver.com"
@@ -150,5 +187,6 @@ def gathering(request, study_pk):
             response = requests.post(url, headers=headers, data=data)
             print(str(response.json()))
         else:
-            print('no')
+            pass
+    
     return redirect('reviews:detail', study_pk)
