@@ -62,9 +62,10 @@
           <ul class="ms-auto navbar-nav">
             {% if request.user.is_authenticated %}
             <li class="h-100" style="position: relative;">
-            {% if user.image %}
-              <div class="rounded-circle nav_profile" style="background-image: url({{ user.image.url }})"></div>
+              {% if user.profile_picture %}
+              <div class="rounded-circle nav_profile" style="background-image: url('{{ user.profile_picture.url }}')"></div>
                 {% else %}
+                <p>{{ user.nickname }}</p>
                   <div class="rounded-circle nav_profile" style="background-image: url('/static/accounts/image/none_profile.png')"></div>
                 {% endif %}
             </li>

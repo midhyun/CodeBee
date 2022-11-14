@@ -10,8 +10,8 @@
     <header class="row head p-5 shadow-lg">
       <div class="col-4">
         <div class="d-flex justify-content-center align-items-center h-100">
-          {% if person.profile %}
-            <img src="https://dummyimage.com/120/000/fff" alt="" class="rounded-circle border border-5">
+          {% if person.profile_picture %}
+            <img src="{{ person.profile_picture.url }}" alt="" class="rounded-circle border border-5">
           {% else %}
             <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
@@ -49,24 +49,23 @@
         <div class="container" style="padding: 50px;">
           <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for study in studys %}
-            <div class="col">
-              <a href="{% url 'reviews:detail' study.pk %}">
-                <div class="card h-100">
-                  {% if study.image %}
-                    <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-                  {% else %}
-                    <div class="card-img-top h-100"></div>
-                  {% endif %}
-                  <div class="card-body">
-                  </div>
-                  <div class="card-grad">
-                    <h5 class="card-title study-title p-3">{{ study.title }}</h5>
-                    <div class="rounded-3 p-3 study-content">
-                      {{ study.content }}
+              <div class="col">
+                <a href="{% url 'reviews:detail' study.pk %}">
+                  <div class="card h-100">
+                    {% if study.image %}
+                      <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                    {% else %}
+                      <div class="card-img-top h-100"></div>
+                    {% endif %}
+                    <div class="card-body"></div>
+                    <div class="card-grad">
+                      <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                      <div class="rounded-3 p-3 study-content">
+                        {{ study.content }}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
+                </a>
               </div>
             {% endfor %}
           </div>
