@@ -20,6 +20,7 @@ def index(request):
     return render(request, 'reviews/index.html', context)
 
 
+
 def create(request):
     if request.method == 'POST':
         study_form = StudyForm(request.POST, request.FILES)
@@ -50,6 +51,7 @@ def detail(request, study_pk):
     context = {'study' : study,
                'cnt':cnt}
     return render(request,'reviews/detail.html', context)
+
 
 
 def userlist(request, study_pk):
