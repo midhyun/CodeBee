@@ -9,10 +9,16 @@
       ), url('/static/accounts/image/bg.jpg');
     background-size: cover;
     background-repeat: no-repeat;
-    border-radius: 20px 20px 0px 0px;
     margin-top: 170px;
     height: 450px;
     background-size: cover;
+}
+
+.index-header {
+    background-image: url('/static/accounts/image/bg.jpg');
+    background-size: cover;
+    height: 500px;
+
 }
 .none {
     width: 120px;
@@ -27,7 +33,10 @@
 }
 
 .board {
-    min-height: 600px;
+    margin-left: 300px;
+    margin-right: 300px;
+    padding-top: 3rem;
+    min-height: calc(100vh - 8rem);
 }
 .tab-menu {
     margin: 20px 0px;
@@ -45,20 +54,22 @@
 .card {
     position: relative;
     overflow: hidden;
+    width: 100%;
+    box-shadow: 1rem;
 }
 
-.card:hover img {
+.card:hover .card-image {
     transform: scale(1.4);
 }
 
-.card img {
+.card .card-image {
     width: 100%;
     transition: all 0.2s linear;
 }
 
 .study-title {
     position: absolute;
-    bottom: 25%;
+    bottom: 30%;
     left: 50%;
     right: 50%;
     transform : translate(-50%);
@@ -67,20 +78,14 @@
     overflow:hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    font-size: 30px;
+    font-size: 20px;
     font-weight: revert;
     color: #344050;
 }
 
-.study-content {
+.content-box {
     position: absolute;
     display: block;
-    overflow:hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    line-height: 26px;
     bottom: 3%;
     left: 50%;
     right: 50%;
@@ -89,10 +94,21 @@
     width: 94%;
     border-style: solid;
     border-radius: 8px;
-    border-width: 2.2px;
+    border-width: 1.2px;
     border-color: #ffecc7;
-    background-color:#FDA88E;
-    color: white;
+    background-color:#ffecc7;
+}
+
+.study-content {
+    min-height: 52px;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 26px;
+    font-size: 14px;
+    color: #344050;
 }
 
 .link {
@@ -108,17 +124,26 @@
 }
 
 .card-body {
-    height: 8rem;
+    height: 2rem;
 }
 /* 카드 그라데이션 */
 .card-grad {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(0deg, #FD9E9E 0%, #FDA790 36%, rgba(255, 255, 255, 0) 83.4%);
+    background: linear-gradient(0deg, #FD9E9E 0%, #FDA790 10%, rgba(255, 255, 255, 0) 76.4%);
     border-radius: 4px;
 }
-
-.card {
-    height: 140px;
+.card span {
+    letter-spacing: 3px;
+    background-color: #FDA790;
+    font-size: 11px;
+    color: white;
+    padding: 3px 10px;
+}
+.members {
+    margin: 3px;
+    padding: 2px 2px;
+    width: 15px;
+    height: 15px;
 }
