@@ -12,6 +12,7 @@
       <span class="ms-3 text-primary">모집중</span>
     {% endif %}
     <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+    {% if request.user.is_authenticated %}
     {% if study.host == user %}
     <div class="text-end mx-5">
       <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
@@ -21,6 +22,7 @@
     <div class="text-end mx-5">
       <a class="btn btn-danger text-decoration-none text-light" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
     </div>
+    {% endif %}
     {% endif %}
     <div class="">
     </div>
@@ -33,9 +35,11 @@
   </div>
   <!-- 스터디 정보 -->
   <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
+    {% if request.user.is_authenticated %}
     <div class="mb-3">
       <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
     </div>
+    {% endif%}
       {% if post.image %}
       <img src="{{ study.image.url }}" alt="">
       {% endif %}
@@ -58,7 +62,9 @@
         {% endif %}
       </p>
     </div>
+    {% if study.location_type == False %}
     <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+    {% endif %}
   </div>
 </div>
 <script type="text/javascript"
