@@ -47,7 +47,7 @@ def create(request):
 
 
 def detail(request, study_pk):
-    review_form = ReviewForm()
+    # review_form = ReviewForm()
 
     study = Study.objects.get(pk=study_pk)
     cnt = len(Accepted.objects.filter(study=study))
@@ -59,7 +59,7 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {'study' : study,
-               'review_form': review_form,
+            #    'review_form': review_form,
                'cnt':cnt,
                'check':user_accepted
                }
