@@ -43,53 +43,51 @@
       <button id="btn_1" class="btn btn-outline-light" style="background-color:rgb(153, 22, 240);">참여중 스터디</button>
       <button id="btn_2" class="btn btn-primary">참여한 스터디</button>
     </div>
+    <!-- 참여 중인 스터디 -->
     <div id="tab-1" class="tab_1">
       <section class="board">
         <!-- 스터디 제목, 기간, 설명 -->
         <div class="container" style="padding: 50px;">
           <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for study in studys %}
-            <div class="col">
-              <a href="{% url 'reviews:detail' study.pk %}">
-                <div class="card h-100">
-                  {% if study.image %}
-                    <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-                  {% else %}
-                    <div class="card-img-top h-100"></div>
-                  {% endif %}
-                  <div class="card-body">
-                  </div>
-                  <div class="card-grad">
-                    <h5 class="card-title study-title p-3">{{ study.title }}</h5>
-                    <div class="rounded-3 p-3 study-content">
-                      {{ study.content }}
+              <div class="col">
+                <a href="{% url 'reviews:detail' study.pk %}">
+                  <div class="card h-100">
+                    {% if study.image %}
+                      <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                    {% else %}
+                      <div class="card-img-top h-100"></div>
+                    {% endif %}
+                    <div class="card-body"></div>
+                    <div class="card-grad">
+                      <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                      <div class="rounded-3 p-3 study-content">
+                        {{ study.content }}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </a>
+                </a>
               </div>
             {% endfor %}
           </div>
         </div>
       </section>
       <div id="tab-2" class="tab_2 deactive p-5">
+
         <!-- 참여한 스터디 -->
         <section class="board">
           {% for study in person.joined.all %}
-            <p class="fw-bold fs-2">
-              <a href="{% url 'reviews:detail' study.pk %}" class="link">
-                {{ study.title }}
-                <span>
-                  <img src="{% static 'accounts/image/next.png' %}" alt="" width="55px">
-                </span>
-              </a>
-            </p>
-            <p class="text-muted">{{ study.deadline}}라고 쓰고 나중엔 리뷰 작성시간이 될</p>
-            {% if study.image %}
-              <img src="{{ study.image.url }}" alt="" class="my-3" width="300px">
+            {% if not study.is_active %}
+              <div class="container">
+                <div class="row">
+                  <div class="col">
+                    <img src="{{ study.image.url }}" alt="">
+                  </div>
+                  <div class="col"></div>
+                </div>
+
+              </div>
             {% endif %}
-            <p>너무 재미있었습니다!</p>
-            <hr class="my-5">
           {% endfor %}
 
         </div>
