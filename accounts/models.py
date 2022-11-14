@@ -37,7 +37,7 @@ class User(AbstractUser):
     # 닉네임 20자 제한
     nickname = models.CharField(max_length=20)
     location = models.CharField(max_length=100, blank=True)
-
+    token = models.CharField(max_length=150, null=True, blank=True)
     @property
     def full_name(self):
         return f"{self.last_name}{self.first_name}"

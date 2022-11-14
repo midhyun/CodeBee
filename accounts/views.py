@@ -191,6 +191,7 @@ def social_login_callback(request, service_name):
             services[service_name]["user_api"], headers=headers
         ).json()
     print(u_info)
+    print(access_token)
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -238,6 +239,8 @@ def social_login_callback(request, service_name):
     user_info = login_data[service_name]
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
+        user.token = access_token
+        user.save()
     else:
         user = get_user_model()()
         user.social_id = user_info["social_id"]
@@ -246,6 +249,7 @@ def social_login_callback(request, service_name):
         user.nickname = user_info["nickname"]
         user.email = user_info["email"]
         user.phone = user_info["phone"]
+        user.token = access_token
         user.set_password(str(state_token))
         user.save()
         user = get_user_model().objects.get(social_id=user_info["social_id"])
