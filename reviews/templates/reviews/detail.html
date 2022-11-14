@@ -2,6 +2,7 @@
 {% block content %}
 {% load static %}
 
+{% if study.isactive %}
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
   <div class="my-5">
@@ -9,7 +10,10 @@
     {% if cnt == study.limits %}
       <span class="ms-3 text-danger">모집마감</span>
     {% else %}
-      <span class="ms-3 text-primary">모집중</span>
+    <span class="ms-3 text-primary">모집중</span>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+    {% endif %}
     {% endif %}
     <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
     {% if request.user.is_authenticated %}
@@ -17,11 +21,15 @@
     <div class="text-end mx-5">
       <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
       <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
+      <a class="ms-3 btn btn-success" href="{% url 'reviews:done' study.pk %}">활동완료</a>
     </div>
     {% else %}
+    {% if check %}
     <div class="text-end mx-5">
-      <a class="btn btn-danger text-decoration-none text-light" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+      <a class="btn btn-danger text-decoration-none text-light"
+        href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
     </div>
+    {% endif %}
     {% endif %}
     {% endif %}
     <div class="">
@@ -29,9 +37,40 @@
   </div>
   <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
   <div class="ms-3 mb-5 d-flex">
-    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">
+      {{study.title }}</a>
     <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
     <a class="btn btn-outline-primary  me-5" href="">후기</a>
+    {% if study.host == user %}
+    <!-- 그룹원 호출 버튼 -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      그룹원 호출
+    </button>
+
+    <!-- 그룹원 호출 모달 -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">그룹원에게 카카오톡 알림 보내기</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'reviews:gathering' study.pk %}" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+              <label class="form-label" for="id_content">카카오톡 인증된 그룹원에게 일괄 메시지를 전송합니다.</label>
+              <textarea maxlength="200" name="message" cols="40" rows="10" class="form-control" placeholder="호출 메시지"
+                required="" id="id_content"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Send message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
   <!-- 스터디 정보 -->
   <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
@@ -65,8 +104,93 @@
     {% if study.location_type == False %}
     <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
     {% endif %}
+    <p>스터디장: {{ study.host }}</p>
+    <p>스터디 소개</p>
+    <p>{{ study.content }}</p>
+    <p>제한 인원: {{ study.accepted_set.count}} / {{ study.limits }}</p>
+    <p>
+      {% if study.accepted_set.count == study.limits %}
+      <span>모집마감</span>
+      {% else %}
+      <span>가입 마감일: {{ study.deadline }}</span>
+      {% endif %}
+    </p>
+    <p>
+      {% if study.location_type == False %}
+      <span>모임장소: {{ study.location }}</span>
+      {% elif study.location_type == True %}
+      <span>온라인으로 진행됩니다.</span>
+      {% endif %}
+    </p>
+  </div>
+  {% if study.location_type == False %}
+  <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+  {% endif %}
+</div>
+</div>
+{% else %}
+<!-- 활동 종료 -->
+<div class="container">
+  <!-- 스터디 이름, 모집여부 -->
+  <div class="my-5">
+    <span style="font-size: 3rem">{{study.title}}  <span class="ms-3 opacity-50">(활동종료)</span></span>
+    <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+    {% if request.user.is_authenticated %}
+    {% if study.host == user %}
+    <div class="text-end mx-5">
+      <a class="ms-3 btn btn-primary disabled" href="">수정</a>
+      <a class="ms-3 btn btn-danger disabled" href="">삭제</a>
+    </div>
+    {% else %}
+    {% if check %}
+    <div class="text-end mx-5">
+      <a class="btn btn-danger text-decoration-none text-light disabled" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+    </div>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+    <div class="">
+    </div>
+  </div>
+  <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
+  <div class="ms-3 mb-5 d-flex">
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
+    <a class="btn btn-outline-primary  me-5" href="">후기</a>
+  </div>
+  <!-- 스터디 정보 -->
+  <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
+    {% if request.user.is_authenticated %}
+    {% endif%}
+      {% if post.image %}
+      <img src="{{ study.image.url }}" alt="">
+      {% endif %}
+      <p>스터디장: {{ study.host }}</p>
+      <p>스터디 소개</p>
+      <p>{{ study.content }}</p>
+      <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
+      <p>
+        {% if study.accepted_set.count == study.limits %}
+        <span>모집마감</span>
+        {% else %}
+        <span>가입 마감일: {{ study.deadline }}</span>
+        {% endif %}
+      </p>
+      <p>
+        {% if study.location_type == False %}
+        <span>모임장소: {{ study.location }}</span>
+        {% elif study.location_type == True %}
+        <span>온라인으로 진행됩니다.</span>
+        {% endif %}
+      </p>
+    </div>
+    {% if study.location_type == False %}
+    <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+    {% endif %}
   </div>
 </div>
+{% endif %}
+
 <script type="text/javascript"
   src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
   <script>

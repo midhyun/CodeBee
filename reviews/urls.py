@@ -19,4 +19,5 @@ urlpatterns = [
     path('<int:pk>/<int:comment_pk>/delete/', views.comment_delete, name='comment_delete'),
     path('<int:study_pk>/gathering', views.gathering, name='gathering'),
     path('<int:study_pk>/gathering', views.gathering, name='gathering'),
+    path('<int:study_pk>/done/',views.done, name='done')
 ]
