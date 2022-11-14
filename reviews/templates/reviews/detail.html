@@ -13,7 +13,7 @@
   <div class="ms-3 mb-5 row">
     <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
     <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
-    <a class="btn btn-outline-primary col-1 me-5" href="">후기</a>
+    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:review' study.pk %}">후기</a>
   </div>
   <!-- 스터디 정보 -->
   <div class=" mb-5 p-3 border border-3 border-warning">

@@ -1,13 +1,16 @@
-from django.shortcuts import render,redirect
-from .forms import StudyForm, ReviewForm,AcceptedForm
-from .models import Study,Review,Accepted
+from django.http import JsonResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import StudyForm, CommentForm, AcceptedForm
+from .models import Study, Comment, Accepted
 from accounts.models import User
+import json
 
 
 # Create your views here.
 
 def home(request):
     return render(request, 'home.html')
+
 
 def index(request):
     studies = Study.objects.order_by('-pk')
@@ -16,8 +19,9 @@ def index(request):
     }
     return render(request, 'reviews/index.html', context)
 
+
 def create(request):
-    if request.method =='POST':
+    if request.method == 'POST':
         study_form = StudyForm(request.POST, request.FILES)
         print(request.POST)
         if study_form.is_valid():
@@ -26,31 +30,34 @@ def create(request):
             study.study_type = request.POST['study_type']
             study.location_type = request.POST['location_type']
             study.location = request.POST['location']
+            study.deadline = request.POST['deadline']
             study.X = request.POST['X']
             study.Y = request.POST['Y']
             study.host = request.user
             study.save()
-            Aform = Accepted(joined=True,study=study,users=study.host)
+            Aform = Accepted(joined=True, study=study, users=study.host)
             Aform.save()
             return redirect('reviews:index')
     else:
         study_form = StudyForm()
-    context = {'study_form' : study_form}
+    context = {'study_form': study_form}
     return render(request, 'reviews/form.html', context)
+
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    review_form = ReviewForm()
-    context = {'study' : study,
+    review_form = CommentForm()
+    context = {'study': study,
                'review_form': review_form}
-    return render(request,'reviews/detail.html', context)
+    return render(request, 'reviews/detail.html', context)
+
 
 def userlist(request, study_pk):
     users = Accepted.objects.filter(study_id=study_pk)
     study = Study.objects.filter(pk=study_pk)
     context = {
-        'members':users,
-        'study':Study.objects.get(pk=study_pk),
+        'members': users,
+        'study': Study.objects.get(pk=study_pk),
     }
     return render(request, 'reviews/userlist.html', context)
 
@@ -70,11 +77,11 @@ def update(request, study_pk):
     else:
         return redirect('reviews:detail', study_pk)
 
+
 def delete(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     study.delete()
     return redirect('reviews:index')
-
 
 
 def join(request, study_pk, user_pk):
@@ -88,12 +95,13 @@ def join(request, study_pk, user_pk):
                 print('이미 가입되어 있습니다.')
                 return redirect('reviews:index')
         else:
-            Aform = Accepted(joined=False,study=study,users=request.user)
+            Aform = Accepted(joined=False, study=study, users=request.user)
             Aform.save()
             print('가입 신청')
             return redirect('reviews:index')
     else:
         return redirect('reviews:index')
+
 
 def study_accepted(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
@@ -105,6 +113,7 @@ def study_accepted(request, study_id, users_id):
         return redirect('reviews:userlist', study_id)
     else:
         return redirect('reviews:userlist', study_id)
+
 
 def study_kick(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
@@ -118,4 +127,103 @@ def study_kick(request, study_id, users_id):
         return redirect('reviews:index')
     else:
         return redirect('reviews:userlist', study_id)
-    
+
+# ==================================comment=======================
+
+def review(request, study_id):
+    study = Study.objects.get(pk=study_id)
+    comments = Comment.objects.all().order_by('-pk')
+    comment_form = CommentForm()
+    context = {
+        'review': study,
+        'comment_form' : comment_form,
+        'comments': comments,
+    }
+
+    return render(request, 'reviews/review.html', context)
+
+
+def comment_create(request, pk):
+    review = get_object_or_404(Study, pk=pk)
+    comment_form = CommentForm(request.POST)
+    if comment_form.is_valid():
+        comment = comment_form.save(commit=False)
+        print(review.id)
+        comment.study_id = review.id
+        comment.user = request.user
+
+        comment.save()
+
+        comments = Comment.objects.filter(study_id=pk).order_by('-pk')
+        comments_data = []
+        for co in comments:
+            co.created_at = co.created_at.strftime('%Y-%m-%d %H:%M')
+            comments_data.append(
+                {
+                    'request_user_pk': request.user.pk,
+                    'comment_pk': co.pk,
+                    'user_pk': co.user.pk,
+                    'username': co.user.username,
+                    'content': co.content,
+                    'created_at': co.created_at,
+                    'updated_at': co.updated_at,
+                    'study_id': co.study_id,
+                })
+        context = {
+            'comments_data': comments_data
+        }
+        return JsonResponse(context)
+
+
+def comment_update(request, pk, comment_pk):
+    if request.user.is_authenticated:
+        jsonObject = json.loads(request.body)
+
+        comment = Comment.objects.get(pk=comment_pk)
+        comment.comment_content = jsonObject.get('content')
+        comment.save()
+
+        comments = Comment.objects.filter(study_id=pk).order_by('-pk')
+        comments_data = []
+        for co in comments:
+            co.created_at = co.created_at.strftime('%Y-%m-%d %H:%M')
+            comments_data.append(
+                {
+                    'request_user_pk': request.user.pk,
+                    'comment_pk': co.pk,
+                    'user_pk': co.user.pk,
+                    'username': co.user.username,
+                    'content': co.content,
+                    'created_at': co.created_at,
+                    'updated_at': co.updated_at,
+                    'study_id': co.study_id,
+                })
+        context = {
+            'comments_data': comments_data
+        }
+        return JsonResponse(context)
+
+
+def comment_delete(request, pk, comment_pk):
+    if request.user.is_authenticated:
+        comment = Comment.objects.get(pk=comment_pk)
+        comment.delete()
+
+        comments = Comment.objects.filter(study_id=pk).order_by('-pk')
+        comments_data = []
+        for co in comments:
+            co.created_at = co.created_at.strftime('%Y-%m-%d %H:%M')
+            comments_data.append(
+                {'request_user_pk': request.user.pk,
+                 'comment_pk': co.pk,
+                 'user_pk': co.user.pk,
+                 'username': co.user.username,
+                 'content': co.content,
+                 'created_at': co.created_at,
+                 'updated_at': co.updated_at,
+                 'study_id': co.study_id,
+                 })
+        context = {
+            'comments_data': comments_data
+        }
+        return JsonResponse(context)
