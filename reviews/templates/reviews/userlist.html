@@ -5,10 +5,10 @@
   <div class="my-5">
     <span style="font-size: 3rem">{{study.title}}</span>
     {% if study.accepted_set.count == study.limits %}
-      <span class="ms-3 text-danger">모집마감</span>
+    <span class="ms-3 text-danger">모집마감</span>
     {% else %}
-      <span class="ms-3 text-primary">모집중</span>
-      <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+    <span class="ms-3 text-primary">모집중</span>
+    <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
     {% endif %}
     <div class="mb-3">
       <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
@@ -20,7 +20,8 @@
       </div>
       {% else %}
       <div class="text-end mx-5">
-        <a class="btn btn-danger text-decoration-none text-light" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+        <a class="btn btn-danger text-decoration-none text-light"
+          href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
       </div>
       {% endif %}
       {% endif %}
@@ -28,9 +29,40 @@
   </div>
   <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
   <div class="ms-3 mb-5 d-flex">
-    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">
+      {{ study.title }}</a>
     <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
     <a class="btn btn-outline-primary  me-5" href="">후기</a>
+    {% if study.host == user %}
+    <!-- 그룹원 호출 버튼 -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+      그룹원 호출
+    </button>
+
+    <!-- 그룹원 호출 모달 -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">그룹원에게 카카오톡 알림 보내기</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="{% url 'reviews:gathering' study.pk %}" method="POST">
+            {% csrf_token %}
+            <div class="modal-body">
+              <label class="form-label" for="id_content">카카오톡 인증된 그룹원에게 일괄 메시지를 전송합니다.</label>
+              <textarea maxlength="200" name="message" cols="40" rows="10" class="form-control" placeholder="호출 메시지"
+                required="" id="id_content"></textarea>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Send message</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endif %}
   </div>
   <!-- 스터디 정보 -->
   <div class="row justify-content-around">

@@ -35,8 +35,8 @@
             <option value="Vue">Vue</option>
             <option value="React">React</option>
           </select>
-          <input required="" cols="40" rows="10" id="id_theme" class="form-control" type="hidden" name="categorie"
-            placeholder="과목을 직접 입력하세요." value="Python">
+          <input maxlength="30" required="" cols="40" rows="10" id="id_theme" class="form-control" type="hidden"
+            name="categorie" placeholder="과목을 직접 입력하세요." value="Python">
         </div>
         <div class="mb-3"><label class="form-label" for="id_studytype">진행방법</label>
           <select aria-label="Default select" class="form-select mb-3" name="studytypeselect"
@@ -45,8 +45,8 @@
             <option value="당일" selected>당일 스터디</option>
             <option value="그룹">그룹 스터디</option>
           </select>
-          <input required="" cols="40" rows="10" id="id_studytype" class="form-control" type="hidden" name="study_type"
-            placeholder="진행방법을 직접 입력하세요." value="Python">
+          <input maxlength="30" required="" cols="40" rows="10" id="id_studytype" class="form-control" type="hidden"
+            name="study_type" placeholder="진행방법을 직접 입력하세요." value="Python">
         </div>
         <div class="mb-3"><label class="form-label" for="id_locationtype">모임형태</label>
           <select aria-label="Default select" class="form-select mb-3" name="location_type"
@@ -67,7 +67,7 @@
         </div>
         <label for="id_addr" class="form-label">주소</label>
         <div class="input-group mb-3">
-          <input name="location" maxlength="80" required="" type="text" class="form-control"
+          <input name="location" maxlength="50" required="" type="text" class="form-control"
             placeholder="직접 입력하거나 지도를 클릭해 마커를 표시하세요." id="id_addr" aria-label="Recipient's username"
             aria-describedby="button-addon2">
           <input onclick="searchPlaces()" class="btn btn-primary" type="button" id="button-addon2" value="검색하기">
