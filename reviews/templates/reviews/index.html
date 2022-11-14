@@ -1,15 +1,53 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+{% endblock css %}
 {% block content %}
-{% if request.user.is_authenticated %}
-<p>{{ request.user }} <a href="{% url 'accounts:logout' %}">로그아웃</a></p>
-{% else %}
-<a href="{% url 'accounts:login' %}">로그인 하러가기</a>
-{% endif %}
+  {% if request.user.is_authenticated %}
+    <p>{{ request.user }}
+      <a href="{% url 'accounts:logout' %}">로그아웃</a>
+    </p>
+  {% else %}
+    <a href="{% url 'accounts:login' %}">로그인 하러가기</a>
+  {% endif %}
 
-<a href="{% url 'reviews:create' %}">스터디 만들기</a>
-{% for study in studies %}
-<div>
-  <a href="{% url 'reviews:detail' study.pk %}">{{ study.title }}</a>
-</div>
-{% endfor %}
+  <a href="{% url 'reviews:create' %}">스터디 만들기</a>
+
+  <div class="container">
+    <!-- 헤더 이미지 영역 -->
+    <section class="board">
+      <!-- 스터디 제목, 기간, 설명 -->
+      <div class="container" style="padding: 50px;">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          {% for study in studies %}
+            <div class="col">
+              <a href="{% url 'reviews:detail' study.pk %}">
+                <div class="card h-100">
+                  {% if study.image %}
+                    <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                  {% else %}
+                    <div class="card-img-top h-100"></div>
+                  {% endif %}
+                  <div class="card-body"></div>
+                  <div class="card-grad">
+                    <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                    <div class="rounded-3 p-3 study-content">
+                      {{ study.content }}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </div>
+
+  {% for study in studies %}
+    <div>
+      <a href="{% url 'reviews:detail' study.pk %}">{{ study.title }}</a>
+    </div>
+  {% endfor %}
 {% endblock content %}

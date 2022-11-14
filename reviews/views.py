@@ -13,7 +13,7 @@ def home(request):
 def index(request):
     studies = Study.objects.order_by('-pk')
     context = {
-        'studies': studies
+        'studies': studies,
     }
     return render(request, 'reviews/index.html', context)
 
