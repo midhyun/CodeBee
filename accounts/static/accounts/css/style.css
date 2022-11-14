@@ -38,10 +38,6 @@
     display: none;
 }
 
-.active {
-    display: block;
-}
-
 .board {
     margin-left: 300px;
     margin-right: 300px;

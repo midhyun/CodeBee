@@ -270,12 +270,17 @@ def index(request):
 
 
 def detail(request, user_pk):
-    accepts = Accepted.objects.filter(users=user_pk)
+    accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
     studies = []
+    deactives = []
     for accept in accepts:
         if accept.joined:
-            studies.append(accepts.study)
-            
+            studies.append(accept.study)
+        
+    for study in studies:
+        if not study.isactive:
+            deactives.append(study)
+                        
     person = get_object_or_404(get_user_model(), pk=user_pk)
     return render(
         request,
@@ -283,5 +288,6 @@ def detail(request, user_pk):
         {
             "person": person,
             "studies" : studies,
+            "deactives" : deactives,
         },
     )
