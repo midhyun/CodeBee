@@ -18,9 +18,9 @@ def index(request):
     return render(request, 'reviews/index.html', context)
 
 def create(request):
-    print(request.POST)
     if request.method =='POST':
         study_form = StudyForm(request.POST, request.FILES)
+        print(request.POST)
         if study_form.is_valid():
             study = study_form.save(commit=False)
             study.categorie = request.POST['categorie']
@@ -29,7 +29,6 @@ def create(request):
             study.location = request.POST['location']
             study.X = request.POST['X']
             study.Y = request.POST['Y']
-            study.deadline = request.POST['deadline']
             study.host = request.user
             study.save()
             Aform = Accepted(joined=True,study=study,users=study.host)
@@ -63,16 +62,6 @@ def update(request, study_pk):
         if request.method == 'POST':
             study_form = StudyForm(request.POST, request.FILES, instance=study)
             if study_form.is_valid():
-                study = study_form.save(commit=False)
-                study.categorie = request.POST['categorie']
-                study.study_type = request.POST['study_type']
-                study.location_type = request.POST['location_type']
-                study.location = request.POST['location']
-                study.X = request.POST['X']
-                study.Y = request.POST['Y']
-                study.deadline = request.POST['deadline']
-                study.host = request.user
-                study.save()
                 study_form.save()
                 return redirect('reviews:detail', study_pk)
         else:
@@ -130,6 +119,7 @@ def study_kick(request, study_id, users_id):
         return redirect('reviews:index')
     else:
         return redirect('reviews:userlist', study_id)
+
 url="https://kapi.kakao.com/v2/api/talk/memo/default/send"
 
 
