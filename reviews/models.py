@@ -16,7 +16,7 @@ class Study(models.Model):
     tag = models.CharField(max_length=50, blank=True)
     categorie = models.CharField(max_length=30)
     study_type = models.CharField(max_length=30)
-    deadline = models.DateTimeField(blank=True)
+    deadline = models.DateTimeField(auto_now=False)
     location_type = models.BooleanField(default=False) # False 오프라인, True 온라인
     location = models.CharField(max_length=50, blank=True)
     X = models.CharField(max_length=20, null=True)
@@ -31,11 +31,12 @@ class Study(models.Model):
         format="JPEG",
         options={"quality": 80},
     )
+    isactive = models.BooleanField(default=True) # True 활성화(활동중), False 활동 종료
 
 
 class Accepted(models.Model):
     joined = models.BooleanField(default=False) # False 신청상태, True 승인상태
-    study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name='accepted')
     users = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default='')
     joindate = models.DateTimeField(auto_now=True)
 

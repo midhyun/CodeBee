@@ -25,7 +25,7 @@ class StudyForm(forms.ModelForm):
             'title': "스터디명",
             'limits': '최대 참여',
             'tag': '태그',
-            'content': '스터디 주제',
+            'content': '스터디 내용',
             'image': '이미지',
         }
         widgets = {

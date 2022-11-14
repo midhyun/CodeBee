@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
-  <p class="my-5">
+  <div class="my-5">
     <span style="font-size: 3rem">{{study.title}}</span>
     {% if study.accepted_set.count == study.limits %}
       <span class="ms-3 text-danger">모집마감</span>
@@ -10,17 +10,21 @@
       <span class="ms-3 text-primary">모집중</span>
       <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
     {% endif %}
-  </p>
-  <div class="mb-3">
-    <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
-    {% if study.host == user %}
-    <p class="text-end mx-5">
-      <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
-      <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
-    </p>
-    {% else %}
-    <a href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴</a>
-    {% endif %}
+    <div class="mb-3">
+      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+      {% if request.user.is_authenticated %}
+      {% if study.host == user %}
+      <div class="text-end mx-5">
+        <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
+        <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
+      </div>
+      {% else %}
+      <div class="text-end mx-5">
+        <a class="btn btn-danger text-decoration-none text-light" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+      </div>
+      {% endif %}
+      {% endif %}
+    </div>
   </div>
   <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
   <div class="ms-3 mb-5 d-flex">

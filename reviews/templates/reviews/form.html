@@ -5,15 +5,15 @@
 <link rel="stylesheet" href="{% static 'css/style.css' %}">{% endblock css%}
 {% block content %}
 
-<div class="container my-3" style="width:60%">
+<div class="container my-3 position-relative" style="width:60%">
   <div class="d-flex align-items-end justify-content-center" style="position:relative; height:200px">
     <img style="position:absolute; top:0px; right:0px" src="{% static 'createb.png' %}" alt="">
-    <h2 class="fw-bold text-center" style="">스터디 만들기</h2>
+    <h2 class="fw-bold text-center my-5">스터디 만들기</h2>
   </div>
   <hr style="border: solid 1px rgb(255, 198, 198); width: 97%; margin:auto;">
-  <div class="row">
-    <div class="col-lg-4">
-      <div class="m-3 card shadow card p-3" style="">
+  <div class="row" style="">
+    <div class="col-lg-4 ">
+      <div class="m-3 card shadow card p-3" style="position: sticky; top:0; z-index:2;">
         하이퍼그로스 2기 절찬리 모집중!<br>
         <img
           src="https://oopy.lazyrockets.com/api/v2/notion/image?src=https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F4c14a348-0f93-4541-91d6-dfe4f265d252%2Fhypergrowth_%25E1%2584%2585%25E1%2585%25A9%25E1%2584%2580%25E1%2585%25A9%25E1%2584%2589%25E1%2585%25B5%25E1%2586%25B7%25E1%2584%2587%25E1%2585%25A9%25E1%2586%25AF.png&blockId=a86012c3-a307-48f1-9c8f-0190bf2151cd&width=256"
@@ -72,6 +72,7 @@
             aria-describedby="button-addon2">
           <input onclick="searchPlaces()" class="btn btn-primary" type="button" id="button-addon2" value="검색하기">
         </div>
+        
 
         {% bootstrap_form study_form %}
         <div class="mb-3"><label class="form-label" for="id_deadline">모집 마감일</label><input type="datetime-local"

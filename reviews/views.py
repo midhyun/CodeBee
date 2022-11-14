@@ -3,8 +3,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import StudyForm, CommentForm, AcceptedForm
 from .models import Study, Comment, Accepted
 from accounts.models import User
+import requests
 import json
-
 
 # Create your views here.
 
@@ -15,7 +15,7 @@ def home(request):
 def index(request):
     studies = Study.objects.order_by('-pk')
     context = {
-        'studies': studies
+        'studies': studies,
     }
     return render(request, 'reviews/index.html', context)
 
@@ -34,6 +34,7 @@ def create(request):
             study.X = request.POST['X']
             study.Y = request.POST['Y']
             study.host = request.user
+            study.deadline = request.POST['deadline']
             study.save()
             Aform = Accepted(joined=True, study=study, users=study.host)
             Aform.save()
@@ -46,10 +47,10 @@ def create(request):
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    review_form = CommentForm()
-    context = {'study': study,
-               'review_form': review_form}
-    return render(request, 'reviews/detail.html', context)
+    cnt = len(Accepted.objects.filter(study=study))
+    context = {'study' : study,
+               'cnt':cnt}
+    return render(request,'reviews/detail.html', context)
 
 
 def userlist(request, study_pk):
@@ -68,6 +69,16 @@ def update(request, study_pk):
         if request.method == 'POST':
             study_form = StudyForm(request.POST, request.FILES, instance=study)
             if study_form.is_valid():
+                study = study_form.save(commit=False)
+                study.categorie = request.POST['categorie']
+                study.study_type = request.POST['study_type']
+                study.location_type = request.POST['location_type']
+                study.location = request.POST['location']
+                study.X = request.POST['X']
+                study.Y = request.POST['Y']
+                study.deadline = request.POST['deadline']
+                study.host = request.user
+                study.save()
                 study_form.save()
                 return redirect('reviews:detail', study_pk)
         else:
@@ -84,6 +95,7 @@ def delete(request, study_pk):
     return redirect('reviews:index')
 
 
+
 def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
     accepted = Accepted.objects.filter(study_id=study_pk)
@@ -93,14 +105,14 @@ def join(request, study_pk, user_pk):
         for joined in users:
             if joined in accepted:
                 print('이미 가입되어 있습니다.')
-                return redirect('reviews:index')
+                return redirect('reviews:detail', study_pk)
         else:
             Aform = Accepted(joined=False, study=study, users=request.user)
             Aform.save()
             print('가입 신청')
-            return redirect('reviews:index')
+            return redirect('reviews:detail', study_pk)
     else:
-        return redirect('reviews:index')
+        return redirect('reviews:detail', study_pk)
 
 
 def study_accepted(request, study_id, users_id):
@@ -128,8 +140,31 @@ def study_kick(request, study_id, users_id):
     else:
         return redirect('reviews:userlist', study_id)
 
-# ==================================comment=======================
+url="https://kapi.kakao.com/v2/api/talk/memo/default/send"
 
+
+
+
+def gathering(request, study_pk):
+    accepted = Accepted.objects.filter(study_id=study_pk, joined=1)
+    data={
+    "template_object": json.dumps({
+        "object_type":"text",
+        "text":"요원이 거의 모였어요 준비하세요!",
+        "link":{
+            "web_url":"www.naver.com",
+            "mobile_url":"www.naver.com"
+        }})}
+    for user in accepted:
+        token = user.users.token
+        if token:
+            headers={"Authorization" : "Bearer " + token}
+            response = requests.post(url, headers=headers, data=data)
+            print(str(response.json()))
+        else:
+            print('no')
+    return redirect('reviews:detail', study_pk)
+# ==================================comment=======================
 def review(request, study_id):
     study = Study.objects.get(pk=study_id)
     comments = Comment.objects.all().order_by('-pk')

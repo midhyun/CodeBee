@@ -44,83 +44,81 @@
       <button id="btn_2" class="btn btn-primary">참여한 스터디</button>
     </div>
     <div id="tab-1" class="tab_1">
-        <section class="board">
+      <section class="board">
         <!-- 스터디 제목, 기간, 설명 -->
         <div class="container" style="padding: 50px;">
-          <div class="row row-cols-3 row-cols-md-3 g-4" style="margin: 45px;">
+          <div class="row row-cols-1 row-cols-md-3 g-4">
             {% for study in studys %}
-              <a href="{% url 'reviews:detail' study.pk %}" class="link">
-                <div class="col">
-                  <div class="card h-100 hi">
-                    {% if study.image %}
-                      <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-                    {% else %}
-                      <div class="card-image"></div>
-                    {% endif %}
-                    <div class="card-grad"></div>
-                    <div class="card-body p-0">
-                      <div class="blur">
-                        <h5 class="fw-bold px-2 study-title">{{ study.title }}</h5>
-                        <div class="study-content p-2">
-                          {{ study.content }}
-                        </div>
-                      </div>
+            <div class="col">
+              <a href="{% url 'reviews:detail' study.pk %}">
+                <div class="card h-100">
+                  {% if study.image %}
+                    <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                  {% else %}
+                    <div class="card-img-top h-100"></div>
+                  {% endif %}
+                  <div class="card-body">
+                  </div>
+                  <div class="card-grad">
+                    <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                    <div class="rounded-3 p-3 study-content">
+                      {{ study.content }}
                     </div>
                   </div>
                 </div>
               </a>
+              </div>
             {% endfor %}
           </div>
         </div>
-      </div>
-    </section>
-    <div id="tab-2" class="tab_2 deactive p-5">
-      <!-- 참여한 스터디 -->
+      </section>
+      <div id="tab-2" class="tab_2 deactive p-5">
+        <!-- 참여한 스터디 -->
         <section class="board">
-        {% for study in person.joined.all %}
-          <p class="fw-bold fs-2">
-            <a href="{% url 'reviews:detail' study.pk %}" class="link">
-              {{ study.title }}
-              <span>
-                <img src="{% static 'accounts/image/next.png' %}" alt="" width="55px">
-              </span>
-            </a>
-          </p>
-          <p class="text-muted">{{ study.deadline}}라고 쓰고 나중엔 리뷰 작성시간이 될</p>
-          {% if study.image %}
-            <img src="{{ study.image.url }}" alt="" class="my-3" width="300px">
-          {% endif %}
-          <p>너무 재미있었습니다!</p>
-          <hr class="my-5">
-        {% endfor %}
+          {% for study in person.joined.all %}
+            <p class="fw-bold fs-2">
+              <a href="{% url 'reviews:detail' study.pk %}" class="link">
+                {{ study.title }}
+                <span>
+                  <img src="{% static 'accounts/image/next.png' %}" alt="" width="55px">
+                </span>
+              </a>
+            </p>
+            <p class="text-muted">{{ study.deadline}}라고 쓰고 나중엔 리뷰 작성시간이 될</p>
+            {% if study.image %}
+              <img src="{{ study.image.url }}" alt="" class="my-3" width="300px">
+            {% endif %}
+            <p>너무 재미있었습니다!</p>
+            <hr class="my-5">
+          {% endfor %}
 
-      </div>
-    </section>
+        </div>
+      </section>
     </div>
 
-  <script>
-    const button1 = document.querySelector('#btn_1')
-    const button2 = document.querySelector('#btn_2')
-    button2.addEventListener('click', function () {
-      const tab1 = document.querySelector("#tab-1")
-      const tab2 = document.querySelector("#tab-2")
-      tab1
-        .classList
-        .add('deactive')
-      tab2
-        .classList
-        .remove('deactive')
-    });
-    button1.addEventListener('click', function () {
-      const tab1 = document.querySelector("#tab-1")
-      const tab2 = document.querySelector("#tab-2")
-      tab1
-        .classList
-        .remove('deactive')
-      tab2
-        .classList
-        .add('deactive')
-    });
-  </script>
+    <script>
+      const button1 = document.querySelector('#btn_1')
+      const button2 = document.querySelector('#btn_2')
+      button2.addEventListener('click', function () {
+        const tab1 = document.querySelector("#tab-1")
+        const tab2 = document.querySelector("#tab-2")
+        tab1
+          .classList
+          .add('deactive')
+        tab2
+          .classList
+          .remove('deactive')
+      });
+      button1.addEventListener('click', function () {
+        const tab1 = document.querySelector("#tab-1")
+        const tab2 = document.querySelector("#tab-2")
+        tab1
+          .classList
+          .remove('deactive')
+        tab2
+          .classList
+          .add('deactive')
+      });
+    </script>
 
-{% endblock content %}
+  {% endblock content %}

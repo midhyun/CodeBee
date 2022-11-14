@@ -1,39 +1,52 @@
+{% extends 'base.html' %}
 {% block content %}
+{% load static %}
+
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
-  <p class="my-5">
+  <div class="my-5">
     <span style="font-size: 3rem">{{study.title}}</span>
-    {% if study.accepted_set.count == study.limits %}
+    {% if cnt == study.limits %}
       <span class="ms-3 text-danger">모집마감</span>
     {% else %}
       <span class="ms-3 text-primary">모집중</span>
     {% endif %}
-  </p>
+    <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+    {% if request.user.is_authenticated %}
+    {% if study.host == user %}
+    <div class="text-end mx-5">
+      <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
+      <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
+    </div>
+    {% else %}
+    <div class="text-end mx-5">
+      <a class="btn btn-danger text-decoration-none text-light" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+    </div>
+    {% endif %}
+    {% endif %}
+    <div class="">
+    </div>
+  </div>
   <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
-  <div class="ms-3 mb-5 row">
-    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
-    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
-    <a class="btn btn-outline-primary col-1 me-5" href="{% url 'reviews:review' study.pk %}">후기</a>
+  <div class="ms-3 mb-5 d-flex">
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
+    <a class="btn btn-outline-primary  me-5" href="">후기</a>
   </div>
   <!-- 스터디 정보 -->
-  <div class=" mb-5 p-3 border border-3 border-warning">
+  <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
+    {% if request.user.is_authenticated %}
     <div class="mb-3">
       <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
-      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
-      {% if study.host == user %}
-      <a class="btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
-      <a class="btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
-      {% else %}
-      <a href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴</a>
-      {% endif %}
     </div>
+    {% endif%}
       {% if post.image %}
       <img src="{{ study.image.url }}" alt="">
       {% endif %}
       <p>스터디장: {{ study.host }}</p>
       <p>스터디 소개</p>
       <p>{{ study.content }}</p>
-      <p>제한 인원: {{ study.accepted_set.count}} / {{ study.limits }}</p>
+      <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
       <p>
         {% if study.accepted_set.count == study.limits %}
         <span>모집마감</span>
@@ -49,7 +62,36 @@
         {% endif %}
       </p>
     </div>
-
-    </div>
+    {% if study.location_type == False %}
+    <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+    {% endif %}
   </div>
-{% endblock %}
+</div>
+<script type="text/javascript"
+  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
+  <script>
+    var X = {{ study.X }}
+    var Y = {{ study.Y }}
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+            center: new kakao.maps.LatLng(`${Y}`,`${X}`), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+        };
+
+    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+    // 마커가 표시될 위치입니다
+    var markerPosition  = new kakao.maps.LatLng(`${Y}`,`${X}`);
+
+    // 마커를 생성합니다
+    var marker = new kakao.maps.Marker({
+        position: markerPosition
+    });
+
+    // 마커가 지도 위에 표시되도록 설정합니다
+    marker.setMap(map);
+
+    // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
+    // marker.setMap(null);
+    </script>
+    {% endblock %}
