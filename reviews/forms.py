@@ -1,5 +1,5 @@
 from django import forms
-from .models import Review,Study, Accepted
+from .models import Comment,Study, Accepted
 
 
 LOCATION_TYPE_CHOICE = (
@@ -25,7 +25,7 @@ class StudyForm(forms.ModelForm):
             'title': "스터디명",
             'limits': '최대 참여',
             'tag': '태그',
-            'content': '스터디 내용',
+            'content': '스터디 소개',
             'image': '이미지',
         }
         widgets = {
@@ -39,17 +39,13 @@ class AcceptedForm(forms.ModelForm):
         fields = ['joined']
 
 
-class ReviewForm(forms.ModelForm):
+class CommentForm(forms.ModelForm):
     class Meta:
-        model = Review
-        exclude = (
-            "review",
-            "user",
-        )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["content"].widget.attrs = {
-            "placeholder": "댓글을 작성해 주세요",
+        model = Comment
+        fields = ['content']
+        labels = {
+            'comment_content': '',
         }
-        self.fields["content"].help_text = None
+        widgets = {
+            'comment_content': forms.TextInput(attrs={'placeholder': '댓글작성', 'style': 'width:400px;'}),
+        }

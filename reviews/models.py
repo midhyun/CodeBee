@@ -6,6 +6,8 @@ from datetime import datetime
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
+
+
 class Study(models.Model):
     limits = models.IntegerField(default=4, validators=[MinValueValidator(2)])
     host = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default='')
@@ -39,7 +41,10 @@ class Accepted(models.Model):
     joindate = models.DateTimeField(auto_now=True)
 
 
-class Review(models.Model):
+class Comment(models.Model):
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     content = models.TextField()
-    date = models.DateField()
+    created_at = models.DateField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE)
