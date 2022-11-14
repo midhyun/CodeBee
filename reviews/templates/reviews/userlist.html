@@ -12,6 +12,7 @@
     {% endif %}
     <div class="mb-3">
       <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+      {% if request.user.is_authenticated %}
       {% if study.host == user %}
       <div class="text-end mx-5">
         <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
@@ -21,6 +22,7 @@
       <div class="text-end mx-5">
         <a class="btn btn-danger text-decoration-none text-light" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
       </div>
+      {% endif %}
       {% endif %}
     </div>
   </div>

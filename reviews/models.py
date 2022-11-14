@@ -29,6 +29,7 @@ class Study(models.Model):
         format="JPEG",
         options={"quality": 80},
     )
+    isactive = models.BooleanField(default=True) # True 활성화(활동중), False 활동 종료
 
 
 class Accepted(models.Model):

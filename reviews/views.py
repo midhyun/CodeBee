@@ -86,14 +86,14 @@ def join(request, study_pk, user_pk):
         for joined in users:
             if joined in accepted:
                 print('이미 가입되어 있습니다.')
-                return redirect('reviews:index')
+                return redirect('reviews:detail', study_pk)
         else:
             Aform = Accepted(joined=False,study=study,users=request.user)
             Aform.save()
             print('가입 신청')
-            return redirect('reviews:index')
+            return redirect('reviews:detail', study_pk)
     else:
-        return redirect('reviews:index')
+        return redirect('reviews:detail', study_pk)
 
 def study_accepted(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
