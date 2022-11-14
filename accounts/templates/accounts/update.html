@@ -3,16 +3,257 @@
 
 {% block content %}
 
-<div>
+<div class="container">
   <h1 class="text-center">회원정보 수정</h1>
-  <form action="" method="POST" class="form">
+  <form id="update-form" action="" method="POST" class="form">
     {% csrf_token %}
-    {% bootstrap_form update_form %}
+    {% for update_field in update_form %}
+    {% bootstrap_field update_field %}
+    {% endfor %}
+    {% for auth_field in auth_form %}
+    {% if auth_field.name == "phone" %}
+    {% if user.is_phone_active %}
+    {% bootstrap_field auth_field %}
+    <form>
+      <div id="phone-div" class="d-flex mb-3">
+        <button id="get-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 10rem;">다시
+          인증하기</button>
+        <p id="already-auth-user" class="mx-3 my-0 d-flex justify-content-center align-items-center"
+          style="font-weight: bolder;">이미 인증을 완료한
+          사용자입니다.</p>
+        <input id="auth-phone" class="form-control d-none" name="auth-phone-input" type="text" placeholder="인증번호 입력"
+          style="width: 10rem;">
+        <input id="auth-phone-submit" class="form-control btn btn-primary d-none mx-3" type="submit" value="인증하기"
+          data-account-id="{{ user.pk }}" style="width: 10rem;">
+        <p id="auth-timer" class="d-none d-flex justify-content-start align-items-center"
+          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+        <p id="help-text" class="d-none d-flex justify-content-start align-items-center"
+          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+      </div>
+    </form>
+    {% else %}
+    {% bootstrap_field auth_field %}
+    <form>
+      <div class="d-flex mb-3">
+        <button id="get-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 10rem;">인증번호
+          받기</button>
+        <input id="auth-phone" class="form-control d-none" name="auth-phone-input" type="text" placeholder="인증번호 입력"
+          style="width: 10rem;">
+        <input id="auth-phone-submit" class="form-control btn btn-primary d-none mx-3" type="submit" value="인증하기"
+          data-account-id="{{ user.pk }}" style="width: 10rem;">
+        <p id="auth-timer" class="d-none d-flex justify-content-start align-items-center"
+          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+        <p id="help-text" class="d-none d-flex justify-content-start align-items-center"
+          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+      </div>
+    </form>
+    {% endif %}
+    {% elif auth_field.name == "email" %}
+    {% bootstrap_field auth_field %}
+    <div id="email-div">
+      <button id="auth-email" class="btn btn-primary" data-account-id="{{ user.pk }}">인증메일 발송</button>
+      <input>
+      <input>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <div>
+      <p class="mb-2">주소</p>
+      <input class="form-control my-2" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+      {% bootstrap_form location_form %}
+    </div>
     <div class="mt-5">
-      {% bootstrap_button button_type="submit" content="로그인" button_class="btn btn-primary col-6 my-2" %}
-      <input type="submit" class="btn btn-dark rounded-pill" value="수정완료">
+      {% bootstrap_button button_type="submit" content="수정완료" button_class="btn btn-primary" %}
     </div>
   </form>
 </div>
 
+
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+  function execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function (data) {
+        // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+        // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+        // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+        var addr = ''; // 주소 변수
+        var extraAddr = ''; // 참고항목 변수
+
+        //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+        if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+          addr = data.roadAddress;
+        } else { // 사용자가 지번 주소를 선택했을 경우(J)
+          addr = data.jibunAddress;
+        }
+
+        // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+        if (data.userSelectedType === 'R') {
+          // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+          // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+          if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
+            extraAddr += data.bname;
+          }
+          // 건물명이 있고, 공동주택일 경우 추가한다.
+          if (data.buildingName !== '' && data.apartment === 'Y') {
+            extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+          }
+          // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+        }
+        // 우편번호와 주소 정보를 해당 필드에 넣는다.
+        document.getElementById("id_location").value = addr;
+        // 커서를 상세주소 필드로 이동한다.
+        document.getElementById("id_detail_location").focus();
+      }
+    }).open();
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  /////////////////////////////////////////////////////// 휴대폰 번호 인증 ///////////////////////////////////////////////////////
+  const phoneId = document.getElementById("id_phone");
+  const getAuthBtn = document.getElementById("get-auth-btn");
+  const authPhone = document.getElementById("auth-phone");
+  const authPhoneSubmit = document.getElementById("auth-phone-submit");
+  const authTimer = document.getElementById("auth-timer");
+  const helpText = document.getElementById("help-text");
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  let formData = new FormData();
+  formData.append("phone", phoneId.value);
+  getAuthBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    // 일일 허용 횟수 검사
+    axios({
+      method: 'post',
+      url: `/accounts/${event.target.dataset.accountId}/update/check/`,
+      headers: { 'X-CSRFToken': csrftoken },
+      data: formData,
+    })
+      .then(response => {
+        if (response.data.authCount == 5) {
+          phoneId.setAttribute("disabled", true);
+          getAuthBtn.setAttribute("disabled", true);
+          helpText.classList.remove("d-none");
+          helpText.textContent = "오늘은 더 이상 인증이 불가능합니다. (최대 인증횟수 5회)";
+        } else {
+          // 인증번호 입력란 보여주기
+          if (document.querySelector("#already-auth-user") != null) {
+            const phoneDiv = document.getElementById("phone-div");
+            const alreadyAuthUser = document.querySelector("#already-auth-user");
+            phoneDiv.removeChild(alreadyAuthUser);
+          };
+          if (phoneId.value.length === 11 && !(isNaN(phoneId.value))) {
+            getAuthBtn.classList.add("d-none");
+            authPhone.classList.remove("d-none");
+            authPhoneSubmit.classList.remove("d-none");
+            authTimer.classList.remove("d-none");
+            helpText.classList.remove("d-none");
+            let formData = new FormData();
+            formData.append("phone", phoneId.value);
+            axios({
+              method: 'post',
+              url: `/accounts/${event.target.dataset.accountId}/update/phone_auth/`,
+              headers: { 'X-CSRFToken': csrftoken },
+              data: formData,
+            })
+              .then(response => {
+                let totalSec = 300;
+                let min = '';
+                let sec = '';
+                let authInterval = setInterval(function () {
+                  let min = parseInt(totalSec / 60);
+                  let sec = totalSec % 60;
+                  if (sec < 10) {
+                    authTimer.textContent = min + " : 0" + sec + "\u00a0";
+                  } else {
+                    authTimer.textContent = min + " : " + sec + "\u00a0";
+                  }
+                  totalSec--;
+                  if (totalSec < 0) {
+                    clearInterval(authInterval);
+                    authTimer.textContent = "인증 시간이 만료되었습니다.";
+                  };
+                }, 1000);
+              });
+          } else {
+            phoneId.focus();
+          };
+        };
+      });
+  });
+  /////////////////////////////////////////////////////// 인증번호 입력 후 제출 ///////////////////////////////////////////////////////
+  authPhoneSubmit.addEventListener("click", (event) => {
+    event.preventDefault();
+    let formData = new FormData();
+    formData.append("auth_number", authPhone.value);
+    formData.append("phone", phoneId.value);
+    axios({
+      method: 'post',
+      url: `/accounts/${event.target.dataset.accountId}/update/check_auth/`,
+      headers: { 'X-CSRFToken': csrftoken },
+      data: formData,
+    })
+      .then(response => {
+        if (response.data.isPhoneActive === true) {
+          authPhoneSubmit.setAttribute("value", response.data.authErrorOrSuccess);
+          authPhoneSubmit.setAttribute("disabled", true);
+          authPhone.setAttribute("disabled", true);
+          phoneId.setAttribute("disabled", true);
+          authTimer.classList.add("d-none");
+        } else {
+          helpText.textContent = response.data.authErrorOrSuccess;
+        };
+      });
+  });
+</script>
+<script>
+  /////////////////////////////////////////////////////// 이메일 인증 ///////////////////////////////////////////////////////
+  const emailId = document.getElementById("id_email");
+  const authEmailBtn = document.getElementById("auth-email");
+  let emailValidate = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+  authEmailBtn.addEventListener("click", (event) => {
+    event.preventDefault();
+    if (emailId.value.match(emailValidate) != null) {
+      // 1. 버튼 누르면 폼 만들고 내용물 담아서 바꾼다음 보여주기
+      // 버튼 누르면 새 인증 폼 만들기
+      const authEmailForm = document.createElement("form");
+      authEmailForm.id = "auth-email-form";
+      // 폼 안에 담길 내용물 만들기
+      const authNumberInput = document.createElement("input");
+      const submitAuthNumberBtn = document.createElement("input");
+      authNumberInput.setAttribute("id", "email");
+      authNumberInput.setAttribute("name", "auth-email-input");
+      authNumberInput.setAttribute("type", "text");
+      authNumberInput.setAttribute("class", "form-control w-25");
+      authNumberInput.setAttribute("placeholder", "인증번호 입력");
+      submitAuthNumberBtn.setAttribute("id", "auth-email-submit");
+      submitAuthNumberBtn.setAttribute("type", "submit");
+      submitAuthNumberBtn.setAttribute("class", "form-control w-25");
+      submitAuthNumberBtn.setAttribute("value", "인증하기");
+      // 내용물을 폼에 담기
+      authEmailForm.appendChild(authNumberInput);
+      authEmailForm.appendChild(submitAuthNumberBtn);
+      // div 안의 내용물 추가하기
+      const emailDiv = document.getElementById("email-div");
+      emailDiv.innerText = '';
+      emailDiv.appendChild(authEmailForm);
+      // 2. 버튼 누르면 url 타고가서 유저가 입력해야 될 인증메일 생성
+      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+      const formData = new FormData();
+      formData.append("email", emailId.value);
+      axios({
+        method: 'post',
+        url: `/accounts/${event.target.dataset.accountId}/update/email_auth/`,
+        headers: { 'X-CSRFToken': csrftoken },
+        data: formData,
+      })
+        .then(response => {
+        });
+    } else {
+      emailId.focus();
+    };
+  });
+</script>
 {% endblock content %}

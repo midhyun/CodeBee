@@ -41,10 +41,10 @@
           <li class="nav-item"><a class="nav-link" href="/board/inquiryBoard" style="color:white">고객센터</a></li>
         </ul>
         <ul class="ms-auto navbar-nav">
-          {% if request.user_is_authenticated %}
-          <li class="nav-item"><a href="#" class="nav-link">로그아웃</a></li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a></li>
           {% else %}
-          <li class="nav-item"><a href="#" class="nav-link" style="color:white">로그인</a></li>
+          <li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a></li>
           {% endif %}
         </ul>
       </div>
