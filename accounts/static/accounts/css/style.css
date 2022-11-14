@@ -25,13 +25,6 @@
 .active {
     display: block;
 }
-.tab_1 {
-    background-color: white;
-}
-
-.tab_2 {
-
-}
 
 .board {
     min-height: 600px;
@@ -124,4 +117,8 @@
     height: 100%;
     background: linear-gradient(0deg, #FD9E9E 0%, #FDA790 36%, rgba(255, 255, 255, 0) 83.4%);
     border-radius: 4px;
+}
+
+.card {
+    height: 140px;
 }

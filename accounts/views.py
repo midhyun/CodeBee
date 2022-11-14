@@ -198,7 +198,7 @@ def social_login_callback(request, service_name):
                 "username": u_info["properties"]["nickname"],
                 "social_profile_picture": u_info["properties"]["profile_image"],
                 "nickname": u_info["properties"]["nickname"],
-                "email": u_info["kakao_account"]["email"],
+                # "email": u_info["kakao_account"]["email"],
                 "phone": None,
             },
         }
@@ -244,7 +244,7 @@ def social_login_callback(request, service_name):
         user.username = user_info["username"]
         user.social_profile_picture = user_info["social_profile_picture"]
         user.nickname = user_info["nickname"]
-        user.email = user_info["email"]
+        # user.email = user_info["email"]
         user.phone = user_info["phone"]
         user.set_password(str(state_token))
         user.save()
