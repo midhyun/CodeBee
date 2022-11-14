@@ -44,10 +44,4 @@
       </div>
     </section>
   </div>
-
-  {% for study in studies %}
-    <div>
-      <a href="{% url 'reviews:detail' study.pk %}">{{ study.title }}</a>
-    </div>
-  {% endfor %}
 {% endblock content %}

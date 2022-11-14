@@ -1,14 +1,17 @@
 {% extends 'base.html' %}
 {% block content %}
+{% if study.isactive %}
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
   <div class="my-5">
     <span style="font-size: 3rem">{{study.title}}</span>
-    {% if study.accepted_set.count == study.limits %}
+    {% if cnt == study.limits %}
       <span class="ms-3 text-danger">모집마감</span>
     {% else %}
       <span class="ms-3 text-primary">모집중</span>
+      {% if user != study.host %}
       <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+      {% endif %}
     {% endif %}
     <div class="mb-3">
       <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
@@ -19,9 +22,11 @@
         <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
       </div>
       {% else %}
+      {% if check %}
       <div class="text-end mx-5">
         <a class="btn btn-danger text-decoration-none text-light" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
       </div>
+      {% endif %}
       {% endif %}
       {% endif %}
     </div>
@@ -36,6 +41,7 @@
   <div class="row justify-content-around">
     <div class="col-5 p-3 border border-3 border-warning rounded-3 mb-5">
       {% for member in members %}
+      <!-- 가입된 멤버 -->
       {% if member.joined == True %}
       <div class="pb-3 mt-2 border-bottom">
         <p class="m-0">{{ member.users }}</p>
@@ -51,6 +57,7 @@
     </div>
     <div class="col-5 p-3 border border-3 border-warning rounded-3 mb-5">
       {% for member in members %}
+      <!-- 가입 신청하고 대기중인 멤버 -->
       {% if member.joined == False %}
       <div class="pb-3 mt-2 border-bottom">
         <p class="m-0">{{ member.users }}</p>
@@ -69,4 +76,74 @@
     </div>
   </div>
 </div>
+{% else %}
+<!-- 활동 종료 -->
+<div class="container">
+  <!-- 스터디 이름, 모집여부 -->
+  <div class="my-5">
+    <span style="font-size: 3rem">{{study.title}}  <span class="ms-3 opacity-50">(활동종료)</span></span>
+    <div class="mb-3">
+      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+      {% if request.user.is_authenticated %}
+      {% if study.host == user %}
+      <div class="text-end mx-5">
+        <a class="ms-3 btn btn-primary disabled" href="">수정</a>
+        <a class="ms-3 btn btn-danger disabled" href="">삭제</a>
+      </div>
+      {% else %}
+      {% if check %}
+      <div class="text-end mx-5">
+        <a class="btn btn-danger text-decoration-none text-light disabled" href="">탈퇴하기</a>
+      </div>
+      {% endif %}
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
+  <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
+  <div class="ms-3 mb-5 d-flex">
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
+    <a class="btn btn-outline-primary  me-5" href="">후기</a>
+  </div>
+  <!-- 스터디 정보 -->
+  <div class="row justify-content-around">
+    <div class="col-5 p-3 border border-3 border-warning rounded-3 mb-5">
+      {% for member in members %}
+      <!-- 가입된 멤버 -->
+      {% if member.joined == True %}
+      <div class="pb-3 mt-2 border-bottom">
+        <p class="m-0">{{ member.users }}</p>
+        {% if user == study.host %}
+        <p class="text-end m-0">
+          <a class="text-danger disabled" href="">강퇴</a>
+        </p>
+        {% endif %}
+        <span>{{ member.joindate }}</span>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+    <div class="col-5 p-3 border border-3 border-warning rounded-3 mb-5">
+      {% for member in members %}
+      <!-- 가입 신청하고 대기중인 멤버 -->
+      {% if member.joined == False %}
+      <div class="pb-3 mt-2 border-bottom">
+        <p class="m-0">{{ member.users }}</p>
+        {% if user == study.host %}
+        <p class="text-end m-0">
+          <a class="disabled" href="">승락</a>
+          <a class="text-danger disabled" href="">거부</a>
+        </p>
+        <span>가입 대기중입니다.</span>
+        {% else%}
+        <span>가입 대기중입니다.</span>
+        {% endif %}
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
