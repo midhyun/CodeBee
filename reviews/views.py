@@ -30,6 +30,7 @@ def create(request):
             study.X = request.POST['X']
             study.Y = request.POST['Y']
             study.host = request.user
+            study.deadline = request.POST['deadline']
             study.save()
             Aform = Accepted(joined=True,study=study,users=study.host)
             Aform.save()
@@ -42,8 +43,10 @@ def create(request):
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     review_form = ReviewForm()
+    cnt = len(Accepted.objects.filter(study=study))
     context = {'study' : study,
-               'review_form': review_form}
+               'review_form': review_form,
+               'cnt':cnt}
     return render(request,'reviews/detail.html', context)
 
 def userlist(request, study_pk):
@@ -62,6 +65,7 @@ def update(request, study_pk):
         if request.method == 'POST':
             study_form = StudyForm(request.POST, request.FILES, instance=study)
             if study_form.is_valid():
+                study = study_form.save(commit=False)
                 study_form.save()
                 return redirect('reviews:detail', study_pk)
         else:
