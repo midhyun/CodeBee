@@ -2,7 +2,8 @@ from django.shortcuts import render,redirect
 from .forms import StudyForm, ReviewForm,AcceptedForm
 from .models import Study,Review,Accepted
 from accounts.models import User
-
+import requests
+import json
 
 # Create your views here.
 
@@ -129,3 +130,25 @@ def study_kick(request, study_id, users_id):
         return redirect('reviews:index')
     else:
         return redirect('reviews:userlist', study_id)
+url="https://kapi.kakao.com/v2/api/talk/memo/default/send"
+
+
+def gathering(request, study_pk):
+    accepted = Accepted.objects.filter(study_id=study_pk, joined=1)
+    data={
+    "template_object": json.dumps({
+        "object_type":"text",
+        "text":"요원이 거의 모였어요 준비하세요!",
+        "link":{
+            "web_url":"www.naver.com",
+            "mobile_url":"www.naver.com"
+        }})}
+    for user in accepted:
+        token = user.users.token
+        if token:
+            headers={"Authorization" : "Bearer " + token}
+            response = requests.post(url, headers=headers, data=data)
+            print(str(response.json()))
+        else:
+            print('no')
+    return redirect('reviews:detail', study_pk)

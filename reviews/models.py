@@ -34,7 +34,7 @@ class Study(models.Model):
 
 class Accepted(models.Model):
     joined = models.BooleanField(default=False) # False 신청상태, True 승인상태
-    study = models.ForeignKey(Study, on_delete=models.CASCADE)
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name='accepted')
     users = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, default='')
     joindate = models.DateTimeField(auto_now=True)
 
