@@ -19,24 +19,14 @@ class StudyForm(forms.ModelForm):
             'limits',
             'tag',
             'content',
-            'categorie',
-            'study_type',
-            'location_type',
-            'location',
             'image',
-            'deadline'
         ]
         labels = {
             'title': "스터디명",
             'limits': '최대 참여',
             'tag': '태그',
-            'content': '규칙 및 소개',
-            'categorie': '공부과목',
-            'study_type': '장기/단기',
-            'location_type': '모임형태',
-            'location': '장소',
+            'content': '스터디 주제',
             'image': '이미지',
-            'deadline': '모집 마감일',
         }
         widgets = {
             'location_type': forms.Select(choices=LOCATION_TYPE_CHOICE),

@@ -10,8 +10,6 @@
 {% for study in studies %}
 <div>
   <a href="{% url 'reviews:detail' study.pk %}">{{ study.title }}</a>
-  <a href="{% url 'reviews:update' study.pk %}">수정</a>
-  <a href="{% url 'reviews:delete' study.pk %}">삭제</a>
 </div>
 {% endfor %}
 {% endblock content %}

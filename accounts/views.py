@@ -8,6 +8,7 @@ from django.contrib.auth import login as user_login
 from django.contrib.auth import logout as user_logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from reviews.models import Study
 
 # 소셜 로그인에 필요한 토큰 생성
 state_token = secrets.token_urlsafe(16)
@@ -265,11 +266,13 @@ def index(request):
 
 
 def detail(request, user_pk):
+    studys = Study.objects.order_by("-pk")
     person = get_object_or_404(get_user_model(), pk=user_pk)
     return render(
         request,
         "accounts/detail.html",
         {
             "person": person,
+            "studys" : studys,
         },
     )

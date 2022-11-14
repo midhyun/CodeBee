@@ -1,14 +1,94 @@
 {% extends 'base.html' %}
 {% load django_bootstrap5 %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">{% endblock css%}
 {% block content %}
-<div class="container">
-  <form action="" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% bootstrap_form study_form %}
-    <div class="d-grid gap-2">
-      <button type="submit" class="btn" style="background-color: rgb(245, 132, 12); color: white;">등록
-      </button>
+
+<div class="container my-3" style="width:60%">
+  <div class="d-flex align-items-end justify-content-center" style="position:relative; height:200px">
+    <img style="position:absolute; top:0px; right:0px" src="{% static 'createb.png' %}" alt="">
+    <h2 class="fw-bold text-center" style="">스터디 만들기</h2>
+  </div>
+  <hr style="border: solid 1px rgb(255, 198, 198); width: 97%; margin:auto;">
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="m-3 card shadow card p-3" style="">
+        하이퍼그로스 2기 절찬리 모집중!<br>
+        <img
+          src="https://oopy.lazyrockets.com/api/v2/notion/image?src=https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F4c14a348-0f93-4541-91d6-dfe4f265d252%2Fhypergrowth_%25E1%2584%2585%25E1%2585%25A9%25E1%2584%2580%25E1%2585%25A9%25E1%2584%2589%25E1%2585%25B5%25E1%2586%25B7%25E1%2584%2587%25E1%2585%25A9%25E1%2586%25AF.png&blockId=a86012c3-a307-48f1-9c8f-0190bf2151cd&width=256"
+          alt="" style="width:80%">
+      </div>
     </div>
-  </form>
+    <div class="col-lg-8 mt-3 card shadow p-5">
+      <form id="studyform" name="studyform" action="" method="POST" enctype="multipart/form-data"
+        style="font-size:14px">
+        <input hidden="hidden">
+        {% csrf_token %}
+        <div class="mb-3"><label class="form-label" for="id_theme">공부과목</label>
+          <select aria-label="Default select" class="form-select mb-3" name="categoryselect"
+            onchange="category_change()">
+            <option value="9">직접입력</option>
+            <option value="Python" selected>Python</option>
+            <option value="Javascript">Javascript</option>
+            <option value="Django">Django</option>
+            <option value="Vue">Vue</option>
+            <option value="React">React</option>
+          </select>
+          <input required="" cols="40" rows="10" id="id_theme" class="form-control" type="hidden" name="categorie"
+            placeholder="과목을 직접 입력하세요." value="Python">
+        </div>
+        <div class="mb-3"><label class="form-label" for="id_studytype">진행방법</label>
+          <select aria-label="Default select" class="form-select mb-3" name="studytypeselect"
+            onchange="studytype_change()">
+            <option value="9">직접입력</option>
+            <option value="당일" selected>당일 스터디</option>
+            <option value="그룹">그룹 스터디</option>
+          </select>
+          <input required="" cols="40" rows="10" id="id_studytype" class="form-control" type="hidden" name="study_type"
+            placeholder="진행방법을 직접 입력하세요." value="Python">
+        </div>
+        <div class="mb-3"><label class="form-label" for="id_locationtype">모임형태</label>
+          <select aria-label="Default select" class="form-select mb-3" name="location_type"
+            onchange="locationtype_change(this)">
+            <option value="0" selected>오프라인</option>
+            <option value="1">온라인</option>
+          </select>
+        </div>
+        <div id="map_wrap" class="map_wrap" style="display:relative">
+          <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
+
+          <div id="menu_wrap" class="bg_white card shadow" style="position:absolute; left:-62%; width:323px;">
+            <div class="option">
+            </div>
+            <ul id="placesList"></ul>
+            <div id="pagination"></div>
+          </div>
+        </div>
+        <label for="id_addr" class="form-label">주소</label>
+        <div class="input-group mb-3">
+          <input name="location" maxlength="80" required="" type="text" class="form-control"
+            placeholder="직접 입력하거나 지도를 클릭해 마커를 표시하세요." id="id_addr" aria-label="Recipient's username"
+            aria-describedby="button-addon2">
+          <input onclick="searchPlaces()" class="btn btn-primary" type="button" id="button-addon2" value="검색하기">
+        </div>
+
+        {% bootstrap_form study_form %}
+        <div class="mb-3"><label class="form-label" for="id_deadline">모집 마감일</label><input type="datetime-local"
+            name="deadline" class="form-control" placeholder="모집 마감일" required="" id="id_deadline"></div>
+        <input name="X" type="hidden" value="">
+        <input name="Y" type="hidden" value="">
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn" style="background-color: rgb(245, 132, 12); color: white;">등록
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
+
+
+<script type="text/javascript"
+  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
+<script src="{% static 'js/form.js'%}"></script>
 {% endblock content %}
