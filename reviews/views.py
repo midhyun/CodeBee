@@ -141,44 +141,45 @@ def join(request, study_pk, user_pk):
             Aform = Accepted(joined=False,study=study,users=request.user)
             Aform.save()
             accepted_now = Accepted.objects.filter(study_id=study_pk)
-            try: image_url = study.image.url
-            except: image_url = 'https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png'
-            data = {"template_object": json.dumps({
-            "object_type": "feed",
-            "content": {
-                "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
-                "description": "신청을 승인해주세요!",
-                "image_url": f"{image_url}",
-                # "image_url": f"http://localhost:8000{image_url}",
-                "image_width": 800,
-                "image_height": 550,
-                "link": {
-                    "web_url": "http://localhost:8000",
-                    "mobile_web_url": "http://localhost:8000",
-                    "android_execution_params": "contentId=100",
-                    "ios_execution_params": "contentId=100"
-                }
-            },
-            "buttons": [
-                {
-                    "title": "웹으로 이동",
+            if token:
+                try: image_url = study.image.url
+                except: image_url = 'https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png'
+                data = {"template_object": json.dumps({
+                "object_type": "feed",
+                "content": {
+                    "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
+                    "description": "신청을 승인해주세요!",
+                    "image_url": f"{image_url}",
+                    # "image_url": f"http://localhost:8000{image_url}",
+                    "image_width": 800,
+                    "image_height": 550,
                     "link": {
                         "web_url": "http://localhost:8000",
-                        "mobile_web_url": "http://localhost:8000"
-                    }
-                },
-                {
-                    "title": "앱으로 이동",
-                    "link": {
+                        "mobile_web_url": "http://localhost:8000",
                         "android_execution_params": "contentId=100",
                         "ios_execution_params": "contentId=100"
                     }
-                }
-            ]
-            })}
-            headers={"Authorization" : "Bearer " + token}
-            response = requests.post(url, headers=headers, data=data)
-            print(str(response.json()))
+                },
+                "buttons": [
+                    {
+                        "title": "웹으로 이동",
+                        "link": {
+                            "web_url": "http://localhost:8000",
+                            "mobile_web_url": "http://localhost:8000"
+                        }
+                    },
+                    {
+                        "title": "앱으로 이동",
+                        "link": {
+                            "android_execution_params": "contentId=100",
+                            "ios_execution_params": "contentId=100"
+                        }
+                    }
+                ]
+                })}
+                headers={"Authorization" : "Bearer " + token}
+                response = requests.post(url, headers=headers, data=data)
+                print(str(response.json()))
             messages.success(request, '가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.')
             return redirect('reviews:detail', study_pk)
     else:

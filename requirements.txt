@@ -16,7 +16,7 @@ django-appconf==1.0.5
 django-bootstrap5==22.1
 django-compressor==4.1
 django-extensions==3.2.1
-django-heroku==0.3.1
+z-heroku==0.3.1
 django-imagekit==4.1.0
 django-sass-processor==1.2.2
 django-shortcuts==1.6
