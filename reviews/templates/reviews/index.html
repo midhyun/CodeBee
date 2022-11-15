@@ -1,7 +1,7 @@
-{% extends 'base.html' %}
+{% extends 'base_test.html' %}
 {% load static %}
 {% block css %}
-  <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 {% endblock css %}
 {% block content %}
 
@@ -32,7 +32,9 @@
                   {% if study.image %}
                     <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
                   {% else %}
-                    <div class="card-img-top h-100"></div>
+                    <div class="card-img-top h-100">
+                    <img src="{% static 'logo_with.png' %}" class="card-img-top card-image" alt="...">
+                    </div>
                   {% endif %}
                   <div class="card-body"></div>
                   <div class="card-grad">

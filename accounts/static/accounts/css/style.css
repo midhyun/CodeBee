@@ -156,7 +156,21 @@
     width: 15px;
     height: 15px;
 }
-
+input[type=password]{
+    font-family:sans-serif;
+    }
+    ::placeholder {
+        font-family: 'Atomy-Bold', sans-serif;
+        opacity: 1; /* Firefox */
+    }
+    :-ms-input-placeholder {
+        /* Internet Explorer 10-11 */
+        font-family: 'Atomy-Bold', sans-serif;
+    }
+    ::-ms-input-placeholder {
+        /* Microsoft Edge */
+        font-family: 'Atomy-Bold', sans-serif;
+    }
 /**================================*/
 .login-bg {
     font-family: 'Atomy-Bold', sans-serif;
