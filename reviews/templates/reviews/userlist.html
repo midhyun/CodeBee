@@ -78,9 +78,17 @@
       <div class="pb-3 mt-2 border-bottom">
         <a href="{% url 'accounts:detail' member.users.pk %}" class="m-0">{{ member.users }}</a>
         {% if user == study.host %}
+        {% if member.users != study.host %}
         <p class="text-end m-0">
           <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
         </p>
+        {% else %}
+        <p class="text-end m-0">
+          <span class="bg-primary p-2 rounded-3 text-light">
+            호스트
+          </span>
+        </p>
+        {% endif %}
         {% endif %}
         <span>{{ member.joindate }}</span>
       </div>
@@ -147,9 +155,17 @@
       <div class="pb-3 mt-2 border-bottom">
         <a href="{% url 'accounts:detail' member.users.pk %}"  class="m-0">{{ member.users }}</a>
         {% if user == study.host %}
+        {% if member.users != study.host %}
         <p class="text-end m-0">
           <a class="text-danger disabled" href="">강퇴</a>
         </p>
+        {% else %}
+        <p class="text-end m-0">
+          <span class="bg-primary p-2 rounded-3 text-light">
+            호스트
+          </span>
+        </p>
+        {% endif %}
         {% endif %}
         <span>{{ member.joindate }}</span>
       </div>
