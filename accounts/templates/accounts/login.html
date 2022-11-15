@@ -12,12 +12,12 @@
             <form action="" method="POST" class="login-card-form">
                 {% csrf_token %}
                 {% bootstrap_form login_form %}
+                {% bootstrap_button button_type="submit" content="로그인" button_class="btn btn-primary col-12 my-2 " %}
             </form>
             <div class="login-card-footer">
                 계정이 없으신가요? <a href="{% url 'accounts:signup' %}">같이 코드비가 되어보세요.</a>
             </div>
             <div class="mt-5">
-                {% bootstrap_button button_type="submit" content="로그인" button_class="btn btn-primary col-12 my-2 " %}
                 {#                <a href="{% url 'accounts:login' %}google" class="btn btn-dark col-6 my-2">구글로 로그인</a>#}
                 {#                <a href="{% url 'accounts:login' %}naver" class="btn btn-success col-6 my-2">네이버로 로그인</a>#}
                 {#                <a href="{% url 'accounts:login' %}github" class="btn btn-secondary col-6 my-2">깃허브로 로그인</a>#}

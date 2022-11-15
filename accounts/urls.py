@@ -15,4 +15,6 @@ urlpatterns = [
     ),
     re_path(r"^login/(?P<service_name>[^/]+)/callback/$", views.social_login_callback),
     path("test/", views.test, name="test"),
+    path('likes/<int:user_pk>/', views.likes, name='likes'),
+    path('dislikes/<int:user_pk>/', views.dislikes, name='dislikes'),
 ]

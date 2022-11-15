@@ -5,6 +5,7 @@ from imagekit.models import ProcessedImageField
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.conf import settings
 
 
 def input_only_number(value):
@@ -35,6 +36,8 @@ class User(AbstractUser):
         null=True,
     )
     # 닉네임 20자 제한
+    likes = models.ManyToManyField("self", symmetrical=False, related_name="ls")
+    dislikes = models.ManyToManyField("self", symmetrical=False, related_name="ds")
     nickname = models.CharField(max_length=20)
     location = models.CharField(max_length=100, blank=True)
     token = models.CharField(max_length=150, null=True, blank=True)
