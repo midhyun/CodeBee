@@ -66,3 +66,9 @@ class Comment(models.Model):
             return str(time.days) + "일 전"
         else:
             return False
+
+class StudyDate(models.Model):
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name='studydate')
+    study_at = models.DateTimeField(auto_now=False)
+    study_end = models.DateTimeField(auto_now=False, null=True, blank=True)
+

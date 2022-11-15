@@ -284,7 +284,7 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
 }
 
 .login-card-logo img {
-    width: 220px;
+    width: 150px;
 }
 
 .login-card-logo,
@@ -451,7 +451,6 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
     transform: translateY(-15px);
   }
 }
-
 .none-review {
     height: calc(100% - 40px);
     border-radius: 5px;
@@ -529,3 +528,4 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
     min-height: 15rem;
     margin: 1rem 0px;
   }
+/** Navbar */

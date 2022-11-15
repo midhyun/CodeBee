@@ -5,7 +5,8 @@
 {% endblock css %}
 {% block content %}
 
-  <header class="index-header"> 
+  <header class="index-header">
+    
       <div class="container">
         {% if request.user.is_authenticated %}
         <p>{{ request.user }}

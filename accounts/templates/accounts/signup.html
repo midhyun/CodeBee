@@ -8,37 +8,36 @@
     <h1 class="text-center">회원가입</h1>
   </div>
   <div>
-    <form action="" method="POST" class="form">
+    <form action="" method="POST" class="form" enctype="multipart/form-data">
       {% csrf_token %}
       <!-- 아이디, 비빌번호 -->
       <div class="card m-4">
-        <h3 class="text-center">계정 정보</h3>
+        <h3 class="text-center py-5">계정 정보</h3>
         {% for signup_field in signup_form %}
         {% if signup_field.name == "username" or signup_field.name == "password1" or signup_field.name == "password2" %}
-        <div>{% bootstrap_field signup_field %}</div>
+        <div class="px-5">{% bootstrap_field signup_field %}</div>
         {% endif %}
         {% endfor %}
       </div>
       <!-- 회원 상세정보 -->
       <div class="card m-4">
-        <h3 class="text-center">인적 사항</h3>
+        <h3 class="text-center py-5">인적 사항</h3>
         {% for signup_field in signup_form %}
         {% if signup_field.name != "username" and signup_field.name != "password1" and signup_field.name != "password2" %}
-        {% bootstrap_field signup_field %}
+        <div class="px-5">{% bootstrap_field signup_field %}</div>
         {% endif %}
         {% endfor %}
-        
-        <div>
+        <div class="px-5">
           <p class="mb-2">주소</p>
-          <input class="btn btn-outline-primary" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
-          <input class="form-control" name="addr1" type="text" id="address" placeholder="주소" required><br>
-          <input class="form-control" name="addr2" type="text" id="detailAddress" placeholder="상세주소" required>
+          <input class="btn btn-outline-primary mb-3" type="button" onclick="execDaumPostcode()" value="우편번호 찾기">
+          <input class="form-control mb-3" name="addr1" type="text" id="address" placeholder="주소" required>
+          <input class="form-control mb-3" name="addr2" type="text" id="detailAddress" placeholder="상세주소" required>
         </div>
       </div>
       <!-- 왼료 버튼 -->
       <div class="d-flex mb-5">
         {% bootstrap_button button_type="submit" content="완료" style="width: 7rem;" %}
-        <a href="{% url 'accounts:signup' %}" class="btn btn-primary ms-auto" style="width: 7rem;">돌아가기</a>
+        <a href="{% url 'reviews:index' %}" class="btn btn-primary ms-auto" style="width: 7rem;">돌아가기</a>
       </div>
     </form>
   </div>
