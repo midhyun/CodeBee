@@ -8,7 +8,9 @@
     <span class="ms-3 text-danger">모집마감</span>
     {% else %}
     <span class="ms-3 text-primary">모집중</span>
+    {% if request.user.is_authenticated %}
     <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+    {% endif %}
     {% endif %}
     <div class="mb-3">
       <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
