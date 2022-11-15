@@ -1,0 +1,55 @@
+{% load django_bootstrap5 %}
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block css %}{% endblock css %}
+    {% bootstrap_css %}{% bootstrap_javascript %}
+    <title>CodeBee</title>
+    <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+</head>
+
+<body>
+
+<nav id="bg">
+    <a href="#"><img src="{% static "logo_with.png" %}" height="60"></a>
+    <a href="#">HOME</a>
+    <a href="#">CODING</a>
+    <a href="#">GUITAR</a>
+    <div id="indicator"></div>
+</nav>
+{% block content %}
+
+{% endblock content %}
+<footer class="align-items-center no-gutters row" style="background:rgb(83, 83, 83); height:80px">
+    <div class="col-md-3"></div>
+    <div class="col-12 col-md-6">
+        <div class="justify-content-between no-gutters row">
+            <div class="p-2 col-12">
+                <p class="mb-0 text-white">@ Copyrights 2022 CodeBee All Rights Reserved</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-4 col-md-3"></div>
+</footer>
+  <script>
+    const bg = document.getElementById('bg')
+
+    window.addEventListener('scroll', () => {
+      bg.style.opacity = 1 - window.pageYOffset / 300 + ''
+    })
+  </script>
+</body>
+
+</html>

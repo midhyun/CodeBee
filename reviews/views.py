@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 from .forms import StudyForm, CommentForm, AcceptedForm
 from .models import Study, Comment, Accepted
 from accounts.models import User
@@ -21,10 +22,15 @@ def index(request):
     }
     return render(request, 'reviews/index.html', context)
 
-
-
+@login_required
 def create(request):
     if request.method == 'POST':
+        tag = ''
+        temp = request.POST['tag']
+        tags = json.loads(temp)
+        print(type(tags))
+        for t in tags:
+            tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
         if study_form.is_valid():
             study = study_form.save(commit=False)
@@ -34,6 +40,7 @@ def create(request):
             study.location = request.POST['location']
             study.X = request.POST['X']
             study.Y = request.POST['Y']
+            study.tag = tag
             study.host = request.user
             study.deadline = request.POST['deadline']
             study.save()
@@ -85,7 +92,7 @@ def userlist(request, study_pk):
     }
     return render(request, 'reviews/userlist.html', context)
 
-
+@login_required
 def update(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     if study.isactive:
@@ -112,13 +119,14 @@ def update(request, study_pk):
         else:
             return redirect('reviews:detail', study_pk)
 
-
+@login_required
 def delete(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     if study.isactive:
         study.delete()
     return redirect('reviews:index')
 
+@login_required
 def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
     accepted = Accepted.objects.filter(study_id=study_pk)
@@ -132,50 +140,53 @@ def join(request, study_pk, user_pk):
         else:
             Aform = Accepted(joined=False,study=study,users=request.user)
             Aform.save()
-            try: image_url = study.image.url
-            except: image_url = ''
-            data = {"template_object": json.dumps({
-            "object_type": "feed",
-            "content": {
-                "title": f"{request.user}님의 스터디 가입신청! ({len(accepted)} / {study.limits})",
-                "description": "신청을 승인해주세요!",
-                "image_url": f"https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png",
-                # "image_url": f"http://localhost:8000{image_url}",
-                "image_width": 800,
-                "image_height": 563,
-                "link": {
-                    "web_url": "http://localhost:8000",
-                    "mobile_web_url": "http://localhost:8000",
-                    "android_execution_params": "contentId=100",
-                    "ios_execution_params": "contentId=100"
-                }
-            },
-            "buttons": [
-                {
-                    "title": "웹으로 이동",
+            accepted_now = Accepted.objects.filter(study_id=study_pk)
+            if token:
+                try: image_url = study.image.url
+                except: image_url = 'https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png'
+                data = {"template_object": json.dumps({
+                "object_type": "feed",
+                "content": {
+                    "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
+                    "description": "신청을 승인해주세요!",
+                    "image_url": f"{image_url}",
+                    # "image_url": f"http://localhost:8000{image_url}",
+                    "image_width": 800,
+                    "image_height": 550,
                     "link": {
                         "web_url": "http://localhost:8000",
-                        "mobile_web_url": "http://localhost:8000"
-                    }
-                },
-                {
-                    "title": "앱으로 이동",
-                    "link": {
+                        "mobile_web_url": "http://localhost:8000",
                         "android_execution_params": "contentId=100",
                         "ios_execution_params": "contentId=100"
                     }
-                }
-            ]
-            })}
-            headers={"Authorization" : "Bearer " + token}
-            response = requests.post(url, headers=headers, data=data)
-            print(str(response.json()))
+                },
+                "buttons": [
+                    {
+                        "title": "웹으로 이동",
+                        "link": {
+                            "web_url": "http://localhost:8000",
+                            "mobile_web_url": "http://localhost:8000"
+                        }
+                    },
+                    {
+                        "title": "앱으로 이동",
+                        "link": {
+                            "android_execution_params": "contentId=100",
+                            "ios_execution_params": "contentId=100"
+                        }
+                    }
+                ]
+                })}
+                headers={"Authorization" : "Bearer " + token}
+                response = requests.post(url, headers=headers, data=data)
+                print(str(response.json()))
             messages.success(request, '가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.')
             return redirect('reviews:detail', study_pk)
     else:
         messages.success(request, '모집인원이 가득 찬 그룹입니다.')
         return redirect('reviews:detail', study_pk)
 
+@login_required
 def study_accepted(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
     user = User.objects.get(id=users_id)
@@ -190,7 +201,7 @@ def study_accepted(request, study_id, users_id):
     else:
         return redirect('reviews:index')
 
-
+@login_required
 def study_kick(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
     user = User.objects.get(id=users_id)
@@ -207,56 +218,60 @@ def study_kick(request, study_id, users_id):
     return redirect('reviews:index')
 
 
-
+@login_required
 def gathering(request, study_pk):
     accepted = Accepted.objects.filter(study_id=study_pk, joined=1)
     study = Study.objects.get(pk=study_pk)
     message = request.POST["message"]
-    try: image_url = study.image.url
-    except: image_url = ''
-    data = {"template_object": json.dumps({
-            "object_type": "feed",
-            "content": {
-                "title": f"{request.user}님의 메시지",
-                "description": f"{message}",
-                "image_url": f"https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png",
-                # "image_url": f"http://localhost:8000{image_url}",
-                "image_width": 800,
-                "image_height": 550,
-                "link": {
-                    "web_url": "http://localhost:8000",
-                    "mobile_web_url": "http://localhost:8000",
-                    "android_execution_params": "contentId=100",
-                    "ios_execution_params": "contentId=100"
-                }
-            },
-            "buttons": [
-                {
-                    "title": "웹으로 이동",
+    if request.user == study.host:
+        try: image_url = study.image.url
+        except: image_url = ''
+        data = {"template_object": json.dumps({
+                "object_type": "feed",
+                "content": {
+                    "title": f"{request.user}님의 메시지",
+                    "description": f"{message}",
+                    "image_url": f"https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png",
+                    # "image_url": f"http://localhost:8000{image_url}",
+                    "image_width": 800,
+                    "image_height": 550,
                     "link": {
-                        "web_url": "http://localhost:8000",
-                        "mobile_web_url": "http://localhost:8000"
-                    }
-                },
-                {
-                    "title": "앱으로 이동",
-                    "link": {
+                        "web_url": "https://google.com",
+                        "mobile_web_url": "https://google.com",
                         "android_execution_params": "contentId=100",
                         "ios_execution_params": "contentId=100"
                     }
-                }
-            ]
-            })}
-    for user in accepted:
-        token = user.users.token
-        if token:
-            headers={"Authorization" : "Bearer " + token}
-            response = requests.post(url, headers=headers, data=data)
-            print(str(response.json()))
-            messages.success(request, '메시지 전송이 완료되었습니다.')
-        else:
-            print('no')
-    return redirect('reviews:detail', study_pk)
+                },
+                "buttons": [
+                    {
+                        "title": "웹으로 이동",
+                        "link": {
+                            "web_url": "https://google.com",
+                            "mobile_web_url": "https://google.com"
+                        }
+                    },
+                    {
+                        "title": "앱으로 이동",
+                        "link": {
+                            "android_execution_params": "contentId=100",
+                            "ios_execution_params": "contentId=100"
+                        }
+                    }
+                ]
+                })}
+        for user in accepted:
+            token = user.users.token
+            if token:
+                headers={"Authorization" : "Bearer " + token}
+                response = requests.post(url, headers=headers, data=data)
+                print(str(response.json()))
+                messages.success(request, '메시지 전송이 완료되었습니다.')
+            else:
+                print('no')
+        return redirect('reviews:detail', study_pk)
+    else:
+        return redirect('reivews:index')
+# ==================================comment=======================
 
 def done(request, study_pk):
     study = Study.objects.get(pk=study_pk)
@@ -276,7 +291,7 @@ def review(request, study_id):
 
     return render(request, 'reviews/review.html', context)
 
-
+@login_required
 def comment_create(request, pk):
     review = get_object_or_404(Study, pk=pk)
     comment_form = CommentForm(request.POST)
@@ -308,7 +323,7 @@ def comment_create(request, pk):
         }
         return JsonResponse(context)
 
-
+@login_required
 def comment_update(request, pk, comment_pk):
     if request.user.is_authenticated:
         jsonObject = json.loads(request.body)
@@ -337,7 +352,7 @@ def comment_update(request, pk, comment_pk):
         }
         return JsonResponse(context)
 
-
+@login_required
 def comment_delete(request, pk, comment_pk):
     if request.user.is_authenticated:
         comment = Comment.objects.get(pk=comment_pk)
@@ -361,3 +376,8 @@ def comment_delete(request, pk, comment_pk):
             'comments_data': comments_data
         }
         return JsonResponse(context)
+
+# Google Calendar Test
+def test_calendar(request):
+    print(request.POST)
+    return render(request, 'reviews/test.html')
