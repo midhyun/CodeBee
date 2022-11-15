@@ -17,15 +17,12 @@
 
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
 
-
-    </style>
 </head>
 
 <body>
 
-<nav>
+<nav id="bg">
     <a href="#"><img src="{% static "logo_with.png" %}" height="60"></a>
     <a href="#">HOME</a>
     <a href="#">CODING</a>
@@ -46,7 +43,13 @@
     </div>
     <div class="col-4 col-md-3"></div>
 </footer>
+  <script>
+    const bg = document.getElementById('bg')
 
+    window.addEventListener('scroll', () => {
+      bg.style.opacity = 1 - window.pageYOffset / 300 + ''
+    })
+  </script>
 </body>
 
 </html>
