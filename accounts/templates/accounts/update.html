@@ -120,31 +120,31 @@
   const authTimer = document.getElementById("auth-timer");
   const helpText = document.getElementById("help-text");
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-  let formData = new FormData();
-  formData.append("phone", phoneId.value);
   getAuthBtn.addEventListener("click", (event) => {
-    event.preventDefault();
-    // 일일 허용 횟수 검사
-    axios({
-      method: 'post',
-      url: `/accounts/${event.target.dataset.accountId}/update/check/`,
-      headers: { 'X-CSRFToken': csrftoken },
-      data: formData,
-    })
-      .then(response => {
-        if (response.data.authCount == 5) {
-          phoneId.setAttribute("disabled", true);
-          getAuthBtn.setAttribute("disabled", true);
-          helpText.classList.remove("d-none");
-          helpText.textContent = "오늘은 더 이상 인증이 불가능합니다. (최대 인증횟수 5회)";
-        } else {
-          // 인증번호 입력란 보여주기
-          if (document.querySelector("#already-auth-user") != null) {
-            const phoneDiv = document.getElementById("phone-div");
-            const alreadyAuthUser = document.querySelector("#already-auth-user");
-            phoneDiv.removeChild(alreadyAuthUser);
-          };
-          if (phoneId.value.length === 11 && !(isNaN(phoneId.value))) {
+    if (phoneId.value.length === 11 && !(isNaN(phoneId.value))) {
+      let formData = new FormData();
+      formData.append("phone", phoneId.value);
+      event.preventDefault();
+      axios({
+        method: 'post',
+        url: `/accounts/${event.target.dataset.accountId}/update/check/`,
+        headers: { 'X-CSRFToken': csrftoken },
+        data: formData,
+      })
+        // 일일 허용 횟수 검사
+        .then(response => {
+          if (response.data.authCount == 5) {
+            phoneId.setAttribute("disabled", true);
+            getAuthBtn.setAttribute("disabled", true);
+            helpText.classList.remove("d-none");
+            helpText.textContent = "오늘은 더 이상 인증이 불가능합니다. (최대 인증횟수 5회)";
+          } else {
+            // 인증번호 입력란 보여주기
+            if (document.querySelector("#already-auth-user") != null) {
+              const phoneDiv = document.getElementById("phone-div");
+              const alreadyAuthUser = document.querySelector("#already-auth-user");
+              phoneDiv.removeChild(alreadyAuthUser);
+            };
             getAuthBtn.classList.add("d-none");
             authPhone.classList.remove("d-none");
             authPhoneSubmit.classList.remove("d-none");
@@ -177,23 +177,23 @@
                   };
                 }, 1000);
               });
-          } else {
-            phoneId.focus();
           };
-        };
-      });
+        });
+    } else {
+      phoneId.focus();
+    };
   });
   /////////////////////////////////////////////////////// 인증번호 입력 후 제출 ///////////////////////////////////////////////////////
   authPhoneSubmit.addEventListener("click", (event) => {
     event.preventDefault();
-    let formData = new FormData();
-    formData.append("auth_number", authPhone.value);
-    formData.append("phone", phoneId.value);
+    let formData2 = new FormData();
+    formData2.append("auth_number", authPhone.value);
+    formData2.append("phone", phoneId.value);
     axios({
       method: 'post',
       url: `/accounts/${event.target.dataset.accountId}/update/check_auth/`,
       headers: { 'X-CSRFToken': csrftoken },
-      data: formData,
+      data: formData2,
     })
       .then(response => {
         if (response.data.isPhoneActive === true) {
