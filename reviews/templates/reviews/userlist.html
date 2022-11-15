@@ -76,7 +76,7 @@
       <!-- 가입된 멤버 -->
       {% if member.joined == True %}
       <div class="pb-3 mt-2 border-bottom">
-        <p class="m-0">{{ member.users }}</p>
+        <a href="{% url 'accounts:detail' member.users.pk %}" class="m-0">{{ member.users }}</a>
         {% if user == study.host %}
         <p class="text-end m-0">
           <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
@@ -92,7 +92,7 @@
       <!-- 가입 신청하고 대기중인 멤버 -->
       {% if member.joined == False %}
       <div class="pb-3 mt-2 border-bottom">
-        <p class="m-0">{{ member.users }}</p>
+        <a href="{% url 'accounts:detail' member.users.pk %}"  class="m-0">{{ member.users }}</a>
         {% if user == study.host %}
         <p class="text-end m-0">
           <a href="{% url 'reviews:study_accepted' study.pk member.users.id %}">승락</a>
@@ -145,7 +145,7 @@
       <!-- 가입된 멤버 -->
       {% if member.joined == True %}
       <div class="pb-3 mt-2 border-bottom">
-        <p class="m-0">{{ member.users }}</p>
+        <a href="{% url 'accounts:detail' member.users.pk %}"  class="m-0">{{ member.users }}</a>
         {% if user == study.host %}
         <p class="text-end m-0">
           <a class="text-danger disabled" href="">강퇴</a>
@@ -161,7 +161,7 @@
       <!-- 가입 신청하고 대기중인 멤버 -->
       {% if member.joined == False %}
       <div class="pb-3 mt-2 border-bottom">
-        <p class="m-0">{{ member.users }}</p>
+        <a href="{% url 'accounts:detail' member.users.pk %}"  class="m-0">{{ member.users }}</a>
         {% if user == study.host %}
         <p class="text-end m-0">
           <a class="disabled" href="">승락</a>

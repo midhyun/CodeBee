@@ -4,6 +4,7 @@ from imagekit.models import ProcessedImageField
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MinLengthValidator, MaxLengthValidator
+from django.conf import settings
 from django.contrib.auth.validators import UnicodeUsernameValidator
 
 
@@ -48,6 +49,19 @@ class User(AbstractUser):
             "quality": 30,
         },
     )
+    # url 형식으로 받아와야 함
+    social_profile_picture = models.CharField(null=True, max_length=150)
+    phone = models.CharField(
+        max_length=13,
+        validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
+        blank=True,
+        null=True,
+    )
+    likes = models.ManyToManyField("self", symmetrical=False, related_name="ls")
+    dislikes = models.ManyToManyField("self", symmetrical=False, related_name="ds")
+    # 닉네임 20자 제한
+    nickname = models.CharField(max_length=20)
+    location = models.CharField(max_length=100, blank=True)
     # 소셜 아이디 관련 필드
     social_id = models.CharField(null=True, max_length=100)
     is_social_account = models.BooleanField(default=False)
