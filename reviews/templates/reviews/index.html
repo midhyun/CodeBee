@@ -1,11 +1,11 @@
-{% extends 'base_test.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% block css %}
   <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
 {% endblock css %}
 {% block content %}
 
-  <header >
+  <header class="index-header">
     
       <div class="container">
         {% if request.user.is_authenticated %}

@@ -24,58 +24,29 @@
       }
     </style>
   </head>
-
-  <body>
-    <div style="height:68px"></div>
-    <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
-      <div class="container">
-        <a class="navbar-brand" style="cursor: pointer;" href="{% url 'reviews:index' %}"><img src="{% static 'logo.png' %}" alt=""></a>
-        <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="/room/list" style="color:white">일반 스터디</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/groups/list" style="color:white">그룹 스터디</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/board/list/advertise" style="color:white">그룹 모집 게시판</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a>
-            </li>
-            <li class="nav-item">
-              {% if user.is_authenticated %}
-                <a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내 스터디</a>
-              {% endif %}
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/term/3" style="color:white">공지사항</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="/board/inquiryBoard" style="color:white">고객센터</a>
-            </li>
-          </ul>
-          <ul class="ms-auto navbar-nav">
-            {% if request.user.is_authenticated %}
-            <li class="h-100" style="position: relative;">
-              {% if user.profile_picture %}
-              <div class="rounded-circle nav_profile" style="background-image: url('{{ user.profile_picture.url }}')"></div>
-                {% else %}
-                <p>{{ user.nickname }}</p>
-                  <div class="rounded-circle nav_profile" style="background-image: url('/static/accounts/image/none_profile.png')"></div>
-                {% endif %}
-            </li>
-              <li class="nav-item">
-                <a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a>
-            </li>
+<body>
+  <div style="height:68px"></div>
+  <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
+    <div class="container">
+      <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}" alt=""></a>
+      <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">일반 스터디</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">그룹 스터디</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" style="color:white">그룹 모집 게시판</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" style="color:white">고객센터</a></li>
+        </ul>
+        <ul class="ms-auto navbar-nav">
+          {% if request.user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내 스터디</a></li>
+          <li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a></li>
           {% else %}
-            <li class="nav-item">
-              <a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a>
-            </li>
+          <li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a></li>
+          <li class="nav-item"><a href="{% url 'accounts:signup' %}" class="nav-link" style="color:white">회원가입</a></li>
           {% endif %}
         </ul>
       </div>

@@ -1,22 +1,34 @@
 import secrets
 import requests
+from .forms import (
+    AuthForm,
+    LocationChangeForm,
+    CustomUserChangeForm,
+    CustomUserCreationForm,
+    CustomPasswordChangeForm,
+)
+from random import randint
+from .models import AuthPhone
 from django.views import View
-from .forms import CustomUserCreationForm
-from django.shortcuts import render, redirect, get_object_or_404
+from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth import login as user_login
 from django.contrib.auth import logout as user_logout
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 from reviews.models import Study, Accepted
+
 
 # 소셜 로그인에 필요한 토큰 생성
 state_token = secrets.token_urlsafe(16)
 
 # 테스트용 html 페이지
 def test(request):
+    users = get_user_model().objects.order_by("-id")
     context = {
-        "uid": request.user,
+        "users": users,
     }
     return render(request, "accounts/test.html", context)
 
@@ -24,22 +36,24 @@ def test(request):
 # Create your views here.
 def signup(request):
     if request.method == "POST":
-        signup_form = CustomUserCreationForm(request.POST)
+        signup_form = CustomUserCreationForm(request.POST, request.FILES)
         if signup_form.is_valid():
             user = signup_form.save(commit=False)
             # 주소
-            user.location = request.POST["addr1"] + " " + request.POST["addr2"]
+            user.location = request.POST["addr1"]
+            user.detail_location = request.POST["addr2"]
             # 휴대폰 번호
-            user.phone = (
-                request.POST["phone"][:3]
-                + "-"
-                + request.POST["phone"][3:7]
-                + "-"
-                + request.POST["phone"][7:]
-            )
+            if user.phone:
+                user.phone = (
+                    request.POST["phone"][:3]
+                    + "-"
+                    + request.POST["phone"][3:7]
+                    + "-"
+                    + request.POST["phone"][7:]
+                )
             user.save()
             user_login(request, user)
-            return redirect("accounts:login")
+            return redirect("accounts:test")
     else:
         signup_form = CustomUserCreationForm()
     context = {
@@ -64,14 +78,11 @@ def login(request):
 
 @login_required
 def logout(request):
-    user_logout(request)
-    return redirect("accounts:login")
-
-
-@login_required
-def update(request, pk):
-    user_logout(request)
-    return redirect("accounts:login")
+    if request.user.is_social_account:
+        user_logout(request)
+    else:
+        user_logout(request)
+    return redirect("accounts:test")
 
 
 def social_login_request(request, service_name):
@@ -190,8 +201,6 @@ def social_login_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
-    print(u_info)
-    print(access_token)
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -199,7 +208,9 @@ def social_login_callback(request, service_name):
                 "username": u_info["properties"]["nickname"],
                 "social_profile_picture": u_info["properties"]["profile_image"],
                 "nickname": u_info["properties"]["nickname"],
-                # "email": u_info["kakao_account"]["email"],
+                "email": u_info["kakao_account"]["email"]
+                if u_info["kakao_account"]["email"]
+                else None,
                 "phone": None,
             },
         }
@@ -207,21 +218,33 @@ def social_login_callback(request, service_name):
         login_data = {
             "naver": {
                 "social_id": u_info["response"]["id"],
-                "username": u_info["response"]["nickname"],
-                "social_profile_picture": u_info["response"]["profile_image"],
-                "nickname": u_info["response"]["name"],
-                "email": u_info["response"]["email"],
-                "phone": u_info["response"]["mobile"],
+                "username": u_info["response"]["nickname"]
+                if u_info["response"]["nickname"]
+                else None,
+                "social_profile_picture": u_info["response"]["profile_image"]
+                if u_info["response"]["profile_image"]
+                else None,
+                "nickname": u_info["response"]["name"]
+                if u_info["response"]["name"]
+                else None,
+                "email": u_info["response"]["email"]
+                if u_info["response"]["email"]
+                else None,
+                "phone": u_info["response"]["mobile"]
+                if u_info["response"]["mobile"]
+                else None,
             },
         }
     elif service_name == "google":
         login_data = {
             "google": {
                 "social_id": u_info["sub"],
-                "username": u_info["name"],
-                "social_profile_picture": u_info["picture"],
-                "nickname": u_info["name"],
-                "email": u_info["email"],
+                "username": u_info["name"] if u_info["name"] else None,
+                "social_profile_picture": u_info["picture"]
+                if u_info["picture"]
+                else None,
+                "nickname": u_info["name"] if u_info["name"] else None,
+                "email": u_info["email"] if u_info["email"] else None,
                 "phone": None,
             },
         }
@@ -229,10 +252,12 @@ def social_login_callback(request, service_name):
         login_data = {
             "github": {
                 "social_id": u_info["id"],
-                "username": u_info["bio"],
-                "social_profile_picture": u_info["avatar_url"],
-                "nickname": u_info["login"],
-                "email": u_info["email"],
+                "username": u_info["bio"] if u_info["bio"] else None,
+                "social_profile_picture": u_info["avatar_url"]
+                if u_info["avatar_url"]
+                else None,
+                "nickname": u_info["login"] if u_info["login"] else None,
+                "email": u_info["email"] if u_info["email"] else None,
                 "phone": None,
             },
         }
@@ -245,12 +270,17 @@ def social_login_callback(request, service_name):
         user = get_user_model()()
         user.social_id = user_info["social_id"]
         user.username = user_info["username"]
-        user.social_profile_picture = user_info["social_profile_picture"]
-        user.nickname = user_info["nickname"]
-        # user.email = user_info["email"]
-        user.phone = user_info["phone"]
+        user.social_profile_picture = (
+            user_info["social_profile_picture"]
+            if user_info["social_profile_picture"]
+            else ""
+        )
+        user.nickname = user_info["nickname"] if user_info["nickname"] else ""
+        user.email = user_info["email"] if user_info["email"] else ""
+        user.phone = user_info["phone"] if user_info["phone"] else ""
         user.token = access_token
         user.set_password(str(state_token))
+        user.is_social_account = True
         user.save()
         user = get_user_model().objects.get(social_id=user_info["social_id"])
     user_login(request, user)
@@ -270,18 +300,140 @@ def index(request):
 
 
 def detail(request, user_pk):
-    accepts = Accepted.objects.filter(users=user_pk)
+    accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
     studies = []
+    deactives = []
     for accept in accepts:
         if accept.joined:
-            studies.append(accepts.study)
-            
+            studies.append(accept.study)
+    for study in studies:
+        if not study.isactive:
+            deactives.append(study)
     person = get_object_or_404(get_user_model(), pk=user_pk)
     return render(
         request,
         "accounts/detail.html",
         {
             "person": person,
-            "studies" : studies,
+            "studies": studies,
+            "deactives": deactives,
         },
     )
+
+
+@login_required
+def password_change(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    if request.method == "POST":
+        pw_change_form = CustomPasswordChangeForm(user, request.POST)
+        if pw_change_form.is_valid():
+            user = pw_change_form.save()
+            update_session_auth_hash(request, user)
+            return redirect("accounts:detail", user_pk)
+    else:
+        pw_change_form = CustomPasswordChangeForm(user)
+    context = {
+        "pw_change_form": pw_change_form,
+    }
+    return render(request, "accounts/password.html", context)
+
+
+@login_required
+def update(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    if request.method == "POST":
+        update_form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
+        location_form = LocationChangeForm(request.POST, instance=user)
+        auth_form = AuthForm(request.POST, instance=user)
+        if update_form.is_valid() and location_form.is_valid() and auth_form.is_valid():
+            user = update_form.save(commit=False)
+            auth = auth_form.save(commit=False)
+            # 휴대폰 번호
+            if auth.phone:
+                auth.phone = (
+                    request.POST["phone"][:3]
+                    + "-"
+                    + request.POST["phone"][3:7]
+                    + "-"
+                    + request.POST["phone"][7:]
+                )
+            auth.save()
+            user.save()
+            return redirect("accounts:detail", user_pk)
+    else:
+        location_form = LocationChangeForm(instance=user)
+        update_form = CustomUserChangeForm(instance=user)
+        if user.phone:
+            phone = user.phone
+            phone = "".join(phone.split("-"))
+            user.phone = phone
+        auth_form = AuthForm(instance=user)
+    context = {
+        "location_form": location_form,
+        "update_form": update_form,
+        "auth_form": auth_form,
+        "user": user,
+    }
+    return render(request, "accounts/update.html", context)
+
+
+def check(request, user_pk):
+    today_ = str(datetime.date.today())
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    user_phone = request.POST["phone"]
+    now_auth_phone = AuthPhone.objects.filter(phone=user_phone[1:])
+    auth_count = 0
+    for data in now_auth_phone:
+        if data.created_at.strftime("%Y-%m-%d") == today_:
+            auth_count += 1
+            if auth_count == 5:
+                break
+    context = {
+        "authCount": auth_count,
+    }
+    return JsonResponse(context)
+
+
+# 휴대폰 인증번호 전송
+def phone_auth(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    random_auth_number = randint(1000, 10000)
+    auth_phone = AuthPhone()
+    auth_phone.phone = user.phone if user.phone else request.POST["phone"]
+    auth_phone.auth_number = random_auth_number
+    auth_phone.save()
+    context = {}
+    return JsonResponse(context)
+
+
+import datetime
+from django.utils import timezone
+
+# 휴대폰 인증번호 입력 후 검증
+def check_auth(request, user_pk):
+    time_limit = timezone.now() + datetime.timedelta(minutes=5)
+    user_phone = request.POST["phone"]
+    phone_auth_number = int(request.POST["auth_number"])
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    now_auth_phone = AuthPhone.objects.filter(phone=user_phone[1:]).order_by(
+        "-updated_at"
+    )[0]
+    if now_auth_phone.updated_at <= time_limit:
+        if now_auth_phone.auth_number == phone_auth_number:
+            user.phone = user_phone
+            user.is_phone_active = True
+            user.save()
+            now_auth_phone.delete()
+            is_phone_active = True
+            auth_error_or_success = "인증 완료"
+        else:
+            is_phone_active = False
+            auth_error_or_success = "인증 번호가 다릅니다."
+    else:
+        is_phone_active = False
+        auth_error_or_success = "인증 시간이 만료되었습니다."
+    context = {
+        "isPhoneActive": is_phone_active,
+        "authErrorOrSuccess": auth_error_or_success,
+    }
+    return JsonResponse(context)

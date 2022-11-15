@@ -2,7 +2,7 @@
 {% block content %}
 {% load static %}
 
-{% if study.isactive %}
+{% if study.isactive == True %}
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
   <div class="my-5">
@@ -104,32 +104,10 @@
     {% if study.location_type == False %}
     <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
     {% endif %}
-    <p>스터디장: {{ study.host }}</p>
-    <p>스터디 소개</p>
-    <p>{{ study.content }}</p>
-    <p>제한 인원: {{ study.accepted_set.count}} / {{ study.limits }}</p>
-    <p>
-      {% if study.accepted_set.count == study.limits %}
-      <span>모집마감</span>
-      {% else %}
-      <span>가입 마감일: {{ study.deadline }}</span>
-      {% endif %}
-    </p>
-    <p>
-      {% if study.location_type == False %}
-      <span>모임장소: {{ study.location }}</span>
-      {% elif study.location_type == True %}
-      <span>온라인으로 진행됩니다.</span>
-      {% endif %}
-    </p>
   </div>
-  {% if study.location_type == False %}
-  <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
-  {% endif %}
 </div>
-</div>
-{% else %}
 <!-- 활동 종료 -->
+{% elif study.isactive == False %}
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
   <div class="my-5">
@@ -160,8 +138,6 @@
   </div>
   <!-- 스터디 정보 -->
   <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
-    {% if request.user.is_authenticated %}
-    {% endif%}
       {% if post.image %}
       <img src="{{ study.image.url }}" alt="">
       {% endif %}
