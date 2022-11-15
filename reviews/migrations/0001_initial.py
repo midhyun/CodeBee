@@ -36,6 +36,15 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='StudyDate',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('study_at', models.DateTimeField()),
+                ('study_end', models.DateTimeField()),
+                ('study', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='studydate', to='reviews.study')),
+            ],
+        ),
+        migrations.CreateModel(
             name='Comment',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),

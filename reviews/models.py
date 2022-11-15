@@ -48,3 +48,8 @@ class Comment(models.Model):
     created_at = models.DateField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     study = models.ForeignKey(Study, on_delete=models.CASCADE)
+
+class StudyDate(models.Model):
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name='studydate')
+    study_at = models.DateTimeField(auto_now=False)
+    study_end = models.DateTimeField(auto_now=False, null=True, blank=True)
