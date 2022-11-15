@@ -38,12 +38,32 @@
     display: none;
 }
 
-.board {
-    margin-left: 300px;
-    margin-right: 300px;
+@media (min-width: 1440px){
+    .board {
     padding-top: 3rem;
     min-height: calc(100vh - 8rem);
-}
+}}
+
+@media (min-width: 800px){
+    .board {
+    padding-top: 2rem;
+    min-height: calc(100vh - 8rem);
+}}
+
+@media (max-width: 600px){
+    .board {
+    margin-left: 100px;
+    margin-right: 100px;
+    min-height: calc(100vh - 8rem);
+}}
+
+@media (max-width: 800px){
+    .board {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-top: 3rem;
+    min-height: calc(100vh - 8rem);
+}}
 
 .tab-menu {
     margin: 20px 0px;
