@@ -41,6 +41,7 @@ var enteraddress = document.querySelector('[name="location"]')
 enteraddress.addEventListener('keydown', function (event) {
     if (event.keyCode === 13) {
     document.getElementById('button-addon2').click();
+
     };
 }, true);
 
@@ -89,17 +90,16 @@ function searchPlaces() {
 
 
     // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-    ps.keywordSearch( keyword, placesSearchCB); 
+    ps.keywordSearch( keyword, placesSearchCB);
+
 }
 
 // 장소검색이 완료됐을 때 호출되는 콜백함수 입니다
 function placesSearchCB(data, status, pagination) {
     if (status === kakao.maps.services.Status.OK) {
-
         // 정상적으로 검색이 완료됐으면
         // 검색 목록과 마커를 표출합니다
         displayPlaces(data);
-
         // 페이지 번호를 표출합니다
         displayPagination(pagination);
 
@@ -118,7 +118,6 @@ function placesSearchCB(data, status, pagination) {
 
 // 검색 결과 목록과 마커를 표출하는 함수입니다
 function displayPlaces(places) {
-
     var listEl = document.getElementById('placesList'), 
     menuEl = document.getElementById('menu_wrap'),
     fragment = document.createDocumentFragment(), 
@@ -308,3 +307,8 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
     document.studyform.Y.value = latlng['Ma']
 
 });
+
+var input = document.getElementById("id_tag")
+new Tagify(input, {
+        maxTags : 5
+    })

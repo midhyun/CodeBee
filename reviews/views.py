@@ -25,6 +25,12 @@ def index(request):
 @login_required
 def create(request):
     if request.method == 'POST':
+        tag = ''
+        temp = request.POST['tag']
+        tags = json.loads(temp)
+        print(type(tags))
+        for t in tags:
+            tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
         if study_form.is_valid():
             study = study_form.save(commit=False)
@@ -34,6 +40,7 @@ def create(request):
             study.location = request.POST['location']
             study.X = request.POST['X']
             study.Y = request.POST['Y']
+            study.tag = tag
             study.host = request.user
             study.deadline = request.POST['deadline']
             study.save()
@@ -371,4 +378,5 @@ def comment_delete(request, pk, comment_pk):
 
 # Google Calendar Test
 def test_calendar(request):
+    print(request.POST)
     return render(request, 'reviews/test.html')
