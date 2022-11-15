@@ -1,21 +1,66 @@
-{% extends 'base.html' %}
+{% extends 'base_login.html' %}
 {% load django_bootstrap5 %}
+{% load static %}
 
 {% block content %}
+    {#"login-card-logo"#}
+    <div class="login-card-container">
+        <div class="login-card">
+            <div class="login-card-logo">
+                <img src="{% static 'logo.png' %}" alt="logo">
+            </div>
+            <form action="" method="POST" class="login-card-form">
+                {% csrf_token %}
+                {% bootstrap_form login_form %}
+            </form>
+            <div class="login-card-footer">
+                계정이 없으신가요? <a href="{% url 'accounts:signup' %}">같이 코드비가 되어보세요.</a>
+            </div>
+            <div class="mt-5">
+                {% bootstrap_button button_type="submit" content="로그인" button_class="btn btn-primary col-12 my-2 " %}
+                {#                <a href="{% url 'accounts:login' %}google" class="btn btn-dark col-6 my-2">구글로 로그인</a>#}
+                {#                <a href="{% url 'accounts:login' %}naver" class="btn btn-success col-6 my-2">네이버로 로그인</a>#}
+                {#                <a href="{% url 'accounts:login' %}github" class="btn btn-secondary col-6 my-2">깃허브로 로그인</a>#}
+                {#                <a href="{% url 'accounts:login' %}kakao" class="btn btn-warning col-6 my-2">카카오톡으로 로그인</a>#}
+            </div>
+            <div class="login-card-social">
+                <div>여기로도 로그인이 가능해요!</div>
+                <div class="downArrow bounce">
+                    <img width="40" height="40" alt=""
+                         src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjwhRE9DVFlQRSBzdmcgIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nICAnaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkJz48c3ZnIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDMyIDMyIiBoZWlnaHQ9IjMycHgiIGlkPSLQodC70L7QuV8xIiB2ZXJzaW9uPSIxLjEiIHZpZXdCb3g9IjAgMCAzMiAzMiIgd2lkdGg9IjMycHgiIHhtbDpzcGFjZT0icHJlc2VydmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiPjxwYXRoIGQ9Ik0yNC4yODUsMTEuMjg0TDE2LDE5LjU3MWwtOC4yODUtOC4yODhjLTAuMzk1LTAuMzk1LTEuMDM0LTAuMzk1LTEuNDI5LDAgIGMtMC4zOTQsMC4zOTUtMC4zOTQsMS4wMzUsMCwxLjQzbDguOTk5LDkuMDAybDAsMGwwLDBjMC4zOTQsMC4zOTUsMS4wMzQsMC4zOTUsMS40MjgsMGw4Ljk5OS05LjAwMiAgYzAuMzk0LTAuMzk1LDAuMzk0LTEuMDM2LDAtMS40MzFDMjUuMzE5LDEwLjg4OSwyNC42NzksMTAuODg5LDI0LjI4NSwxMS4yODR6IiBmaWxsPSIjMTIxMzEzIiBpZD0iRXhwYW5kX01vcmUiLz48Zy8+PGcvPjxnLz48Zy8+PGcvPjxnLz48L3N2Zz4="/>
+                </div>
+                <div class="login-card-social-btns">
+                    <a href="{% url 'accounts:login' %}github">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github"
+                             width="29" height="29" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+                             fill="none" stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path>
+                        </svg>
 
-<div class="container">
-  <form action="" method="POST">
-    {% csrf_token %}
-    {% bootstrap_form login_form %}
-    <div class="mt-5">
-      <a href="{% url 'accounts:signup' %}" class="btn btn-outline-dark col-6 my-2">회원가입</a>
-      {% bootstrap_button button_type="submit" content="로그인" button_class="btn btn-primary col-6 my-2" %}
-      <a href="{% url 'accounts:login' %}google" class="btn btn-dark col-6 my-2">구글로 로그인</a>
-      <a href="{% url 'accounts:login' %}naver" class="btn btn-success col-6 my-2">네이버로 로그인</a>
-      <a href="{% url 'accounts:login' %}github" class="btn btn-secondary col-6 my-2">깃허브로 로그인</a>
-      <a href="{% url 'accounts:login' %}kakao" class="btn btn-warning col-6 my-2">카카오톡으로 로그인</a>
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M7 10v4h3v7h4v-7h3l1 -4h-4v-2a1 1 0 0 1 1 -1h3v-4h-3a5 5 0 0 0 -5 5v2h-3"></path>
+                        </svg>
+                    </a>
+                    <a href="{% url 'accounts:login' %}kakao">
+                        <img src="{% static 'kakao.png' %}" alt="logo" style="width:32px">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M17.788 5.108a9 9 0 1 0 3.212 6.892h-8"></path>
+                        </svg>
+                    </a>
+                    <a href="{% url 'accounts:login' %}google">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google"
+                             width="24"
+                             height="24" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                            <path d="M17.788 5.108a9 9 0 1 0 3.212 6.892h-8"></path>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+
+        </div>
     </div>
-  </form>
-</div>
 
 {% endblock content %}

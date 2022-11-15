@@ -22,6 +22,7 @@ def index(request):
     return render(request, 'reviews/index.html', context)
 
 
+
 def create(request):
     if request.method == 'POST':
         study_form = StudyForm(request.POST, request.FILES)
@@ -46,6 +47,7 @@ def create(request):
 
 
 def detail(request, study_pk):
+
     study = Study.objects.get(pk=study_pk)
     cnt = len(Accepted.objects.filter(study=study))
     users = Accepted.objects.filter(study_id=study_pk)
@@ -56,11 +58,13 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {'study' : study,
+
                'cnt':cnt,
                'check':user_accepted
                }
 
     return render(request,'reviews/detail.html', context)
+
 
 
 def userlist(request, study_pk):
