@@ -4,4 +4,4 @@ from django.contrib.auth.admin import UserAdmin
 
 # Register your models here.
 admin.site.register(get_user_model(), UserAdmin)
-UserAdmin.fieldsets += (("Nickname fields", {"fields":("nickname",)}),)
+UserAdmin.fieldsets += (("Nickname fields", {"fields":("nickname", "profile_picture",)}),)

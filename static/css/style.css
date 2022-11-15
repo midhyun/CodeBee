@@ -38,3 +38,15 @@
 .hide {
     display:none;
 }
+
+/* 네비바 프로필 사진 */
+.nav_profile {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 30px;
+    height: 30px;
+    background-size:cover;
+    background-repeat: no-repeat;
+    border: solid 2px #fff;
+}

@@ -3,28 +3,27 @@
 <!DOCTYPE html>
 <html lang="ko">
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {% block css %}{% endblock css %}
-  {% bootstrap_css %}{% bootstrap_javascript %}
-  <title>CodeBee</title>
-  <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-  <style>
-    body {
-      font-family: 'NanumSquareNeo';
-    }
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block css %}{% endblock css %}
+    {% bootstrap_css %}{% bootstrap_javascript %}
+    <title>CodeBee</title>
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+      body {
+        font-family: 'NanumSquareNeo';
+      }
 
-    a {
-      text-decoration: none;
-    }
-  </style>
-</head>
-
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
 <body>
   <div style="height:68px"></div>
   <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
@@ -54,15 +53,13 @@
     </div>
   </nav>
   {% if messages %}
-  {% for message in messages %}
-  <div class="alert alert-{{ message.tags }}">
-    {{ message }}
-  </div>
-  {% endfor %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+      </div>
+    {% endfor %}
   {% endif %}
-  {% block content %}
-
-  {% endblock content %}
+  {% block content %}{% endblock content %}
   <footer class="align-items-center no-gutters row" style="background:rgb(83, 83, 83); height:80px">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">
