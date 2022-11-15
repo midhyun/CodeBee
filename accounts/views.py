@@ -303,6 +303,7 @@ def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
     studies = []
     deactives = []
+    
     for accept in accepts:
         if accept.joined:
             studies.append(accept.study)
@@ -310,6 +311,7 @@ def detail(request, user_pk):
         if not study.isactive:
             deactives.append(study)
     person = get_object_or_404(get_user_model(), pk=user_pk)
+                 
     return render(
         request,
         "accounts/detail.html",
