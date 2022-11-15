@@ -86,7 +86,7 @@
             <section class="">
               {% for deactive in deactives %}
                 <div class="row d-flex">
-                  <div class="col-3">
+                  <div class="col-3 h-100">
                     <a href="{% url 'reviews:detail' deactive.pk %}">
                       {% if deactive.image %}
                         <img src="{{ deactive.image.url }}" class="card-img-top" alt="스터디 대문사진">
@@ -100,30 +100,38 @@
                         <!-- 작성자의 리뷰가 있을 경우 -->
                         {% if comment.user == person %}
                           <a href="{% url 'reviews:detail' deactive.pk %}">
-                            <p>
-                              <!-- 작성일자 : ~시간 전 표시 -->
-                              {% if comment.created_string == False %}
-                                <!-- 7일이 지나면 날짜로 출력 -->
-                                {{ comment.created_at|date:'m월 d일' }}
-                              {% else %}
-                                <!-- 7일이 지나기 전이라면 함수 대입한 결과 -->
-                                {{ comment.created_string }}
-                              {% endif %}
-                            </p>
 
-                            <p class="study-content yes-review shadow-sm hi">{{ comment.content }}</p>
+                            <div class="study-content yes-review shadow-sm hi">{{ comment.content }}
+                              <p class="created_at">
+                                <!-- 작성일자 : ~시간 전 표시 -->
+                                {% if comment.created_string == False %}
+                                  <!-- 7일이 지나면 날짜로 출력 -->
+                                  {{ comment.created_at|date:'m월 d일' }}
+                                {% else %}
+                                  <!-- 7일이 지나기 전이라면 함수 대입한 결과 -->
+                                  {{ comment.created_string }}
+                                {% endif %}
+                                작성된 리뷰입니다.
+                              </p>
+                            </div>
                           </a>
                         {% endif %}
                         {% empty %}
                         <div class="d-flex justify-content-center align-items-center none-review">
                           <img src="{% static '/accounts/image/write.png' %}" width="42px;" alt="">
                           <span class="text-muted">리뷰를 작성하지 않은 스터디입니다.</span>
+                          {% if user == person %}
+                            <a href="{% url 'reviews:detail' deactive.pk %}">
+                              <button class="creview">지금 작성하러 가기</button>
+                            </a>
+                          {% endif %}
                         </div>
                       </div>
                     {% endfor %}
                   </div>
                 </div>
               {% endfor %}
+
             </section>
           </div>
         </div>

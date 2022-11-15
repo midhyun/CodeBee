@@ -459,6 +459,7 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
 }
 
 .yes-review {
+    position: relative;
     min-height: 52px;
     height: calc(100% - 40px);
     overflow:hidden;
@@ -473,3 +474,58 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
     border-radius: 10px;
     background-color: #fff;
 }
+
+.yes-review .created_at {
+    position: absolute;
+    bottom: 0px;
+    right: 20px;
+    font-style: italic;
+    font-size: 20px;
+}
+
+/* 지금 작성하러 가기 */
+.creview {
+    border-radius: 30px;
+    background-color: #5ca1e1;
+    border: none;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+    padding: 16px;
+    width: 220px;
+    transition: all 0.5s;
+    cursor: pointer;
+    margin: 36px;
+    box-shadow: 0 10px 20px -8px rgba(0, 0, 0,.7);
+  }
+  
+  .creview{
+    cursor: pointer;
+    display: block;
+    position: relative;
+    transition: 0.5s;
+  }
+  
+  .creview:after {
+    content: '»';
+    position: absolute;
+    opacity: 0;  
+    top: 14px;
+    right: -15px;
+    transition: 0.5s;
+  }
+  
+  .creview:hover{
+    padding-right: 24px;
+    padding-left:8px;
+  }
+  
+  .creview:hover:after {
+    opacity: 1;
+    right: 30px;
+  }
+
+  .tab-content .row {
+    min-height: 15rem;
+    margin: 1rem 0px;
+  }
