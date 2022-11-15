@@ -1,13 +1,52 @@
-{% if request.user.is_authenticated %}
-<p>{{ request.user }}</p>
-{% else %}
-<p>로그인 해주세요</p>
-{% endif %}
-<a href="{% url 'reviews:create' %}">스터디 만들기</a>
-{% for study in studies %}
-<div>
-  <a href="{% url 'reviews:detail' study.pk %}">{{ study.title }}</a>
-  <a href="{% url 'reviews:update' study.pk %}">수정</a>
-  <a href="{% url 'reviews:delete' study.pk %}">삭제</a>
-</div>
-{% endfor %}
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+{% endblock css %}
+{% block content %}
+
+  <header class="index-header"> 
+      <div class="container">
+        {% if request.user.is_authenticated %}
+        <p>{{ request.user }}
+          <a href="{% url 'accounts:logout' %}">로그아웃</a>
+        </p>
+        {% else %}
+        <a href="{% url 'accounts:login' %}">로그인 하러가기</a>
+        {% endif %}
+        
+        <a href="{% url 'reviews:create' %}">스터디 만들기</a>
+      </div>
+    </header>
+    <!-- 헤더 이미지 영역 -->
+    <section class="board">
+      <hr class="my-4">
+      <!-- 스터디 제목, 기간, 설명 -->
+      <div class="container" style="padding: 50px;">
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+          {% for study in studies %}
+            <div class="col">
+              <a href="{% url 'reviews:detail' study.pk %}">
+                <div class="card border-0 shadow h-100">
+                  {% if study.image %}
+                    <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                  {% else %}
+                    <div class="card-img-top h-100"></div>
+                  {% endif %}
+                  <div class="card-body"></div>
+                  <div class="card-grad">
+                    <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                    <div class="rounded-3 p-2 content-box">
+                      <p class="study-content m-0">{{ study.content }}</p>
+                      <span class="border rounded-pill"><img src="{% static '/members.png' %}" alt="" class="members">{{ study.accepted.all|length }}/{{ study.limits }}</span>
+                    </div>
+                  </div>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </section>
+  </div>
+{% endblock content %}

@@ -36,7 +36,7 @@ class User(AbstractUser):
         null=True,
     )
     nickname = models.CharField(max_length=20, blank=True)
-    location = models.CharField(max_length=30, blank=True)
+    location = models.CharField(max_length=100, blank=True)
     detail_location = models.CharField(max_length=30, blank=True)
     profile_picture = ProcessedImageField(
         upload_to="profile_pictures/",
@@ -56,6 +56,11 @@ class User(AbstractUser):
     )  # >>> url 형식으로 받아와야 함
     is_phone_active = models.BooleanField(default=False)
     is_email_active = models.BooleanField(default=False)
+    token = models.CharField(max_length=150, null=True, blank=True)
+
+    @property
+    def full_name(self):
+        return f"{self.last_name}{self.first_name}"
 
 
 import time

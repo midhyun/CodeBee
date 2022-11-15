@@ -7,11 +7,12 @@
 
 {% block content %}
 <div>
+  <!-- 헤더 이미지 영역 -->
   <header class="row head p-5 shadow-lg">
     <div class="col-4">
       <div class="d-flex justify-content-center align-items-center h-100">
-        {% if person.profile %}
-        <img src="https://dummyimage.com/120/000/fff" alt="" class="rounded-circle border border-5">
+        {% if person.profile_picture %}
+        <img src="{{ person.profile_picture.url }}" alt="" class="rounded-circle border border-5">
         {% else %}
         <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
         {% endif %}
@@ -38,73 +39,60 @@
 </div>
 <div class="container">
 
-  <!-- 헤더 이미지 영역 -->
-  <section class="board">
-    <div class="tab-menu">
-      <button id="btn_1" class="btn btn-primary">참여중 스터디</button>
-      <button id="btn_2" class="btn btn-primary">참여한 스터디</button>
-    </div>
-    <div id="tab-1" class="tab_1">
-      <div class="row">
-        <!-- 스터디 이미지 -->
-        <div class="col-4">
+  <div class="tab-menu">
+    <button id="btn_1" class="btn btn-outline-light" style="background-color:rgb(153, 22, 240);">참여중 스터디</button>
+    <button id="btn_2" class="btn btn-primary">참여한 스터디</button>
+  </div>
 
+  <div id="tab-1" class="tab_1">
+    <section class="board">
+      <!-- 스터디 제목, 기간, 설명 -->
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for study in studies %}
+        <div class="col">
+          <div class="card h-100">
+            <a href="{% url 'reviews:detail' study.pk %}">
+              {% if study.image %}
+              <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+              {% else %}
+              <div class="card-img-top h-100"></div>
+              {% endif %}
+              <div class="card-body"></div>
+              <div class="card-grad">
+                <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                <div class="rounded-3 p-3 study-content">
+                  {{ study.content }}
+                </div>
+              </div>
+          </div>
+          </a>
         </div>
-        <!-- 스터디 제목, 기간, 설명 -->
-        <div class="col-8" style="padding: 50px;">
-          <div style="padding: 50px 0px;">
-            <span class="display-5 fw-bold">즐거운 스터디</span>
-            <span class="text-muted">2022.11.10 ~ 2022.11.15</span>
-            <p style="text-overflow: ellipsis; width:80%;">아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주
-              즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.</p>
-          </div>
-          <hr>
-          <div style="padding: 50px 0px;">
-            <span class="display-5 fw-bold">즐거운 스터디</span>
-            <span class="text-muted">2022.11.10 ~ 2022.11.15</span>
-            <p style="text-overflow: ellipsis; width:80%;">아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주
-              즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.</p>
-          </div>
-          <hr>
-          <div style="padding: 50px 0px;">
-            <span class="display-5 fw-bold">즐거운 스터디</span>
-            <span class="text-muted">2022.11.10 ~ 2022.11.15</span>
-            <p style="text-overflow: ellipsis; width:80%;">아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주
-              즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.아주아주 즐겁습니다.</p>
-          </div>
-          <hr>
-
-
-        </div>
-        참여중입니다.
+        {% endfor %}
       </div>
-
-
-
-
-    </div>
-    <div id="tab-2" class="tab_2 deactive">
-      참여한 스터디 목록입니다.
-    </div>
+  </div>
   </section>
 
-</div>
+  <div id="tab-2" class="tab_2 deactive p-5">
+    <!-- 참여한 스터디 -->
+    <section class="board">
+      {% for deactive in deactives %}
+      <p class="fw-bold fs-2">
+        <a href="{% url 'reviews:detail' deactive.pk %}" class="link">
+          {{ deactive.title }}
+          <span>
+            <img src="{% static 'accounts/image/next.png' %}" alt="" width="55px">
+          </span>
+        </a>
+      </p>
+      <p class="text-muted">{{ deactive.deadline}}</p>
+      {% if deactive.image %}
+      <img src="{{ deactive.image.url }}" alt="" class="my-3" width="300px">
+      {% endif %}
+      <p>너무 재미있었습니다!</p>
+      <hr class="my-5">
+  </div>
+  {% endfor %}
+  </section>
+  <script src="{% static '/accounts/js/detail.js'%}"></script>
 
-<script>
-  const button1 = document.querySelector('#btn_1')
-  const button2 = document.querySelector('#btn_2')
-  button2.addEventListener('click', function () {
-    const tab1 = document.querySelector("#tab-1")
-    const tab2 = document.querySelector("#tab-2")
-    tab1.classList.add('deactive')
-    tab2.classList.remove('deactive')
-  });
-  button1.addEventListener('click', function () {
-    const tab1 = document.querySelector("#tab-1")
-    const tab2 = document.querySelector("#tab-2")
-    tab1.classList.remove('deactive')
-    tab2.classList.add('deactive')
-  });
-</script>
-
-{% endblock content %}
+  {% endblock content %}

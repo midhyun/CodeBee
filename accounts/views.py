@@ -18,6 +18,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from reviews.models import Study, Accepted
+
 
 # 소셜 로그인에 필요한 토큰 생성
 state_token = secrets.token_urlsafe(16)
@@ -199,7 +201,6 @@ def social_login_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
-
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -263,6 +264,8 @@ def social_login_callback(request, service_name):
     user_info = login_data[service_name]
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
+        user.token = access_token
+        user.save()
     else:
         user = get_user_model()()
         user.social_id = user_info["social_id"]
@@ -275,6 +278,7 @@ def social_login_callback(request, service_name):
         user.nickname = user_info["nickname"] if user_info["nickname"] else ""
         user.email = user_info["email"] if user_info["email"] else ""
         user.phone = user_info["phone"] if user_info["phone"] else ""
+        user.token = access_token
         user.set_password(str(state_token))
         user.is_social_account = True
         user.save()
@@ -296,12 +300,25 @@ def index(request):
 
 
 def detail(request, user_pk):
+    accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
+    studies = []
+    deactives = []
+    for accept in accepts:
+        if accept.joined:
+            studies.append(accept.study)
+        
+    for study in studies:
+        if not study.isactive:
+            deactives.append(study)
+                        
     person = get_object_or_404(get_user_model(), pk=user_pk)
     return render(
         request,
         "accounts/detail.html",
         {
             "person": person,
+            "studies" : studies,
+            "deactives" : deactives,
         },
     )
 

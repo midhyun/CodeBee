@@ -1,12 +1,20 @@
+@font-face {
+    font-family: 'Atomy-Bold';
+    src: url('https://runedemonic.github.io/Tgether/Atomy-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .head {
     background: linear-gradient(
-        to bottom,
-        rgba(20, 20, 20, 0) 10%,
-        rgba(20, 20, 20, 0.25) 25%,
-        rgba(20, 20, 20, 0.5) 50%,
-        rgba(20, 20, 20, 0.75) 75%,
-        rgba(20, 20, 20, 1) 100%
-      ), url('/static/accounts/image/bg.jpg');
+            to bottom,
+            rgba(20, 20, 20, 0) 10%,
+            rgba(20, 20, 20, 0.25) 25%,
+            rgba(20, 20, 20, 0.5) 50%,
+            rgba(20, 20, 20, 0.75) 75%,
+            rgba(20, 20, 20, 1) 100%
+    ),
+    url('/static/accounts/image/bg.jpg');
     background-size: cover;
     background-repeat: no-repeat;
     border-radius: 20px 20px 0px 0px;
@@ -14,6 +22,14 @@
     height: 450px;
     background-size: cover;
 }
+
+.index-header {
+    background-image: url('/static/accounts/image/bg.jpg');
+    background-size: cover;
+    height: 500px;
+
+}
+
 .none {
     width: 120px;
 }
@@ -22,22 +38,322 @@
     display: none;
 }
 
-.active {
-    display: block;
-}
-.tab_1 {
-    height: 100vh;
-    background-color: lightblue
-}
-
-.tab_2 {
-    height: 100vh;
-    background-color: lightpink;
-}
-
 .board {
-    min-height: 600px;
+    margin-left: 300px;
+    margin-right: 300px;
+    padding-top: 3rem;
+    min-height: calc(100vh - 8rem);
 }
+
 .tab-menu {
     margin: 20px 0px;
+}
+
+.hi {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.2s ease-out;
+}
+
+.hi:hover {
+    transform: translateY(-10px);
+}
+
+.card {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    box-shadow: 1rem;
+}
+
+.card:hover .card-image {
+    transform: scale(1.4);
+}
+
+.card .card-image {
+    width: 100%;
+    transition: all 0.2s linear;
+}
+
+.study-title {
+    position: absolute;
+    bottom: 30%;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%);
+    width: 100%;
+    margin-bottom: 7rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: 20px;
+    font-weight: revert;
+    color: #344050;
+}
+
+.content-box {
+    position: absolute;
+    display: block;
+    bottom: 3%;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%);
+    height: 92px;
+    width: 94%;
+    border-style: solid;
+    border-radius: 8px;
+    border-width: 1.2px;
+    border-color: #ffecc7;
+    background-color:#ffecc7;
+}
+
+.study-content {
+    min-height: 52px;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 26px;
+    font-size: 14px;
+    color: #344050;
+}
+
+.link {
+    width: 100%;
+    text-decoration: none;
+    color: black;
+
+}
+
+.card-img-top {
+    object-fit: cover;
+    height: 15rem;
+}
+
+.card-body {
+    height: 2rem;
+}
+
+/* 카드 그라데이션 */
+.card-grad {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(0deg, #FD9E9E 0%, #FDA790 10%, rgba(255, 255, 255, 0) 76.4%);
+    border-radius: 4px;
+}
+.card span {
+    letter-spacing: 3px;
+    background-color: #FDA790;
+    font-size: 11px;
+    color: white;
+    padding: 3px 10px;
+}
+.members {
+    margin: 3px;
+    padding: 2px 2px;
+    width: 15px;
+    height: 15px;
+}
+
+/**================================*/
+.login-bg {
+    font-family: 'Atomy-Bold', sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(to right, #333399, #ff00cc);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-card {
+    width: 450px;
+    background: rgba(255, 255, 255, .5);
+    padding: 4rem;
+    border-radius: 10px;
+    position: relative;
+}
+
+.login-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, .15);
+    transform: rotate(-6deg);
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.login-card-logo {
+    margin-bottom: 2rem;
+}
+
+.login-card-logo img {
+    width: 220px;
+}
+
+.login-card-logo,
+.login-card-header,
+.login-card-footer {
+    text-align: center;
+}
+
+.login-card a {
+    text-decoration: none;
+    color: #35339a;
+}
+
+.login-card a:hover {
+    text-decoration: underline;
+}
+
+/* Login Card Form */
+.login-card-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.login-card-form .form-item {
+    position: relative;
+}
+
+.login-card-form .form-item .form-item-icon {
+    position: absolute;
+    top: .82rem;
+    left: 1.4rem;
+    font-size: 1.3rem;
+    opacity: .4;
+}
+
+.login-card-form .checkbox {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.login-card-form .form-item-other {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: calc(1rem * .8);
+    margin-bottom: .5rem;
+}
+
+/* Login Card Footer */
+.login-card-footer {
+    margin-top: 1.5rem;
+    font-size: calc(1rem * .8);
+}
+
+/* Login Card Social Buttons */
+.login-card-social {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.login-card-social > div {
+    opacity: .8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: calc(1rem * .8);
+}
+
+.login-card-social-btns {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.login-card-social-btns a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(255, 255, 255, .6);
+    border-radius: 100px;
+    transition: all .5s;
+}
+
+.login-card-social-btns a:hover {
+    background-color: white;
+    transform: scale(1.1);
+}
+
+/* ---------- */
+/* Responsive */
+@media (max-width: 768px) {
+
+    body {
+        padding: 2rem 0;
+    }
+
+    .login-card {
+        width: 280px;
+        padding: 2rem;
+    }
+
+}
+/** animation*/
+
+.bounce {
+	-moz-animation: bounce 2s infinite;
+	-webkit-animation: bounce 2s infinite;
+	animation: bounce 2s infinite;
+}
+
+@-moz-keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    -moz-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -moz-transform: translateY(-30px);
+    transform: translateY(-30px);
+  }
+  60% {
+    -moz-transform: translateY(-15px);
+    transform: translateY(-15px);
+  }
+}
+@-webkit-keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -webkit-transform: translateY(-30px);
+    transform: translateY(-30px);
+  }
+  60% {
+    -webkit-transform: translateY(-15px);
+    transform: translateY(-15px);
+  }
+}
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    -moz-transform: translateY(0);
+    -ms-transform: translateY(0);
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+  }
+  40% {
+    -moz-transform: translateY(-30px);
+    -ms-transform: translateY(-30px);
+    -webkit-transform: translateY(-30px);
+    transform: translateY(-30px);
+  }
+  60% {
+    -moz-transform: translateY(-15px);
+    -ms-transform: translateY(-15px);
+    -webkit-transform: translateY(-15px);
+    transform: translateY(-15px);
+  }
 }
