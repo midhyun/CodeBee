@@ -17,14 +17,12 @@ class StudyForm(forms.ModelForm):
         fields = [
             'title',
             'limits',
-            'tag',
             'content',
             'image',
         ]
         labels = {
             'title': "스터디명",
             'limits': '최대 참여',
-            'tag': '태그',
             'content': '스터디 소개',
             'image': '이미지',
         }

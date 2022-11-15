@@ -2,7 +2,9 @@
 {% load django_bootstrap5 %}
 {% load static %}
 {% block css %}
-<link rel="stylesheet" href="{% static 'css/style.css' %}">{% endblock css%}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css">
+{% endblock css%}
 {% block content %}
 
 <div class="container my-3 position-relative" style="width:60%">
@@ -11,7 +13,7 @@
     <h2 class="fw-bold text-center my-5">스터디 만들기</h2>
   </div>
   <hr style="border: solid 1px rgb(255, 198, 198); width: 97%; margin:auto;">
-  <div class="row" style="">
+  <div class="row">
     <div class="col-lg-4 ">
       <div class="m-3 card shadow card p-3" style="position: sticky; top:0; z-index:2;">
         하이퍼그로스 2기 절찬리 모집중!<br>
@@ -46,7 +48,7 @@
             <option value="그룹">그룹 스터디</option>
           </select>
           <input maxlength="30" required="" cols="40" rows="10" id="id_studytype" class="form-control" type="hidden"
-            name="study_type" placeholder="진행방법을 직접 입력하세요." value="Python">
+            name="study_type" placeholder="진행방법을 직접 입력하세요." value="당일">
         </div>
         <div class="mb-3"><label class="form-label" for="id_locationtype">모임형태</label>
           <select aria-label="Default select" class="form-select mb-3" name="location_type"
@@ -72,13 +74,17 @@
             aria-describedby="button-addon2">
           <input onclick="searchPlaces()" class="btn btn-primary" type="button" id="button-addon2" value="검색하기">
         </div>
-        
-
         {% bootstrap_form study_form %}
         <div class="mb-3"><label class="form-label" for="id_deadline">모집 마감일</label><input type="datetime-local"
-            name="deadline" class="form-control" placeholder="모집 마감일" required="" id="id_deadline"></div>
+          name="deadline" class="form-control" placeholder="모집 마감일" required="" id="id_deadline" value=""></div>
+        <div class="mb-3"><label class="form-label" for="id_study_at">스터디 시작일</label><input type="datetime-local"
+          name="study_at" class="form-control" placeholder="스터디 시작일" required="" id="id_study_at"></div>
+        <div class="mb-3"><label class="form-label" for="id_study_end">스터디 종료일</label><input type="datetime-local"
+            name="study_end" class="form-control" placeholder="스터디 종료일" required="" id="id_study_end"></div>
         <input name="X" type="hidden" value="">
         <input name="Y" type="hidden" value="">
+        <div class="mb-3"><label for="id_tag" class="form-label">태그 작성</label>
+        <input id="id_tag" name='tag' placeholder="#해시태그 #최대5개" type="hidden"></div>
         <div class="d-grid gap-2">
           <button type="submit" class="btn" style="background-color: rgb(245, 132, 12); color: white;">등록
           </button>
@@ -92,4 +98,12 @@
 <script type="text/javascript"
   src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
 <script src="{% static 'js/form.js'%}"></script>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<script>
+  var input = document.studyform.tag
+      new Tagify(input, {
+          maxTags : 5
+      })
+</script>
 {% endblock content %}
