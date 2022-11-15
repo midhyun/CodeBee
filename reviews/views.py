@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import StudyForm, CommentForm, AcceptedForm
-from .models import Study, Comment, Accepted
+from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm
+from .models import Study, Comment, Accepted, StudyDate
 from accounts.models import User
 import requests
 import json
@@ -32,7 +32,8 @@ def create(request):
         for t in tags:
             tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
-        if study_form.is_valid():
+        study_date = StudyDateForm(request.POST)
+        if study_form.is_valid() and study_date.is_valid():
             study = study_form.save(commit=False)
             study.categorie = request.POST['categorie']
             study.study_type = request.POST['study_type']
@@ -42,14 +43,20 @@ def create(request):
             study.Y = request.POST['Y']
             study.tag = tag
             study.host = request.user
-            study.deadline = request.POST['deadline']
             study.save()
+            date = study_date.save(commit=False)
+            date.study = study
+            date.save()
             Aform = Accepted(joined=True, study=study, users=study.host)
             Aform.save()
             return redirect('reviews:index')
     else:
         study_form = StudyForm()
-    context = {'study_form': study_form}
+        study_date = StudyDateForm()
+    context = {
+        'study_form': study_form,
+        'study_date': study_date,
+    }
     return render(request, 'reviews/form.html', context)
 
 
@@ -95,11 +102,13 @@ def userlist(request, study_pk):
 @login_required
 def update(request, study_pk):
     study = Study.objects.get(pk=study_pk)
+    date = StudyDate.objects.filter(study_id=study_pk)
     if study.isactive:
         if request.user == study.host:
             if request.method == 'POST':
                 study_form = StudyForm(request.POST, request.FILES, instance=study)
-                if study_form.is_valid():
+                study_date = StudyDateForm(request.POST, instance=date[0])
+                if study_form.is_valid() and study_date.is_valid():
                     study = study_form.save(commit=False)
                     study.categorie = request.POST['categorie']
                     study.study_type = request.POST['study_type']
@@ -111,10 +120,17 @@ def update(request, study_pk):
                     study.host = request.user
                     study.save()
                     study_form.save()
+                    date_ = study_date.save(commit=False)
+                    date_.study = study
+                    date_.save()
                     return redirect('reviews:detail', study_pk)
             else:
                 study_form = StudyForm(instance=study)
-            context = {'study_form': study_form}
+                study_date = StudyDateForm(instance=date[0])
+            context = {
+                'study_form': study_form,
+                'study_date': study_date,
+                }
             return render(request, 'reviews/form.html', context)
         else:
             return redirect('reviews:detail', study_pk)
