@@ -194,7 +194,7 @@
 }
 
 .login-card-logo img {
-    width: 220px;
+    width: 150px;
 }
 
 .login-card-logo,
@@ -361,3 +361,4 @@
     transform: translateY(-15px);
   }
 }
+/** Navbar */
