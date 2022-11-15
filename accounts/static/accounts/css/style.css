@@ -38,16 +38,24 @@
     display: none;
 }
 
+.board {
+    width: 100vw;
+    background: rgb(2,0,36);
+background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075630253) 35%, rgba(255,0,186,1) 100%);
+}
 @media (min-width: 1440px){
     .board {
     padding-top: 3rem;
     min-height: calc(100vh - 8rem);
 }}
 
-@media (min-width: 800px){
+@media (max-width: 860px){
     .board {
     padding-top: 2rem;
     min-height: calc(100vh - 8rem);
+}
+.wrapper {
+    width: 80%;
 }}
 
 @media (max-width: 600px){
@@ -65,9 +73,75 @@
     min-height: calc(100vh - 8rem);
 }}
 
-.tab-menu {
-    margin: 20px 0px;
-}
+.wrapper {
+    max-width: 82rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .tabs {
+    position: relative;
+    margin: 3rem 0;
+    background: #1abc9c;
+  }
+  .tabs::before,
+  .tabs::after {
+    content: "";
+    display: table;
+  }
+  .tabs::after {
+    clear: both;
+  }
+  .tab {
+    float: left;
+  }
+  .tab-switch {
+    display: none;
+  }
+  .tab-label {
+    position: relative;
+    display: block;
+    line-height: 2.75em;
+    height: 3em;
+    padding: 0 1.618em;
+    background: #1abc9c;
+    border-right: 0.125rem solid #16a085;
+    color: #fff;
+    cursor: pointer;
+    top: 0;
+    transition: all 0.25s;
+  }
+  .tab-label:hover {
+    top: -0.25rem;
+    transition: top 0.25s;
+  }
+  .tab-content {
+    width: 100%;
+    min-height: 18rem;
+    position: absolute;
+    z-index: 1;
+    top: 2.75em;
+    left: 0;
+    padding: 4.618rem;
+    background: #fff;
+    color: #2c3e50;
+    border-bottom: 0.25rem solid #bdc3c7;
+    opacity: 0;
+    transition: all 0.35s;
+  }
+  .tab-switch:checked + .tab-label {
+    background: #fff;
+    color: #2c3e50;
+    border-bottom: 0;
+    border-right: 0.125rem solid #fff;
+    transition: all 0.35s;
+    z-index: 1;
+    top: -0.0625rem;
+  }
+  .tab-switch:checked + label + .tab-content {
+    z-index: 2;
+    opacity: 1;
+    transition: all 0.35s;
+  }
 
 .hi {
     position: relative;
@@ -376,4 +450,26 @@
     -webkit-transform: translateY(-15px);
     transform: translateY(-15px);
   }
+}
+
+.none-review {
+    height: calc(100% - 40px);
+    border-radius: 5px;
+    background-color: rgb(233, 233, 233)
+}
+
+.yes-review {
+    min-height: 52px;
+    height: calc(100% - 40px);
+    overflow:hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-height: 26px;
+    font-size: 14px;
+    color: #344050;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
 }

@@ -38,76 +38,98 @@
     </header>
   </div>
 
-  <div class="tab-menu container">
-    <button id="btn_1" class="btn btn-outline-light" style="background-color:rgb(153, 22, 240);">참여중 스터디</button>
-    <button id="btn_2" class="btn btn-primary">참여한 스터디</button>
-  </div>
-
-  <div id="tab-1" class="tab_1">
-<!-- 진행중 스터디 -->
-    <section class="board">
-      <!-- 스터디 제목, 기간, 설명 -->
-      <div class="row row-cols-1 row-cols-md-4 g-4">
-        {% for study in studies %}
-          {% if study.isactive %}
-            <div class="col">
-              <a href="{% url 'reviews:detail' study.pk %}">
-                <div class="card border-0 shadow h-100">
-                  {% if study.image %}
-                    <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-                  {% else %}
-                    <div class="card-img-top h-100"></div>
-                  {% endif %}
-                  <div class="card-body"></div>
-                  <div class="card-grad">
-                    <h5 class="card-title study-title p-3">{{ study.title }}</h5>
-                    <div class="rounded-3 p-2 content-box">
-                      <p class="study-content m-0">{{ study.content }}</p>
-                      <span class="border rounded-pill"><img src="{% static '/members.png' %}" alt="" class="members">{{ study.accepted.all|length }}/{{ study.limits }}</span>
+  <div class="board">
+    <div class="wrapper">
+      <div class="tabs">
+        <div class="tab">
+          <input type="radio" name="css-tabs" id="tab-1" checked="checked" class="tab-switch">
+          <label for="tab-1" class="tab-label">진행 중 스터디</label>
+          <div class="tab-content">
+            <!-- 진행중 스터디 -->
+            <section class="">
+              <!-- 스터디 제목, 기간, 설명 -->
+              <div class="row row-cols-1 row-cols-md-4 g-4">
+                {% for study in studies %}
+                  <div class="col">
+                    {% if study.isactive %}
+                      <a href="{% url 'reviews:detail' study.pk %}">
+                        <div class="card border-0 shadow h-100">
+                          {% if study.image %}
+                            <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                          {% else %}
+                            <div class="card-img-top h-100"></div>
+                          {% endif %}
+                          <div class="card-body"></div>
+                          <div class="card-grad">
+                            <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                            <div class="rounded-3 p-2 content-box">
+                              <p class="study-content m-0">{{ study.content }}</p>
+                              <span class="border rounded-pill"><img src="{% static '/members.png' %}" alt="" class="members">{{ study.accepted.all|length }}/{{ study.limits }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
                     </div>
-                  </div>
-                </div>
-              </a>
-            </div>
-          {% endif %}
-        {% endfor %}
-      </div>
-    </div>
-  </section>
+                  {% endif %}
 
-  <div id="tab-2" class="tab_2 deactive p-5">
-    <!-- 참여한 스터디 -->
-    <section class="board">
-      {% for deactive in deactives %}
-        <div class="row d-flex">
-          <div class="col-3">
-            <a href="{% url 'reviews:detail' deactive.pk %}">
-              {% if deactive.image %}
-                <img src="{{ deactive.image.url }}" class="card-img-top" alt="스터디 대문사진">
-              {% endif %}
-            </a>
-          </div>
-          <div class="col-8">
-            <p class="text-muted">모집마감일|{{ deactive.deadline }}</p>
-            {% for comment in deactive.comment_set.all %}
-              {% if comment.user == person %}
-                <p class="study-content">후기내용|{{ comment.content }}</p>
-              {% endif %}
-              {% empty %}
-              <div style="transform: translate(0%, 70%);">
-                <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="align-top me-3 text-muted bi bi-emoji-frown" viewbox="0 0 16 16">
-                  <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                  <path d="M4.285 12.433a.5.5 0 0 0 .683-.183A3.498 3.498 0 0 1 8 10.5c1.295 0 2.426.703 3.032 1.75a.5.5 0 0 0 .866-.5A4.498 4.498 0 0 0 8 9.5a4.5 4.5 0 0 0-3.898 2.25.5.5 0 0 0 .183.683zM7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z"/>
-                </svg>
-                <span class="text-muted display-4">아직 작성된 후기가 없어요.</span>
-              {% endfor %}
-              <hr>
-            </div>
-            <hr>
+                {% endfor %}
+              </div>
+            </section>
           </div>
         </div>
-      {% endfor %}
-    </section>
-    <script src="{% static '/accounts/js/detail.js'%}"></script>
 
-  {% endblock content %}
+        <!-- 참여한 스터디 -->
+        <div class="tab">
+          <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
+          <label for="tab-2" class="tab-label">참여한 스터디</label>
+          <div class="tab-content">
+            <section class="">
+              {% for deactive in deactives %}
+                <div class="row d-flex">
+                  <div class="col-3">
+                    <a href="{% url 'reviews:detail' deactive.pk %}">
+                      {% if deactive.image %}
+                        <img src="{{ deactive.image.url }}" class="card-img-top" alt="스터디 대문사진">
+                      {% endif %}
+                    </a>
+                  </div>
+                  <div class="col-8">
+                    <div class="h-100">
+                      <p class="text-muted">모집마감일|{{ deactive.deadline }}</p>
+                      {% for comment in deactive.comment_set.all %}
+                        <!-- 작성자의 리뷰가 있을 경우 -->
+                        {% if comment.user == person %}
+                          <a href="{% url 'reviews:detail' deactive.pk %}">
+                            <p>
+                              <!-- 작성일자 : ~시간 전 표시 -->
+                              {% if comment.created_string == False %}
+                                <!-- 7일이 지나면 날짜로 출력 -->
+                                {{ comment.created_at|date:'m월 d일' }}
+                              {% else %}
+                                <!-- 7일이 지나기 전이라면 함수 대입한 결과 -->
+                                {{ comment.created_string }}
+                              {% endif %}
+                            </p>
+
+                            <p class="study-content yes-review shadow-sm hi">{{ comment.content }}</p>
+                          </a>
+                        {% endif %}
+                        {% empty %}
+                        <div class="d-flex justify-content-center align-items-center none-review">
+                          <img src="{% static '/accounts/image/write.png' %}" width="42px;" alt="">
+                          <span class="text-muted">리뷰를 작성하지 않은 스터디입니다.</span>
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
