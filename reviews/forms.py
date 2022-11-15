@@ -7,8 +7,8 @@ LOCATION_TYPE_CHOICE = (
     ('true', '온라인')
 )
 STUDY_TYPE_CHOICE =(
-    ('장기', '그룹(주기적인 활동)'),
-    ('단기', '당일(1회성)')
+    ('그룹 스터디', '그룹 스터디'),
+    ('당일 스터디', '당일 스터디')
 )
 
 class StudyForm(forms.ModelForm):
@@ -30,6 +30,7 @@ class StudyForm(forms.ModelForm):
         }
         widgets = {
             'location_type': forms.Select(choices=LOCATION_TYPE_CHOICE),
+
             'study_type' : forms.Select(choices=STUDY_TYPE_CHOICE),
             'deadline': forms.DateTimeInput(attrs={
                 'class': 'form-control',

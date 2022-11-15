@@ -7,7 +7,6 @@ from django.contrib.auth.forms import (
 )
 
 
-
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
@@ -120,6 +119,7 @@ class AuthForm(UserChangeForm):
                 }
             ),
         }
+
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):
