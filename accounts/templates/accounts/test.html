@@ -2,15 +2,20 @@
 
 {% block content %}
 
-<h1>test</h1>
-{% for user in users %}
-{% if user == request.user %}
-<h5>{{ user }}</h5>
-<a href="{% url 'accounts:logout' %}" class="btn btn-primary">로그아웃</a>
-<a href="{% url 'accounts:update' user.pk %}" class="btn btn-primary">내정보 수정</a>
-{% else %}
-<p>{{ user }}</p>
-{% endif %}
-{% endfor %}
+  <h1>test</h1>
+  {% for user in users %}
+    {% if user == request.user %}
+      <h5>{{ user }}</h5>
+      <div>
+        <a href="https://github.com/{{ user.username }}/">
+          <img src="https://github-readme-stats.vercel.app/api/top-langs/?username={{ user.username }}&layout=compact">
+        </a>
+      </div>
+      <a href="{% url 'accounts:logout' %}" class="btn btn-primary">로그아웃</a>
+      <a href="{% url 'accounts:update' user.pk %}" class="btn btn-primary">내정보 수정</a>
+    {% else %}
+      <p>{{ user }}</p>
+    {% endif %}
+  {% endfor %}
 
 {% endblock content %}

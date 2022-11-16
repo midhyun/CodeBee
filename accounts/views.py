@@ -208,9 +208,9 @@ def social_login_callback(request, service_name):
                 "username": u_info["properties"]["nickname"],
                 "social_profile_picture": u_info["properties"]["profile_image"],
                 "nickname": u_info["properties"]["nickname"],
-                "email": u_info["kakao_account"]["email"]
-                if u_info["kakao_account"]["email"]
-                else None,
+                # "email": u_info["kakao_account"]["email"]
+                # if u_info["kakao_account"]["email"]
+                # else None,
                 "phone": None,
             },
         }
@@ -252,7 +252,7 @@ def social_login_callback(request, service_name):
         login_data = {
             "github": {
                 "social_id": u_info["id"],
-                "username": u_info["bio"] if u_info["bio"] else None,
+                "username": u_info["login"] if u_info["login"] else None,
                 "social_profile_picture": u_info["avatar_url"]
                 if u_info["avatar_url"]
                 else None,
@@ -276,7 +276,7 @@ def social_login_callback(request, service_name):
             else ""
         )
         user.nickname = user_info["nickname"] if user_info["nickname"] else ""
-        user.email = user_info["email"] if user_info["email"] else ""
+        # user.email = user_info["email"] if user_info["email"] else ""
         user.phone = user_info["phone"] if user_info["phone"] else ""
         user.token = access_token
         user.set_password(str(state_token))

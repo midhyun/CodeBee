@@ -61,6 +61,8 @@ class Comment(models.Model):
         if time < timedelta(days=1):
             return "오늘"
             # return str(int(time.seconds / 3600)) + "시간 전"
+        elif time < timedelta(days=2):
+            return "어제"
         elif time < timedelta(days=7):
             time = datetime.now().date() - self.created_at.date()
             return str(time.days) + "일 전"
