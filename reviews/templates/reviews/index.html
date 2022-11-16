@@ -1,55 +1,89 @@
 {% extends 'base_test.html' %}
 {% load static %}
 {% block css %}
-  <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
 {% endblock css %}
 {% block content %}
 
-  <header class="index-header">
-    
-      <div class="container">
-        {% if request.user.is_authenticated %}
-        <p>{{ request.user }}
-          <a href="{% url 'accounts:logout' %}">로그아웃</a>
-        </p>
-        {% else %}
-        <a href="{% url 'accounts:login' %}">로그인 하러가기</a>
-        {% endif %}
-        
-        <a href="{% url 'reviews:create' %}">스터디 만들기</a>
-      </div>
+    <header class="index-header">
+
+        <div class="">
+            {% if request.user.is_authenticated %}
+                <p>{{ request.user }}
+                    <a href="{% url 'accounts:logout' %}">로그아웃</a>
+                </p>
+            {% else %}
+                <a href="{% url 'accounts:login' %}">로그인 하러가기</a>
+            {% endif %}
+
+            <a href="{% url 'reviews:create' %}">스터디 만들기</a>
+        </div>
     </header>
     <!-- 헤더 이미지 영역 -->
-    <section class="board">
-      <hr class="my-4">
-      <!-- 스터디 제목, 기간, 설명 -->
-      <div class="container" style="padding: 50px;">
-        <div class="row row-cols-1 row-cols-md-4 g-4">
-          {% for study in studies %}
+
+
+    <!-- 스터디 제목, 기간, 설명 -->
+    <div class="container shadow content" style="padding: 50px;">
+        <div class="row row-cols-4 row-cols-md-4 g-4">
+            {% for study in studies %}
             <div class="col">
-              <a href="{% url 'reviews:detail' study.pk %}">
-                <div class="card border-0 shadow h-100">
-                  {% if study.image %}
+                <div class="card h-100 w-100 shadow h-100 p-3">
+                    {% if study.image %}
                     <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-                  {% else %}
-                    <div class="card-img-top h-100">
+                    {% else %}
                     <img src="{% static 'logo_with.png' %}" class="card-img-top card-image" alt="...">
+                    {% endif %}
+                    <div class="card-body ">
+                    <h5 class="card-title text-center mb-5">{{ study.title }}</h5>
+                        <div class="d-flex justify-content-between m-auto" style="background-color:gray height: 64px">
+                            <!-- 장단기 -->
+                            <div class="d-flex flex-column justify-content-center">
+                                <img src="">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor" class="bi bi-calendar-week" viewBox="0 0 16 16">
+                                    <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
+                                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                </svg>
+                                <p class="text-center">
+                                    단기
+                                </p>
+                            </div>
+                            <!-- 언어 -->
+                            <div class="d-flex flex-column justify-content-center">
+                                <img src="">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-python ms-1" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3" />
+                                    <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3" />
+                                    <path d="M8 9v-4a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v5a2 2 0 0 1 -2 2h-4a2 2 0 0 0 -2 2v5a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4" />
+                                    <line x1="11" y1="6" x2="11" y2="6.01" />
+                                    <line x1="13" y1="18" x2="13" y2="18.01" />
+                                </svg>
+                                <p class="text-center">
+                                    Python
+                                </p>
+                            </div>
+                            <!-- 정원 -->
+                            <div class="d-flex flex-column ">
+                                <img src="">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                    <circle cx="12" cy="7" r="4" />
+                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                                </svg>
+                                <p class="text-center">
+                                    {{ study.accepted.all|length }}/{{ study.limits }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                  {% endif %}
-                  <div class="card-body"></div>
-                  <div class="card-grad">
-                    <h5 class="card-title study-title p-3">{{ study.title }}</h5>
-                    <div class="rounded-3 p-2 content-box">
-                      <p class="study-content m-0">{{ study.content }}</p>
-                      <span class="border rounded-pill"><img src="{% static '/members.png' %}" alt="" class="members">{{ study.accepted.all|length }}/{{ study.limits }}</span>
                     </div>
-                  </div>
                 </div>
-              </a>
+                {% endfor %}
             </div>
-          {% endfor %}
         </div>
-      </div>
-    </section>
-  </div>
+    </div>
+
+
+
 {% endblock content %}
+

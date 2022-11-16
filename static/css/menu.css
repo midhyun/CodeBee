@@ -1,16 +1,41 @@
-html,
+/* @font-face {
+    font-family: 'Atomy-Bold';
+    src: url('https://runedemonic.github.io/Tgether/Atomy-Bold.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+} */
+
+html, body {
+    padding: 0;
+    height: 100%;
+    /* font-family: 'Atomy-Bold', sans-serif; */
+    
+}
+
+.index-header{
+    height: 500px;
+    background:  linear-gradient(17deg, teal, purple, orange)
+}
+
+.content {
+   /** min-height: calc(100vh - 80px);*/
+}
 
 body {
     margin: 0;
-    background-color: #292929;
-    overflow: hidden;
+    /*background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);*/
+    
+
+    /*background-image: linear-gradient(to top, #5f72bd 0%, #9b23ea 100%);*/
 }
+
 
 nav {
     position: relative;
-    width: 319px;
+    width: 1550px;
     display: table;
     margin: 0 auto;
+    background:#292929
     /*transform: translateY(10%);*/
 }
 
@@ -23,6 +48,7 @@ nav a {
     text-decoration: none;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-weight: bold;
+    font-size: xx-large;
     padding: 10px 20px;
     transition: 0.2s ease color;
 }
@@ -108,13 +134,13 @@ nav a:nth-child(4):hover ~ #indicator {
     background: linear-gradient(130deg, purple, palevioletred);
 }
 
-.card-img-top {
-    object-fit: cover;
-    height: 15rem;
+.card-image{
+    height:296px;
+    object-fit: scale-down;
 }
 
 .card-body {
-    height: 2rem;
+    height: 11rem;
 }
 
 /* 카드 그라데이션 */
@@ -122,9 +148,11 @@ nav a:nth-child(4):hover ~ #indicator {
     position: absolute;
     width: 100%;
     height: 100%;
-    background: linear-gradient(0deg, #FD9E9E 0%, #FDA790 10%, rgba(255, 255, 255, 0) 76.4%);
+    /*background: linear-gradient(0deg, rgba(255, 0, 186, 0.89) 0%, rgba(16, 9, 121, 0.8597689075630253) 35%, rgba(2, 0, 36, 0.4) 100%);*/
+
     border-radius: 4px;
 }
+
 .card span {
     letter-spacing: 3px;
     background-color: #FDA790;
@@ -132,12 +160,14 @@ nav a:nth-child(4):hover ~ #indicator {
     color: white;
     padding: 3px 10px;
 }
+
 .members {
     margin: 3px;
     padding: 2px 2px;
     width: 15px;
     height: 15px;
 }
+
 .card {
     position: relative;
     overflow: hidden;
@@ -149,7 +179,39 @@ nav a:nth-child(4):hover ~ #indicator {
     transform: scale(1.4);
 }
 
+.card title {
+    font-weight: bold;
+}
+.card-title{
+    font-weight: bold;
+
+}
+
 .card .card-image {
     width: 100%;
     transition: all 0.2s linear;
+}
+
+.container {
+    background: rgba(255, 255, 255, .5);
+    padding: 4rem;
+    border-radius: 10px;
+    position: relative;
+    height: 1000px;
+
+}
+.container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, .15);
+
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.container-fluid{
+    background:  #292929;
+    opacity: 0;
+
 }
