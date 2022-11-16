@@ -1,12 +1,14 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm
-from .models import Study, Comment, Accepted, StudyDate
+from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm, HoneyForm
+from .models import Study, Comment, Accepted, StudyDate, Honey
+
 from accounts.models import User
 import requests
 import json
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 
 # Create your views here.
 # 카카오톡 나에게 보내기 메시지 url
@@ -147,6 +149,9 @@ def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
     accepted = Accepted.objects.filter(study_id=study_pk)
     users = Accepted.objects.filter(users_id=user_pk)
+
+
+
     token = study.host.token
     if study.limits > len(accepted):
         for joined in users:
@@ -412,3 +417,60 @@ def test_calendar(request):
     print(request.POST)
     return render(request, 'reviews/test.html')
 
+def likes(request, study_pk, user_pk):
+    study = get_object_or_404(Study, pk=study_pk)
+    rated = get_object_or_404(get_user_model(), pk=user_pk)
+    rating = get_object_or_404(get_user_model(), pk=request.user.pk)
+    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+
+    if rated == request.user:
+        messages.warning(request, '본인을 평가할 수 없습니다.')
+
+    else:
+        if check:
+            honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)
+            if honey.like == True:
+                honey.delete()
+            else:
+                honey.dislike = False
+                honey.like = True
+                honey.save()
+        else:
+            honeyform = HoneyForm(request)
+            honey = honeyform.save(commit=False)
+            honey.study = study
+            honey.rating_user = rating
+            honey.rated_user = rated
+            honey.like = True
+            honey.save()
+
+    return redirect('reviews:userlist', study_pk)
+    
+def dislikes(request, study_pk, user_pk):
+    study = get_object_or_404(Study, pk=study_pk)
+    rated = get_object_or_404(get_user_model(), pk=user_pk)
+    rating = get_object_or_404(get_user_model(), pk=request.user.pk)
+    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+
+    if rated == request.user:
+        messages.warning(request, '본인을 평가할 수 없습니다.')
+
+    else:
+        if check:
+            honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)
+            if honey.dislike == True:
+                honey.delete()
+            else:
+                honey.dislike = True
+                honey.like = False
+                honey.save()
+        else:
+            honeyform = HoneyForm(request)
+            honey = honeyform.save(commit=False)
+            honey.study = study
+            honey.rating_user = rating
+            honey.rated_user = rated
+            honey.dislike = True
+            honey.save()
+
+    return redirect('reviews:userlist', study_pk)

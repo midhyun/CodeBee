@@ -21,18 +21,19 @@
 </head>
 
 <body>
-
-<nav id="bg">
-    <a href="#"><img src="{% static "logo_with.png" %}" height="60"></a>
+<div class="container-fluid" id="bg">
+<nav >
+    <a href="#"><img src="{% static "logo_white.png" %}" width="80"></a>
     <a href="#">HOME</a>
     <a href="#">CODING</a>
     <a href="#">GUITAR</a>
     <div id="indicator"></div>
 </nav>
+</div>
 {% block content %}
 
 {% endblock content %}
-<footer class="align-items-center no-gutters row" style="background:rgb(83, 83, 83); height:80px">
+<footer class="align-items-center no-gutters row" style="position:sticky; background:rgb(83, 83, 83); height:80px; bottom:0">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">
         <div class="justify-content-between no-gutters row">
