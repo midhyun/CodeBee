@@ -2,97 +2,142 @@
 {% load static %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
 {% endblock css %}
 
 {% block content %}
-<div>
-  <!-- 헤더 이미지 영역 -->
-  <header class="row head p-5 shadow-lg">
-    <div class="col-4">
-      <div class="d-flex justify-content-center align-items-center h-100">
-        {% if person.profile_picture %}
-        <img src="{{ person.profile_picture.url }}" alt="" class="rounded-circle border border-5">
-        {% else %}
-        <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
-        {% endif %}
-      </div>
-    </div>
-
-    <!-- 이름, 이메일, 깃허브 -->
-    <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
-      <p class="fw-bold">
-        {{ person.nickname }}
-      </p>
-      <p>
-        {% if person.email %}
-        {{ person.email }}
-        {% else %}
-        이메일이 존재하지 않습니다.
-        {% endif %}
-      </p>
-      <p>
-        깃허브
-      </p>
-    </div>
-  </header>
-</div>
-<div class="container">
-
-  <div class="tab-menu">
-    <button id="btn_1" class="btn btn-outline-light" style="background-color:rgb(153, 22, 240);">참여중 스터디</button>
-    <button id="btn_2" class="btn btn-primary">참여한 스터디</button>
-  </div>
-
-  <div id="tab-1" class="tab_1">
-    <section class="board">
-      <!-- 스터디 제목, 기간, 설명 -->
-      <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% for study in studies %}
-        <div class="col">
-          <div class="card h-100">
-            <a href="{% url 'reviews:detail' study.pk %}">
-              {% if study.image %}
-              <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-              {% else %}
-              <div class="card-img-top h-100"></div>
-              {% endif %}
-              <div class="card-body"></div>
-              <div class="card-grad">
-                <h5 class="card-title study-title p-3">{{ study.title }}</h5>
-                <div class="rounded-3 p-3 study-content">
-                  {{ study.content }}
-                </div>
-              </div>
-          </div>
-          </a>
+  <div>
+    <!-- 헤더 이미지 영역 -->
+    <header class="row head p-5 shadow-lg">
+      <div class="col-4">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          {% if person.profile_picture %}
+            <img src="{{ person.profile_picture.url }}" alt="" class="rounded-circle border border-5">
+          {% else %}
+            <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
+          {% endif %}
         </div>
-        {% endfor %}
       </div>
-  </div>
-  </section>
 
-  <div id="tab-2" class="tab_2 deactive p-5">
-    <!-- 참여한 스터디 -->
-    <section class="board">
-      {% for deactive in deactives %}
-      <p class="fw-bold fs-2">
-        <a href="{% url 'reviews:detail' deactive.pk %}" class="link">
-          {{ deactive.title }}
-          <span>
-            <img src="{% static 'accounts/image/next.png' %}" alt="" width="55px">
-          </span>
-        </a>
-      </p>
-      <p class="text-muted">{{ deactive.deadline}}</p>
-      {% if deactive.image %}
-      <img src="{{ deactive.image.url }}" alt="" class="my-3" width="300px">
-      {% endif %}
-      <p>너무 재미있었습니다!</p>
-      <hr class="my-5">
+      <!-- 이름, 이메일, 깃허브 -->
+      <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
+        <p class="fw-bold">
+          {{ person.nickname }}
+        </p>
+        <p>
+          {% if person.email %}
+            {{ person.email }}
+          {% else %}
+            이메일이 존재하지 않습니다.
+          {% endif %}
+        </p>
+        <p>
+          깃허브
+        </p>
+      </div>
+    </header>
   </div>
-  {% endfor %}
-  </section>
-  <script src="{% static '/accounts/js/detail.js'%}"></script>
 
-  {% endblock content %}
+  <div class="board">
+    <div class="wrapper">
+      <div class="tabs">
+        <div class="tab">
+          <input type="radio" name="css-tabs" id="tab-1" checked="checked" class="tab-switch">
+          <label for="tab-1" class="tab-label">진행 중 스터디</label>
+          <div class="tab-content">
+            <!-- 진행중 스터디 -->
+            <section class="">
+              <!-- 스터디 제목, 기간, 설명 -->
+              <div class="row row-cols-1 row-cols-md-4 g-4">
+                {% for study in studies %}
+                  <div class="col">
+                    {% if study.isactive %}
+                      <a href="{% url 'reviews:detail' study.pk %}">
+                        <div class="card border-0 shadow h-100">
+                          {% if study.image %}
+                            <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                          {% else %}
+                            <div class="card-img-top h-100"></div>
+                          {% endif %}
+                          <div class="card-body"></div>
+                          <div class="card-grad">
+                            <h5 class="card-title study-title p-3">{{ study.title }}</h5>
+                            <div class="rounded-3 p-2 content-box">
+                              <p class="study-content m-0">{{ study.content }}</p>
+                              <span class="border rounded-pill"><img src="{% static '/members.png' %}" alt="" class="members">{{ study.accepted.all|length }}/{{ study.limits }}</span>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  {% endif %}
+
+                {% endfor %}
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- 참여한 스터디 -->
+        <div class="tab">
+          <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
+          <label for="tab-2" class="tab-label">참여한 스터디</label>
+          <div class="tab-content">
+            <section class="">
+              {% for deactive in deactives %}
+                <div class="row d-flex">
+                  <div class="col-3 h-100">
+                    <a href="{% url 'reviews:detail' deactive.pk %}">
+                      {% if deactive.image %}
+                        <img src="{{ deactive.image.url }}" class="card-img-top" alt="스터디 대문사진">
+                      {% endif %}
+                    </a>
+                  </div>
+                  <div class="col-8">
+                    <div class="h-100">
+                      <p class="text-muted">모집마감일|{{ deactive.deadline }}</p>
+                      {% for comment in deactive.comment_set.all %}
+                        <!-- 작성자의 리뷰가 있을 경우 -->
+                        {% if comment.user == person %}
+                          <a href="{% url 'reviews:detail' deactive.pk %}">
+
+                            <div class="study-content yes-review shadow-sm hi">{{ comment.content }}
+                              <p class="created_at">
+                                <!-- 작성일자 : ~시간 전 표시 -->
+                                {% if comment.created_string == False %}
+                                  <!-- 7일이 지나면 날짜로 출력 -->
+                                  {{ comment.created_at|date:'m월 d일' }}
+                                {% else %}
+                                  <!-- 7일이 지나기 전이라면 함수 대입한 결과 -->
+                                  {{ comment.created_string }}
+                                {% endif %}
+                                작성된 리뷰입니다.
+                              </p>
+                            </div>
+                          </a>
+                        {% endif %}
+                        {% empty %}
+                        <div class="d-flex justify-content-center align-items-center none-review">
+                          <img src="{% static '/accounts/image/write.png' %}" width="42px;" alt="">
+                          <span class="text-muted">리뷰를 작성하지 않은 스터디입니다.</span>
+                          {% if user == person %}
+                            <a href="{% url 'reviews:detail' deactive.pk %}">
+                              <button class="creview">지금 작성하러 가기</button>
+                            </a>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}

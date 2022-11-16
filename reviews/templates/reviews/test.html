@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +6,46 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css">
+    <style>
+.tagify{    
+    width: 100%;
+    display: block;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    border-radius: 0.375rem;
+    transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  }
+    </style>
 </head>
 <body>
-    <iframe src="https://calendar.google.com/calendar/embed?src=f2f19500be912d05709de824fb500a6e46ed5c3d72d938b11c986ab4ce0226d1%40group.calendar.google.com&ctz=Asia%2FSeoul" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+  <!-- 구글 캘린더 iframe -->
+  <!-- <iframe src="https://calendar.google.com/calendar/embed?src=f2f19500be912d05709de824fb500a6e46ed5c3d72d938b11c986ab4ce0226d1%40group.calendar.google.com&ctz=Asia%2FSeoul" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe> -->
+  
+  <!-- 해시태그 -->
+    <form name="studyform" action="" method="POST">
+        {% csrf_token %}
+        <div>
+        <input class="form-control" name='tag' placeholder="#해시태그 #최대5개" type="hidden">
+        <button type="submit"></button>
+      </div>
+    </form>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+<script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+<script>
+var input = document.studyform.tag
+    new Tagify(input, {
+        maxTags : 5
+    })
+</script>
 </body>
 </html>

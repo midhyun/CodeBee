@@ -24,4 +24,12 @@
 {% endif %}
 {% endfor %}
 
+
+{% for member in members %}
+<p>{{member}}
+  <a href="{% url 'accounts:likes' member.pk %}">좋아요</a>
+  <a href="{% url 'accounts:dislikes' member.pk %}">싫어요</a>
+</p>
+{% endfor%}
+
 {% endblock content %}

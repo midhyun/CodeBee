@@ -149,6 +149,7 @@ class AuthForm(UserChangeForm):
         }
 
 
+
 class CustomPasswordChangeForm(PasswordChangeForm):
     def clean_new_password1(self):
         old_password = self.cleaned_data.get("old_password")

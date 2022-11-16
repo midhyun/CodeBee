@@ -24,6 +24,7 @@ from django.utils.encoding import force_bytes, force_text
 from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, redirect, get_object_or_404
+
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 
@@ -44,14 +45,21 @@ GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
 GITHUB_CLIENT_ID = os.getenv("GITHUB_CLIENT_ID")
 GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
+from reviews.models import Study, Accepted
+from django.contrib import messages
+from .models import User
+
+
 
 # 소셜 로그인에 필요한 토큰 생성
 state_token = secrets.token_urlsafe(32)
 
 # 테스트용 html 페이지
 def test(request):
+    members = User.objects.all()
     users = get_user_model().objects.order_by("-id")
     context = {
+        'members':members,
         "users": users,
     }
     return render(request, "accounts/test.html", context)
@@ -374,6 +382,7 @@ def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
     studies = []
     deactives = []
+    
     for accept in accepts:
         if accept.joined:
             studies.append(accept.study)
@@ -381,6 +390,7 @@ def detail(request, user_pk):
         if not study.isactive:
             deactives.append(study)
     person = get_object_or_404(get_user_model(), pk=user_pk)
+                 
     return render(
         request,
         "accounts/detail.html",
@@ -391,6 +401,38 @@ def detail(request, user_pk):
         },
     )
 
+def likes(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    if user == request.user:
+        messages.warning(request, '본인을 평가할 수 없습니다.')
+        
+    else:
+        if user.ls.filter(pk=request.user.pk):
+            user.ls.remove(request.user)
+            user.save()
+        else:
+            if user.ds.filter(pk=request.user.pk):
+                user.ds.remove(request.user)
+            user.ls.add(request.user)
+            user.save()
+    context ={}
+    return render(request, 'accounts/test2.html', context)
+
+def dislikes(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    if user == request.user:
+        messages.warning(request, '본인을 평가할 수 없습니다.')
+    else:
+        if user.ds.filter(pk=request.user.pk):
+            user.ds.remove(request.user)
+            user.save()
+        else:
+            if user.ls.filter(pk=request.user.pk):
+                user.ls.remove(request.user)
+            user.ds.add(request.user)
+            user.save()
+    context ={}
+    return render(request, 'accounts/test2.html', context)
 
 @login_required
 def password_change(request, user_pk):

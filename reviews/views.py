@@ -1,8 +1,8 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import StudyForm, CommentForm, AcceptedForm
-from .models import Study, Comment, Accepted
+from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm
+from .models import Study, Comment, Accepted, StudyDate
 from accounts.models import User
 import requests
 import json
@@ -27,26 +27,40 @@ def index(request):
 
 @login_required
 def create(request):
-    if request.method == "POST":
+    if request.method == 'POST':
+        tag = ''
+        temp = request.POST['tag']
+        tags = json.loads(temp)
+        print(type(tags))
+        for t in tags:
+            tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
-        if study_form.is_valid():
+        study_date = StudyDateForm(request.POST)
+        if study_form.is_valid() and study_date.is_valid():
             study = study_form.save(commit=False)
-            study.categorie = request.POST["categorie"]
-            study.study_type = request.POST["study_type"]
-            study.location_type = request.POST["location_type"]
-            study.location = request.POST["location"]
-            study.X = request.POST["X"]
-            study.Y = request.POST["Y"]
+            study.categorie = request.POST['categorie']
+            study.study_type = request.POST['study_type']
+            study.location_type = request.POST['location_type']
+            study.location = request.POST['location']
+            study.X = request.POST['X']
+            study.Y = request.POST['Y']
+            study.tag = tag
             study.host = request.user
-            study.deadline = request.POST["deadline"]
             study.save()
+            date = study_date.save(commit=False)
+            date.study = study
+            date.save()
             Aform = Accepted(joined=True, study=study, users=study.host)
             Aform.save()
             return redirect("reviews:index")
     else:
         study_form = StudyForm()
-    context = {"study_form": study_form}
-    return render(request, "reviews/form.html", context)
+        study_date = StudyDateForm()
+    context = {
+        'study_form': study_form,
+        'study_date': study_date,
+    }
+    return render(request, 'reviews/form.html', context)
 
 
 def detail(request, study_pk):
@@ -86,11 +100,13 @@ def userlist(request, study_pk):
 @login_required
 def update(request, study_pk):
     study = Study.objects.get(pk=study_pk)
+    date = StudyDate.objects.filter(study_id=study_pk)
     if study.isactive:
         if request.user == study.host:
             if request.method == "POST":
                 study_form = StudyForm(request.POST, request.FILES, instance=study)
-                if study_form.is_valid():
+                study_date = StudyDateForm(request.POST, instance=date[0])
+                if study_form.is_valid() and study_date.is_valid():
                     study = study_form.save(commit=False)
                     study.categorie = request.POST["categorie"]
                     study.study_type = request.POST["study_type"]
@@ -102,11 +118,18 @@ def update(request, study_pk):
                     study.host = request.user
                     study.save()
                     study_form.save()
-                    return redirect("reviews:detail", study_pk)
+                    date_ = study_date.save(commit=False)
+                    date_.study = study
+                    date_.save()
+                    return redirect('reviews:detail', study_pk)
             else:
                 study_form = StudyForm(instance=study)
-            context = {"study_form": study_form}
-            return render(request, "reviews/form.html", context)
+                study_date = StudyDateForm(instance=date[0])
+            context = {
+                'study_form': study_form,
+                'study_date': study_date,
+                }
+            return render(request, 'reviews/form.html', context)
         else:
             return redirect("reviews:detail", study_pk)
 
@@ -134,52 +157,47 @@ def join(request, study_pk, user_pk):
             Aform = Accepted(joined=False, study=study, users=request.user)
             Aform.save()
             accepted_now = Accepted.objects.filter(study_id=study_pk)
-            try:
-                image_url = study.image.url
-            except:
-                image_url = "https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png"
-            data = {
-                "template_object": json.dumps(
-                    {
-                        "object_type": "feed",
-                        "content": {
-                            "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
-                            "description": "신청을 승인해주세요!",
-                            "image_url": f"{image_url}",
-                            # "image_url": f"http://localhost:8000{image_url}",
-                            "image_width": 800,
-                            "image_height": 550,
-                            "link": {
-                                "web_url": "http://localhost:8000",
-                                "mobile_web_url": "http://localhost:8000",
-                                "android_execution_params": "contentId=100",
-                                "ios_execution_params": "contentId=100",
-                            },
-                        },
-                        "buttons": [
-                            {
-                                "title": "웹으로 이동",
-                                "link": {
-                                    "web_url": "http://localhost:8000",
-                                    "mobile_web_url": "http://localhost:8000",
-                                },
-                            },
-                            {
-                                "title": "앱으로 이동",
-                                "link": {
-                                    "android_execution_params": "contentId=100",
-                                    "ios_execution_params": "contentId=100",
-                                },
-                            },
-                        ],
+            if token:
+                try: image_url = study.image.url
+                except: image_url = 'https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png'
+                data = {"template_object": json.dumps({
+                "object_type": "feed",
+                "content": {
+                    "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
+                    "description": "신청을 승인해주세요!",
+                    "image_url": f"{image_url}",
+                    # "image_url": f"http://localhost:8000{image_url}",
+                    "image_width": 800,
+                    "image_height": 550,
+                    "link": {
+                        "web_url": "http://localhost:8000",
+                        "mobile_web_url": "http://localhost:8000",
+                        "android_execution_params": "contentId=100",
+                        "ios_execution_params": "contentId=100"
                     }
-                )
-            }
-            headers = {"Authorization": "Bearer " + token}
-            response = requests.post(url, headers=headers, data=data)
-            print(str(response.json()))
-            messages.success(request, "가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.")
-            return redirect("reviews:detail", study_pk)
+                },
+                "buttons": [
+                    {
+                        "title": "웹으로 이동",
+                        "link": {
+                            "web_url": "http://localhost:8000",
+                            "mobile_web_url": "http://localhost:8000"
+                        }
+                    },
+                    {
+                        "title": "앱으로 이동",
+                        "link": {
+                            "android_execution_params": "contentId=100",
+                            "ios_execution_params": "contentId=100"
+                        }
+                    }
+                ]
+                })}
+                headers={"Authorization" : "Bearer " + token}
+                response = requests.post(url, headers=headers, data=data)
+                print(str(response.json()))
+            messages.success(request, '가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.')
+            return redirect('reviews:detail', study_pk)
     else:
         messages.success(request, "모집인원이 가득 찬 그룹입니다.")
         return redirect("reviews:detail", study_pk)
@@ -391,4 +409,6 @@ def comment_delete(request, pk, comment_pk):
 
 # Google Calendar Test
 def test_calendar(request):
-    return render(request, "reviews/test.html")
+    print(request.POST)
+    return render(request, 'reviews/test.html')
+

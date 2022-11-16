@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% for member in members %}
+<div>
+  <a href="{% url 'accounts:like' member.pk %}">{{member}}</a>
+</div>
+{% endfor%}
+
+{% endblock content %}
