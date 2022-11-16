@@ -75,12 +75,7 @@
           <input onclick="searchPlaces()" class="btn btn-primary" type="button" id="button-addon2" value="검색하기">
         </div>
         {% bootstrap_form study_form %}
-        <div class="mb-3"><label class="form-label" for="id_deadline">모집 마감일</label><input type="datetime-local"
-          name="deadline" class="form-control" placeholder="모집 마감일" required="" id="id_deadline" value=""></div>
-        <div class="mb-3"><label class="form-label" for="id_study_at">스터디 시작일</label><input type="datetime-local"
-          name="study_at" class="form-control" placeholder="스터디 시작일" required="" id="id_study_at"></div>
-        <div class="mb-3"><label class="form-label" for="id_study_end">스터디 종료일</label><input type="datetime-local"
-            name="study_end" class="form-control" placeholder="스터디 종료일" required="" id="id_study_end"></div>
+        {% bootstrap_form study_date %}
         <input name="X" type="hidden" value="">
         <input name="Y" type="hidden" value="">
         <div class="mb-3"><label for="id_tag" class="form-label">태그 작성</label>

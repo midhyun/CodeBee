@@ -2,15 +2,34 @@
 
 {% block content %}
 
-<h1>test</h1>
+<h1 class="text-center">이 페이지는 accounts 앱의 테스트 페이지 입니다.</h1>
+<h3 class="text-center">지금 로그인 되어있는 유저와 모든 유저목록이 표시되는 페이지 입니다.</h3>
 {% for user in users %}
 {% if user == request.user %}
-<h5>{{ user }}</h5>
+<h5>지금 로그인 되어있는 유저 : {{ user.username }}</h5>
 <a href="{% url 'accounts:logout' %}" class="btn btn-primary">로그아웃</a>
 <a href="{% url 'accounts:update' user.pk %}" class="btn btn-primary">내정보 수정</a>
+<div>
+  <a href="https://github.com/{{ user.git_username }}/">
+    <img src="https://github-readme-stats.vercel.app/api/top-langs/?username={{ user.git_username }}&layout=compact">
+  </a>
+</div>
+<div>
+  <a href="https://solved.ac/{{ user.boj_username }}" target="_blank">
+    <img src="http://mazassumnida.wtf/api/generate_badge?boj={{ user.boj_username }}">
+  </a>
+</div>
 {% else %}
-<p>{{ user }}</p>
+<p class="m-0">모든 유저 목록 : {{ user }}</p>
 {% endif %}
 {% endfor %}
+
+
+{% for member in members %}
+<p>{{member}}
+  <a href="{% url 'accounts:likes' member.pk %}">좋아요</a>
+  <a href="{% url 'accounts:dislikes' member.pk %}">싫어요</a>
+</p>
+{% endfor%}
 
 {% endblock content %}
