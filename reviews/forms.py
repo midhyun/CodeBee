@@ -1,5 +1,5 @@
 from django import forms
-from .models import Comment,Study, Accepted, Honey
+from .models import Study, StudyDate, Accepted, Comment, Honey
 
 
 LOCATION_TYPE_CHOICE = (
@@ -19,16 +19,42 @@ class StudyForm(forms.ModelForm):
             'limits',
             'content',
             'image',
+            'deadline',
         ]
         labels = {
             'title': "스터디명",
             'limits': '최대 참여',
             'content': '스터디 소개',
             'image': '이미지',
+            'deadline': '모집 마감일',
         }
         widgets = {
             'location_type': forms.Select(choices=LOCATION_TYPE_CHOICE),
-            'study_type': forms.Select(choices=STUDY_TYPE_CHOICE),
+
+            'study_type' : forms.Select(choices=STUDY_TYPE_CHOICE),
+            'deadline': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),      
+        }
+
+class StudyDateForm(forms.ModelForm):
+    class Meta:
+        model = StudyDate
+        fields = ['study_at', 'study_end',]
+        labels = {
+            'study_at': '스터디 시작일',
+            'study_end': '스터디 종료일',
+        }
+        widgets = {
+            'study_at': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),
+            'study_end': forms.DateTimeInput(attrs={
+                'class': 'form-control',
+                'type': 'datetime-local'
+            }),        
         }
 
 class AcceptedForm(forms.ModelForm):
