@@ -63,8 +63,6 @@ class User(AbstractUser):
         blank=True,
         null=True,
     )
-    likes = models.ManyToManyField("self", symmetrical=False, related_name="ls")
-    dislikes = models.ManyToManyField("self", symmetrical=False, related_name="ds")
     # 닉네임 20자 제한
     nickname = models.CharField(max_length=20)
     location = models.CharField(max_length=100, blank=True)
