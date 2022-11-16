@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+
+{% block content %}
+
+<div class="container">
+  <h1 class="text-center">인증에 실패하였습니다.</h1>
+  <p class="text-center">관리자에게 문의하세요.</p>
+  <a href="{% url 'accounts:test' %}" class="text-center">메인 페이지로 가기</a>
+</div>
+
+{% endblock content %}

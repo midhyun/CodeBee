@@ -20,6 +20,12 @@ urlpatterns = [
     path('dislikes/<int:user_pk>/', views.dislikes, name='dislikes'),
     path("<int:user_pk>/password/", views.password_change, name="password-change"),
     path("<int:user_pk>/update/check/", views.check, name="check"),
-    path("<int:user_pk>/update/phone_auth/", views.phone_auth, name="phone-auth"),
-    path("<int:user_pk>/update/check_auth/", views.check_auth, name="check_auth"),
+    path("<int:user_pk>/update/phone-auth/", views.phone_auth, name="phone-auth"),
+    path("<int:user_pk>/update/check-auth/", views.check_auth, name="check-auth"),
+    path("<int:user_pk>/update/send-email/", views.send_email, name="send-email"),
+    re_path(
+        r"^([a-zA-Z0-9][^/]+)/([a-zA-Z0-9][^/]+)/$",
+        views.check_email_auth,
+        name="check-email-auth",
+    ),
 ]

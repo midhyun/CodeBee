@@ -1,11 +1,17 @@
+import os
+import time
+import hmac
+import base64
+import hashlib
+import requests
 from django.db import models
+from dotenv import load_dotenv
 from imagekit.processors import ResizeToFill
 from imagekit.models import ProcessedImageField
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinLengthValidator, MaxLengthValidator
-from django.conf import settings
 from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 
 def input_only_number(value):
@@ -24,21 +30,21 @@ class TimeStampedModel(models.Model):
 class User(AbstractUser):
     username = models.CharField(
         error_messages={"unique": "같은 아이디가 이미 존재합니다."},
-        max_length=16,
         unique=True,
+        max_length=16,
         validators=[UnicodeUsernameValidator()],
         verbose_name="아이디",
     )
-    fullname = models.CharField(max_length=20, blank=True)
+    nickname = models.CharField(max_length=20, blank=True)
     phone = models.CharField(
         max_length=13,
         validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
         blank=True,
         null=True,
     )
-    nickname = models.CharField(max_length=20, blank=True)
-    location = models.CharField(max_length=100, blank=True)
-    detail_location = models.CharField(max_length=30, blank=True)
+    fullname = models.CharField(max_length=20, blank=True)
+    address = models.CharField(max_length=100)
+    detail_address = models.CharField(max_length=30)
     profile_picture = ProcessedImageField(
         upload_to="profile_pictures/",
         blank=True,
@@ -63,6 +69,8 @@ class User(AbstractUser):
     nickname = models.CharField(max_length=20)
     location = models.CharField(max_length=100, blank=True)
     # 소셜 아이디 관련 필드
+    git_username = models.CharField(null=True, blank=True, max_length=50)
+    boj_username = models.CharField(null=True, blank=True, max_length=50)
     social_id = models.CharField(null=True, max_length=100)
     is_social_account = models.BooleanField(default=False)
     social_profile_picture = models.CharField(
@@ -72,21 +80,17 @@ class User(AbstractUser):
     is_email_active = models.BooleanField(default=False)
     token = models.CharField(max_length=150, null=True, blank=True)
 
-    @property
-    def full_name(self):
-        return f"{self.last_name}{self.first_name}"
 
-
-import time
-import hmac
-import base64
-import hashlib
-import requests
+load_dotenv()
 
 
 class AuthPhone(TimeStampedModel):
     phone = models.IntegerField()
     auth_number = models.IntegerField()
+
+    NAVER_CLOUD_ACCESS_KEY = os.getenv("NAVER_CLOUD_ACCESS_KEY")
+    NAVER_CLOUD_SECRET_KEY = os.getenv("NAVER_CLOUD_SECRET_KEY")
+    NAVER_CLOUD_SERVICE_ID = os.getenv("NAVER_CLOUD_SERVICE_ID")
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -94,10 +98,9 @@ class AuthPhone(TimeStampedModel):
 
     def send_sms(self):
         timestamp = str(int(time.time() * 1000))
-        access_key = "uuLXZ69D3OHR1C98uyyF"  # 배포시 보안 적용 필수
-        secret_key = "VlJmCGao0WOsJ9oPl8u3C2esuK6s6wmrdRqAImR7"  # 배포시 보안 적용 필수
-        secret_key = bytes(secret_key, "UTF-8")
-        service_id = "ncp:sms:kr:295990079948:codebee"  # 배포시 보안 적용 필수
+        access_key = self.NAVER_CLOUD_ACCESS_KEY
+        secret_key = bytes(self.NAVER_CLOUD_SECRET_KEY, "UTF-8")
+        service_id = self.NAVER_CLOUD_SERVICE_ID
         method = "POST"
         uri = f"/sms/v2/services/{service_id}/messages"
         message = method + " " + uri + "\n" + timestamp + "\n" + access_key
