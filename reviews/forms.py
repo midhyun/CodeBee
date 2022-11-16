@@ -1,5 +1,5 @@
 from django import forms
-from .models import Comment,Study, Accepted
+from .models import Comment,Study, Accepted, Honey
 
 
 LOCATION_TYPE_CHOICE = (
@@ -47,3 +47,8 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'comment_content': forms.TextInput(attrs={'placeholder': '댓글작성', 'style': 'width:400px;'}),
         }
+
+class HoneyForm(forms.ModelForm):
+    class Meta:
+        model = Honey
+        fields = ['like', 'dislike']
