@@ -28,6 +28,7 @@ class TimeStampedModel(models.Model):
 
 
 class User(AbstractUser):
+    # 필수 항목 필드
     username = models.CharField(
         error_messages={"unique": "같은 아이디가 이미 존재합니다."},
         unique=True,
@@ -35,50 +36,53 @@ class User(AbstractUser):
         validators=[UnicodeUsernameValidator()],
         verbose_name="아이디",
     )
-    nickname = models.CharField(max_length=20, blank=True)
+    # 선택 항목 필드
+    fullname = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+    )
+    nickname = models.CharField(
+        max_length=20,
+        null=True,
+        blank=True,
+    )
     phone = models.CharField(
         max_length=13,
         validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
-        blank=True,
         null=True,
+        blank=True,
     )
-    fullname = models.CharField(max_length=20, blank=True)
-    address = models.CharField(max_length=100)
-    detail_address = models.CharField(max_length=30)
     profile_picture = ProcessedImageField(
         upload_to="profile_pictures/",
-        blank=True,
         null=True,
+        blank=True,
         processors=[ResizeToFill(128, 128)],
         format="JPEG",
         options={
             "quality": 30,
         },
     )
-    # url 형식으로 받아와야 함
-    social_profile_picture = models.CharField(null=True, max_length=150)
-    phone = models.CharField(
-        max_length=13,
-        validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
-        blank=True,
-        null=True,
-    )
+    address = models.CharField(max_length=100)
+    detail_address = models.CharField(max_length=30)
+    # 다른 유저와 상호작용 필드
     likes = models.ManyToManyField("self", symmetrical=False, related_name="ls")
     dislikes = models.ManyToManyField("self", symmetrical=False, related_name="ds")
-    # 닉네임 20자 제한
-    nickname = models.CharField(max_length=20)
-    location = models.CharField(max_length=100, blank=True)
     # 소셜 아이디 관련 필드
+    is_social_account = models.BooleanField(default=False)
     git_username = models.CharField(null=True, blank=True, max_length=50)
     boj_username = models.CharField(null=True, blank=True, max_length=50)
-    social_id = models.CharField(null=True, max_length=100)
-    is_social_account = models.BooleanField(default=False)
-    social_profile_picture = models.CharField(
-        null=True, max_length=150
-    )  # >>> url 형식으로 받아와야 함
+    social_id = models.CharField(null=True, blank=True, max_length=100)
+    social_profile_picture = models.CharField(null=True, blank=True, max_length=150)
+    # 인증 필드
     is_phone_active = models.BooleanField(default=False)
     is_email_active = models.BooleanField(default=False)
     token = models.CharField(max_length=150, null=True, blank=True)
+    g_token = models.CharField(max_length=150, null=True, blank=True)
+
+    @property
+    def full_name(self):
+        return f"{self.last_name}{self.first_name}"
 
 
 load_dotenv()
@@ -123,3 +127,9 @@ class AuthPhone(TimeStampedModel):
         }
         # 여기서 인증번호가 보내짐
         requests.post(url, json=data, headers=headers)
+
+class UserToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='usertoken')
+    service_name = models.CharField(max_length=10)
+    token = models.CharField(max_length=300)
+    re_token = models.CharField(max_length=300, null=True)

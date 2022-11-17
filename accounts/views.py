@@ -9,7 +9,8 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from .models import AuthPhone
+from .models import AuthPhone, User, UserToken
+from django.views import View
 from dotenv import load_dotenv
 from django.http import JsonResponse
 from pjt.settings import EMAIL_HOST_USER
@@ -47,8 +48,6 @@ GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
 from reviews.models import Study, Accepted
 from django.contrib import messages
-from .models import User
-
 
 
 # 소셜 로그인에 필요한 토큰 생성
@@ -59,7 +58,7 @@ def test(request):
     members = User.objects.all()
     users = get_user_model().objects.order_by("-id")
     context = {
-        'members':members,
+        "members": members,
         "users": users,
     }
     return render(request, "accounts/test.html", context)
@@ -181,6 +180,7 @@ def social_login_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
+        print(u_info)
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -251,13 +251,11 @@ def social_login_callback(request, service_name):
         user = get_user_model()()
         uid = user_info["social_id"]
         user.social_id = uid
-        user.username = (
-            user_info["username"]
-            if service_name == "github"
-            else f"{service_name}#{uid}"
-        )
+        user.username = f"{service_name}#{uid}"
         user.social_profile_picture = user_info["social_profile_picture"]
-        user.nickname = user_info["nickname"]
+        user.nickname = (
+            user_info["nickname"] if user_info["nickname"] else user_info["username"]
+        )
         user.email = user_info["email"]
         user.phone = user_info["phone"]
         user.set_password(str(state_token))
@@ -377,12 +375,11 @@ def index(request):
         },
     )
 
-
 def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
     studies = []
     deactives = []
-    
+
     for accept in accepts:
         if accept.joined:
             studies.append(accept.study)
@@ -390,7 +387,7 @@ def detail(request, user_pk):
         if not study.isactive:
             deactives.append(study)
     person = get_object_or_404(get_user_model(), pk=user_pk)
-                 
+
     return render(
         request,
         "accounts/detail.html",
@@ -401,11 +398,12 @@ def detail(request, user_pk):
         },
     )
 
+
 def likes(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if user == request.user:
-        messages.warning(request, '본인을 평가할 수 없습니다.')
-        
+        messages.warning(request, "본인을 평가할 수 없습니다.")
+
     else:
         if user.ls.filter(pk=request.user.pk):
             user.ls.remove(request.user)
@@ -415,13 +413,14 @@ def likes(request, user_pk):
                 user.ds.remove(request.user)
             user.ls.add(request.user)
             user.save()
-    context ={}
-    return render(request, 'accounts/test2.html', context)
+    context = {}
+    return render(request, "accounts/test2.html", context)
+
 
 def dislikes(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if user == request.user:
-        messages.warning(request, '본인을 평가할 수 없습니다.')
+        messages.warning(request, "본인을 평가할 수 없습니다.")
     else:
         if user.ds.filter(pk=request.user.pk):
             user.ds.remove(request.user)
@@ -431,8 +430,9 @@ def dislikes(request, user_pk):
                 user.ls.remove(request.user)
             user.ds.add(request.user)
             user.save()
-    context ={}
-    return render(request, 'accounts/test2.html', context)
+    context = {}
+    return render(request, "accounts/test2.html", context)
+
 
 @login_required
 def password_change(request, user_pk):
@@ -519,7 +519,7 @@ def check_auth(request, user_pk):
 
 
 # 이메일 인증 메일 생성
-def active_mail(domain, uidb64, token):
+def active_mail(domain, uidb64, token, email_address):
     html_test = f"""\
 <!DOCTYPE html>
 <html lang="ko">
@@ -532,7 +532,7 @@ def active_mail(domain, uidb64, token):
 <body>    
 <h1>[코드비 회원 인증]</h1>
 <h3>아래 버튼을 클릭하면 인증이 완료됩니다.</h3>
-<form action="http://{domain}/accounts/{uidb64}/{token}/">
+<form action="http://{domain}/accounts/{uidb64}/{token}/{email_address}/">
 <input type="submit" style="text-decoration: none; width: 100px; height: 40px; border-radius: 1rem;" value="인증하기">
 </form>
 </body>
@@ -547,7 +547,8 @@ def send_email(request, user_pk):
     email_address = request.POST["email_address"]
     domain = get_current_site(request).domain
     uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
-    email_data = active_mail(domain, uidb64, state_token)
+    uemailb64 = urlsafe_base64_encode(force_bytes(email_address))
+    email_data = active_mail(domain, uidb64, state_token, uemailb64)
     email = EmailMultiAlternatives(
         "[코드비] 회원 이메일 인증", "", f"CodeBee <{EMAIL_HOST_USER}>", [email_address]
     )
@@ -560,10 +561,12 @@ def send_email(request, user_pk):
 
 
 # 인증 메일 확인
-def check_email_auth(request, uidb64, token):
+def check_email_auth(request, uidb64, token, uemailb64):
     user_pk = force_text(urlsafe_base64_decode(uidb64))
+    email_address = force_text(urlsafe_base64_decode(uemailb64))
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if token == state_token:
+        user.email = email_address
         user.is_email_active = True
         user.save()
         context = {
