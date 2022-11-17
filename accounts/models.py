@@ -47,6 +47,12 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
+    email = models.EmailField(
+        null=True,
+        blank=True,
+        max_length=254,
+        verbose_name="이메일 주소",
+    )
     phone = models.CharField(
         max_length=13,
         validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
@@ -72,6 +78,7 @@ class User(AbstractUser):
     is_social_account = models.BooleanField(default=False)
     git_username = models.CharField(null=True, blank=True, max_length=50)
     boj_username = models.CharField(null=True, blank=True, max_length=50)
+    service_name = models.CharField(null=True, max_length=20)
     social_id = models.CharField(null=True, blank=True, max_length=100)
     social_profile_picture = models.CharField(null=True, blank=True, max_length=150)
     # 인증 필드
@@ -83,6 +90,9 @@ class User(AbstractUser):
     @property
     def full_name(self):
         return f"{self.last_name}{self.first_name}"
+
+    def __str__(self):
+        return self.username
 
 
 load_dotenv()

@@ -4,6 +4,7 @@ import requests
 from .forms import (
     AuthForm,
     AddressForm,
+    SNSUserSignupForm,
     CustomUserChangeForm,
     CustomUserCreationForm,
     CustomPasswordChangeForm,
@@ -13,6 +14,7 @@ from .models import AuthPhone, User, UserToken
 from django.views import View
 from dotenv import load_dotenv
 from django.http import JsonResponse
+from django.shortcuts import resolve_url
 from pjt.settings import EMAIL_HOST_USER
 from reviews.models import Study, Accepted
 from django.contrib.auth import get_user_model
@@ -57,14 +59,16 @@ state_token = secrets.token_urlsafe(32)
 def test(request):
     members = User.objects.all()
     users = get_user_model().objects.order_by("-id")
+    service_name = request.user.service_name if request.user.is_authenticated else None
     context = {
+        "service_name": service_name,
         "members": members,
         "users": users,
     }
     return render(request, "accounts/test.html", context)
 
 
-def social_login_request(request, service_name):
+def social_signup_request(request, service_name):
     google_base_url = "https://www.googleapis.com/auth"
     google_email = "/userinfo.email"
     google_myinfo = "/userinfo.profile"
@@ -75,13 +79,13 @@ def social_login_request(request, service_name):
             "redirect_uri": "http://localhost:8000/accounts/login/kakao/callback",
             "response_type": "code",
         },
-        "naver": {
-            "base_url": "https://nid.naver.com/oauth2.0/authorize",
-            "client_id": NAVER_CLIENT_ID,
-            "redirect_uri": "http://localhost:8000/accounts/login/naver/callback",
-            "response_type": "code",
-            "state": state_token,
-        },
+        # "naver": {
+        #     "base_url": "https://nid.naver.com/oauth2.0/authorize",
+        #     "client_id": NAVER_CLIENT_ID,
+        #     "redirect_uri": "http://localhost:8000/accounts/login/naver/callback",
+        #     "response_type": "code",
+        #     "state": state_token,
+        # },
         "google": {
             "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
             "client_id": GOOGLE_CLIENT_ID,
@@ -104,7 +108,7 @@ def social_login_request(request, service_name):
     return redirect(res)
 
 
-def social_login_callback(request, service_name):
+def social_signup_callback(request, service_name):
     services = {
         "kakao": {
             "data": {
@@ -155,23 +159,24 @@ def social_login_callback(request, service_name):
         headers = {
             "accept": "application/json",
         }
-        access_token = requests.post(
+        token = requests.post(
             services[service_name]["api"],
             data=services[service_name]["data"],
             headers=headers,
-        ).json()["access_token"]
+        ).json()
     else:
-        access_token = requests.post(
+        token = requests.post(
             services[service_name]["api"], data=services[service_name]["data"]
-        ).json()["access_token"]
-
+        ).json()
+    # ================================== 액세스 토큰 발급 ==================================
+    access_token = token["access_token"]
+    # ================================== 액세스 토큰 발급 ==================================
     payload = {
         "kakao": {"Authorization": f"bearer ${access_token}"},
         "naver": {"Authorization": f"bearer {access_token}"},
         "google": {"access_token": f"{access_token}"},
         "github": {"Authorization": f"token {access_token}"},
     }
-
     if service_name == "google":
         params = payload[service_name]
         u_info = requests.get(services[service_name]["user_api"], params=params).json()
@@ -194,35 +199,27 @@ def social_login_callback(request, service_name):
                 "phone": None,
             },
         }
-    elif service_name == "naver":
-        login_data = {
-            "naver": {
-                "social_id": u_info["response"]["id"],
-                "username": u_info["response"]["nickname"],
-                "social_profile_picture": u_info["response"]["profile_image"]
-                if "profile_image" in u_info["response"]
-                else None,
-                "nickname": u_info["response"]["name"]
-                if "name" in u_info["response"]
-                else None,
-                "email": u_info["response"]["email"]
-                if "email" in u_info["response"]
-                else None,
-                "phone": u_info["response"]["mobile"]
-                if "mobile" in u_info["response"]
-                else None,
-            },
-        }
+    # elif service_name == "naver":
+    #     login_data = {
+    #         "naver": {
+    #             "social_id": u_info["response"]["id"],
+    #             "username": u_info["response"]["nickname"],
+    #             "social_profile_picture": u_info["response"]["profile_image"]
+    #             "nickname": u_info["response"]["name"]
+    #             "email": u_info["response"]["email"]
+    #             "phone": u_info["response"]["mobile"]
+    #         },
+    #     }
     elif service_name == "google":
         login_data = {
             "google": {
                 "social_id": u_info["sub"],
-                "username": u_info["name"],
+                "username": u_info["given_name"],
                 "social_profile_picture": u_info["picture"]
-                if u_info["picture"]
+                if "picture" in u_info
                 else None,
-                "nickname": u_info["name"] if u_info["name"] else None,
-                "email": u_info["email"] if u_info["email"] else None,
+                "nickname": u_info["given_name"],
+                "email": u_info["email"],
                 "phone": None,
             },
         }
@@ -231,11 +228,9 @@ def social_login_callback(request, service_name):
             "github": {
                 "social_id": u_info["id"],
                 "username": u_info["login"],
-                "social_profile_picture": u_info["avatar_url"]
-                if u_info["avatar_url"]
-                else None,
-                "nickname": u_info["bio"] if u_info["bio"] else None,
-                "email": u_info["email"] if u_info["email"] else None,
+                "social_profile_picture": u_info["avatar_url"],
+                "nickname": u_info["bio"],
+                "email": u_info["email"],
                 "phone": None,
                 ### 깃허브에서만 가져오는 항목 ###
                 "git_username": u_info["login"],
@@ -243,39 +238,92 @@ def social_login_callback(request, service_name):
             },
         }
     user_info = login_data[service_name]
-    if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
-        user = get_user_model().objects.get(social_id=user_info["social_id"])
-        user.token = access_token
-        user.save()
-    else:
-        user = get_user_model()()
-        uid = user_info["social_id"]
-        user.social_id = uid
-        user.username = f"{service_name}#{uid}"
-        user.social_profile_picture = user_info["social_profile_picture"]
-        user.nickname = (
-            user_info["nickname"] if user_info["nickname"] else user_info["username"]
-        )
-        user.email = user_info["email"]
-        user.phone = user_info["phone"]
-        user.set_password(str(state_token))
-        user.is_social_account = True
+    # if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
+    # user = get_user_model().objects.get(social_id=user_info["social_id"])
+    # user.token = access_token
+    # user.save()
+    # else:
+    social_data = {
+        # 소셜 서비스 구분
+        "social_id": str(user_info["social_id"]),
+        "service_name": service_name,
+        "is_social_account": True,
         # 유저 토큰 가져오기
-        user.token = access_token
+        "token": access_token,
+    }
+    data = {
+        # 일반 정보
+        "social_profile_picture": user_info["social_profile_picture"],
+        "nickname": user_info["nickname"],
+        "email": user_info["email"],
+        "phone": user_info["phone"],
         # 깃허브에서만 가져오는 항목
-        user.git_username = u_info["login"] if service_name == "github" else None
-        user.save()
-        user = get_user_model().objects.get(social_id=user_info["social_id"])
-    user_login(request, user)
-    return redirect(request.GET.get("next") or "accounts:test")
+        "git_username": (u_info["login"] if service_name == "github" else None),
+    }
+    signup_form = CustomUserCreationForm(initial=data)
+    sns_signup_form = SNSUserSignupForm(initial=social_data)
+    signup_form.fields["phone"].widget.attrs["maxlength"] = 11
+    address_form = AddressForm()
+    context = {
+        "signup_form": signup_form,
+        "address_form": address_form,
+        "sns_signup_form": sns_signup_form,
+    }
+    return render(request, "accounts/signup.html", context)
+
+
+# 소셜로그인 연결 끊기
+def sns_withdrawal(request, service_name):
+    social_id = request.user.social_id
+    user = get_object_or_404(get_user_model(), social_id=social_id)
+    access_token = user.token
+    services = {
+        "kakao": {
+            "url": "https://kapi.kakao.com/v1/user/unlink",
+            "headers": {"Authorization": f"Bearer ${access_token}"},
+        },
+        "google": {
+            "url": "https://oauth2.googleapis.com/revoke",
+            "params": {"token": f"{access_token}"},
+        },
+    }
+    data = "headers" if service_name == "kakao" else "params"
+    try:
+        requests.post(
+            services[service_name]["url"], data=services[service_name][f"{data}"]
+        )
+        user.delete()
+        context = {
+            "success": "success",
+            "msg": "정상적으로 해지되었습니다.",
+        }
+    except Exception:
+        context = {
+            "error": "에러가 발생했습니다.",
+            "error": Exception,
+        }
+    return render(request, "accounts/sns-disconnect.html", context)
 
 
 def signup(request):
     if request.method == "POST":
         signup_form = CustomUserCreationForm(request.POST, request.FILES)
+        sns_signup_form = SNSUserSignupForm(request.POST)
         address_form = AddressForm(request.POST)
         if signup_form.is_valid() and address_form.is_valid():
             user = signup_form.save(commit=False)
+            # 소셜 서비스 구분
+            user.social_id = (
+                request.POST["social_id"] if "social_id" in request.POST else None
+            )
+            user.service_name = (
+                request.POST["service_name"] if "service_name" in request.POST else None
+            )
+            user.is_social_account = (
+                True if "is_social_account" in request.POST else False
+            )
+            # 유저 토큰
+            user.token = request.POST["token"] if "token" in request.POST else None
             # 주소
             user.address = request.POST["address"]
             user.detail_address = request.POST["detail_address"]
@@ -532,8 +580,8 @@ def active_mail(domain, uidb64, token, email_address):
 <body>    
 <h1>[코드비 회원 인증]</h1>
 <h3>아래 버튼을 클릭하면 인증이 완료됩니다.</h3>
-<form action="http://{domain}/accounts/{uidb64}/{token}/{email_address}/">
-<input type="submit" style="text-decoration: none; width: 100px; height: 40px; border-radius: 1rem;" value="인증하기">
+<form action="http://{domain}/accounts/{uidb64}/update/send-email/{token}/{email_address}/email-auth/">
+<input type="submit" style="text-decoration: none; width: 7rem; height: 2rem; border-radius: 0.5rem;" value="인증하기">
 </form>
 </body>
 </html>
@@ -566,12 +614,20 @@ def check_email_auth(request, uidb64, token, uemailb64):
     email_address = force_text(urlsafe_base64_decode(uemailb64))
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if token == state_token:
-        user.email = email_address
-        user.is_email_active = True
-        user.save()
-        context = {
-            "user": user,
-        }
-        return render(request, "accounts/email-auth.html", context)
+        if user.is_email_active:
+            context = {
+                "error": "이미 인증된 유저입니다.",
+            }
+        else:
+            user.email = email_address
+            user.is_email_active = True
+            user.save()
+            context = {
+                "success": "success",
+                "msg": "인증이 완료되었습니다.",
+            }
     else:
-        return render(request, "accounts/email-auth-failed.html")
+        context = {
+            "error": "토큰 값이 다릅니다.",
+        }
+    return render(request, "accounts/email-auth.html", context)
