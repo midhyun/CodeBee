@@ -71,6 +71,7 @@ class User(AbstractUser):
     is_phone_active = models.BooleanField(default=False)
     is_email_active = models.BooleanField(default=False)
     token = models.CharField(max_length=150, null=True, blank=True)
+    g_token = models.CharField(max_length=150, null=True, blank=True)
 
     @property
     def full_name(self):
@@ -120,3 +121,9 @@ class AuthPhone(TimeStampedModel):
         }
         # 여기서 인증번호가 보내짐
         requests.post(url, json=data, headers=headers)
+
+class UserToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='usertoken')
+    service_name = models.CharField(max_length=10)
+    token = models.CharField(max_length=300)
+    re_token = models.CharField(max_length=300, null=True)

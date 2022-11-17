@@ -8,7 +8,7 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from .models import AuthPhone
+from .models import AuthPhone, User, UserToken
 from django.views import View
 from django.http import JsonResponse
 from django.contrib.auth import get_user_model
@@ -20,7 +20,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from reviews.models import Study, Accepted
 from django.contrib import messages
-from .models import User
 
 
 
@@ -206,6 +205,7 @@ def social_login_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
+        print(u_info)
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -213,9 +213,7 @@ def social_login_callback(request, service_name):
                 "username": u_info["properties"]["nickname"],
                 "social_profile_picture": u_info["properties"]["profile_image"],
                 "nickname": u_info["properties"]["nickname"],
-                "email": u_info["kakao_account"]["email"]
-                if u_info["kakao_account"]["email"]
-                else None,
+                "email": u_info["kakao_account"]["email"] if u_info["kakao_account"]["email"] else None,
                 "phone": None,
             },
         }
@@ -291,7 +289,6 @@ def social_login_callback(request, service_name):
     user_login(request, user)
     return redirect(request.GET.get("next") or "accounts:test")
 
-
 # test용도
 def index(request):
     persons = get_user_model().objects.order_by("-pk")
@@ -302,7 +299,6 @@ def index(request):
             "persons": persons,
         },
     )
-
 
 def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")

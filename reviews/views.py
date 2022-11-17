@@ -7,6 +7,8 @@ from accounts.models import User
 import requests
 import json
 from django.contrib import messages
+from django.conf import settings
+from django.contrib.auth import get_user_model
 # Create your views here.
 # 카카오톡 나에게 보내기 메시지 url
 url="https://kapi.kakao.com/v2/api/talk/memo/default/send"
@@ -27,10 +29,11 @@ def create(request):
     if request.method == 'POST':
         tag = ''
         temp = request.POST['tag']
-        tags = json.loads(temp)
-        print(type(tags))
-        for t in tags:
-            tag += t['value'] + ','
+        if temp:
+            tags = json.loads(temp)
+            print(type(tags))
+            for t in tags:
+                tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
         study_date = StudyDateForm(request.POST)
         if study_form.is_valid() and study_date.is_valid():
@@ -116,7 +119,6 @@ def update(request, study_pk):
                     study.location = request.POST['location']
                     study.X = request.POST['X']
                     study.Y = request.POST['Y']
-                    study.deadline = request.POST['deadline']
                     study.host = request.user
                     study.save()
                     study_form.save()
@@ -395,5 +397,72 @@ def comment_delete(request, pk, comment_pk):
 
 # Google Calendar Test
 def test_calendar(request):
-    print(request.POST)
+
     return render(request, 'reviews/test.html')
+# 콜
+def google_call(request):
+    # if request.user.g_token:
+    #     return render(request, 'reviews/test.html')
+    # else:
+    #     url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com&redirect_uri=http://localhost:8000/reviews/google_code&response_type=code&scope=https://www.googleapis.com/auth/calendar'
+    #     return redirect(url)
+    url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com&redirect_uri=http://localhost:8000/reviews/google_code&response_type=code&scope=https://www.googleapis.com/auth/calendar'
+    return redirect(url)
+# 콜백
+def google_code(request):
+    url = 'https://oauth2.googleapis.com/token'
+    data = {
+                "grant_type": "authorization_code",
+                "redirect_uri": "http://localhost:8000/reviews/google_code",
+                "client_id": "503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com",  # 배포시 보안적용 해야함
+                "client_secret": "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",  # 배포시 보안적용 해야함
+                "project_id":"keen-button-368611",
+                "state": request.GET.get("state"),
+                "code": request.GET.get("code"),
+            }
+    res = requests.post(url, data=data).json()
+    token = res['access_token']
+    re_token = res['refresh_token']
+    print(token)
+    user_ = get_user_model().objects.get(pk=request.user.pk)
+    user_.g_token = token
+    user_.save()
+    url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=none&key=AIzaSyB86Erv475UlH5VfgBaSCA53hPcnoR46IA'
+    headers = {
+        "Authorization": 'Bearer' + token,
+        "Accept": 'application/json',
+        "Content-Type": 'application/json',
+    }
+    # data = {
+    #     "end":{
+    #         "dateTime":schedule.study_end.strftime("%Y-%m-%dT%H:%M:%S"),
+    #         "timeZone":"Asia/Seoul"
+    #     },
+    #     "start":{
+    #         "dateTime":schedule.study_at.strftime("%Y-%m-%dT%H:%M:%S"),
+    #         "timeZone":"Asia/Seoul"
+    #     },
+    #     "summary": study.title,
+    #     "location":study.location,
+    #     "description": study.content
+    # }
+    data = {
+    "end":{
+        "dateTime":'2022-11-18T13:00:00',
+        "timeZone":"Asia/Seoul"
+    },
+    "start":{
+        "dateTime":'2022-11-18T13:00:00',
+        "timeZone":"Asia/Seoul"
+    },
+    "summary": 'test',
+    "location":'test',
+    "description": 'test'
+}
+
+    response = requests.post(url, headers=headers, data=data)
+    if response.json().get('code') == 200:
+        print('일정이 성공적으로 등록되었습니다.')
+    else:
+        print('일정이 성공적으로 등록되지 못했습니다. 오류메시지 : ' + str(response.json()))
+    return redirect('reviews:test_calendar')
