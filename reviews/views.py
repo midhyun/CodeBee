@@ -135,6 +135,8 @@ def update(request, study_pk):
                 study_form = StudyForm(instance=study)
                 study_date = StudyDateForm(instance=date[0])
             context = {
+                'study': study,
+                'date': date,
                 'study_form': study_form,
                 'study_date': study_date,
                 }
