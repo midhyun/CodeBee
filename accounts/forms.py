@@ -53,7 +53,7 @@ class CustomUserCreationForm(UserCreationForm):
             ),
             "boj_username": forms.TextInput(
                 attrs={
-                    "placeholder": "백준 아이디를 입력하시면 프로필에 백준 티어가 나옵니다.",
+                    "placeholder": "아이디가 이메일 형식일 경우 이메일 부분을 뺀 아이디만 입력해주세요.",
                 }
             ),
             "fullname": forms.TextInput(
@@ -135,11 +135,6 @@ class AuthForm(UserChangeForm):
             "email": "이메일",
         }
         widgets = {
-            "email": forms.TextInput(
-                attrs={
-                    "placeholder": "",
-                }
-            ),
             "phone": forms.TextInput(
                 attrs={
                     "placeholder": "'-' 를 제외하고 입력해주세요.",
@@ -148,6 +143,22 @@ class AuthForm(UserChangeForm):
             ),
         }
 
+
+class SNSUserSignupForm(forms.ModelForm):
+    class Meta:
+        model = get_user_model()
+        fields = (
+            "social_id",
+            "service_name",
+            "is_social_account",
+            "token",
+        )
+        widgets = {
+            "social_id": forms.HiddenInput,
+            "service_name": forms.HiddenInput,
+            "is_social_account": forms.HiddenInput,
+            "token": forms.HiddenInput,
+        }
 
 
 class CustomPasswordChangeForm(PasswordChangeForm):

@@ -76,7 +76,9 @@
     <p class="mb-2">주소</p>
     <input class="form-control my-2" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
     {% bootstrap_form address_form %}
-    {% bootstrap_button button_type="submit" content="수정완료" %}
+    <div class="mb-5">
+      {% bootstrap_button button_type="submit" content="수정완료" %}
+    </div>
   </form>
 </div>
 
