@@ -85,10 +85,12 @@
         {% else %}
         <p class="text-end m-0">
           <span class="bg-primary p-2 rounded-3 text-light">
-            호스트
+            스터디장
           </span>
         </p>
         {% endif %}
+        {% else %}
+        <p></p>
         {% endif %}
         <span>{{ member.joindate }}</span>
       </div>
@@ -108,6 +110,7 @@
         </p>
         <span>가입 대기중입니다.</span>
         {% else%}
+        <p class="m-0"></p>
         <span>가입 대기중입니다.</span>
         {% endif %}
       </div>
@@ -154,6 +157,8 @@
       {% if member.joined == True %}
       <div class="pb-3 mt-2 border-bottom">
         <a href="{% url 'accounts:detail' member.users.pk %}"  class="m-0">{{ member.users }}</a>
+        <a href="{% url 'reviews:likes' study.pk member.users.pk %}">좋아요</a>
+        <a href="{% url 'reviews:dislikes' study.pk member.users.pk %}">싫어요</a>
         {% if user == study.host %}
         {% if member.users != study.host %}
         <p class="text-end m-0">
@@ -162,7 +167,7 @@
         {% else %}
         <p class="text-end m-0">
           <span class="bg-primary p-2 rounded-3 text-light">
-            호스트
+            스터디장
           </span>
         </p>
         {% endif %}
@@ -185,6 +190,7 @@
         </p>
         <span>가입 대기중입니다.</span>
         {% else%}
+        <p class="m-0"></p>
         <span>가입 대기중입니다.</span>
         {% endif %}
       </div>

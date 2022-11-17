@@ -22,4 +22,6 @@ urlpatterns = [
     path('<int:study_pk>/done/',views.done, name='done'),
     path('google_code', views.google_code, name='google_code'),
     path('google_call', views.google_call, name='google_call')
+    path('likes/<int:study_pk>/<int:user_pk>/', views.likes, name='likes'),
+    path('dislikes/<int:study_pk>/<int:user_pk>/', views.dislikes, name='dislikes'),
 ]

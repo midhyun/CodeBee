@@ -30,8 +30,7 @@
         <div class="px-5">
           <p class="mb-2">주소</p>
           <input class="btn btn-outline-primary mb-3" type="button" onclick="execDaumPostcode()" value="우편번호 찾기">
-          <input class="form-control mb-3" name="addr1" type="text" id="address" placeholder="주소" required>
-          <input class="form-control mb-3" name="addr2" type="text" id="detailAddress" placeholder="상세주소" required>
+          {% bootstrap_form address_form %}
         </div>
       </div>
       <!-- 왼료 버튼 -->
@@ -79,9 +78,9 @@
                     // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
                 }
                 // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                document.getElementById("address").value = addr;
+                document.getElementById("id_address").value = addr;
                 // 커서를 상세주소 필드로 이동한다.
-                document.getElementById("detailAddress").focus();
+                document.getElementById("id_detail_address").focus();
             }
         }).open();
     }

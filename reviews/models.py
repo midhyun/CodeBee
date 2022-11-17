@@ -72,3 +72,9 @@ class StudyDate(models.Model):
     study_at = models.DateTimeField(auto_now=False)
     study_end = models.DateTimeField(auto_now=False, null=True, blank=True)
 
+class Honey(models.Model):
+    study = models.ForeignKey(Study, on_delete=models.CASCADE, related_name='joinedstudy')
+    rating_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='ru')
+    rated_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rdu')
+    like = models.BooleanField(default=False)
+    dislike = models.BooleanField(default=False)

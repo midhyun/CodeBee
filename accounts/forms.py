@@ -14,15 +14,19 @@ class CustomUserCreationForm(UserCreationForm):
             "username",
             "fullname",
             "nickname",
-            "phone",
             "email",
+            "phone",
+            "git_username",
+            "boj_username",
             "profile_picture",
         )
         labels = {
             "fullname": "이름",
             "nickname": "닉네임",
-            "phone": "핸드폰 번호",
             "email": "이메일",
+            "phone": "휴대폰 번호",
+            "git_username": "깃허브 아이디",
+            "boj_username": "백준 아이디",
             "profile_picture": "프로필 사진",
         }
         widgets = {
@@ -36,15 +40,25 @@ class CustomUserCreationForm(UserCreationForm):
                     "placeholder": "닉네임을 입력해주세요.",
                 }
             ),
-            "fullname": forms.TextInput(
-                attrs={
-                    "placeholder": "본명을 입력해주세요.",
-                }
-            ),
             "phone": forms.TextInput(
                 attrs={
                     "placeholder": "'-' 를 제외하고 입력해주세요.",
                     "style": "width: 100%; resize: none;",
+                }
+            ),
+            "git_username": forms.TextInput(
+                attrs={
+                    "placeholder": "깃허브 아이디는 깃허브 사용 언어 통계에 사용됩니다.",
+                }
+            ),
+            "boj_username": forms.TextInput(
+                attrs={
+                    "placeholder": "백준 아이디를 입력하시면 프로필에 백준 티어가 나옵니다.",
+                }
+            ),
+            "fullname": forms.TextInput(
+                attrs={
+                    "placeholder": "본명을 입력해주세요.",
                 }
             ),
         }
@@ -53,13 +67,17 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
     class Meta:
         model = get_user_model()
-        exclude = ("password",)
         fields = (
             "nickname",
+            "git_username",
+            "boj_username",
             "profile_picture",
         )
         labels = {
             "nickname": "닉네임",
+            "git_username": "깃허브 아이디",
+            "boj_username": "백준 아이디",
+            "profile_picture": "프로필 사진",
         }
         widgets = {
             "nickname": forms.TextInput(
@@ -67,27 +85,37 @@ class CustomUserChangeForm(UserChangeForm):
                     "placeholder": "닉네임을 입력해주세요.",
                 }
             ),
+            "git_username": forms.TextInput(
+                attrs={
+                    "placeholder": "깃허브 아이디는 깃허브 사용 언어 통계에 사용됩니다.",
+                }
+            ),
+            "boj_username": forms.TextInput(
+                attrs={
+                    "placeholder": "백준 아이디를 입력하시면 프로필에 백준 티어가 나옵니다.",
+                }
+            ),
         }
 
 
-class LocationChangeForm(UserChangeForm):
+class AddressForm(forms.ModelForm):
     class Meta:
         model = get_user_model()
         fields = (
-            "location",
-            "detail_location",
+            "address",
+            "detail_address",
         )
         labels = {
-            "location": "",
-            "detail_location": "",
+            "address": "",
+            "detail_address": "",
         }
         widgets = {
-            "location": forms.TextInput(
+            "address": forms.TextInput(
                 attrs={
                     "placeholder": "주소",
                 }
             ),
-            "detail_location": forms.TextInput(
+            "detail_address": forms.TextInput(
                 attrs={
                     "placeholder": "상세주소",
                 }
@@ -109,7 +137,7 @@ class AuthForm(UserChangeForm):
         widgets = {
             "email": forms.TextInput(
                 attrs={
-                    "placeholder": "이메일을 입력해주세요.",
+                    "placeholder": "",
                 }
             ),
             "phone": forms.TextInput(

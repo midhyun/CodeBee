@@ -1,28 +1,32 @@
 from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm
-from .models import Study, Comment, Accepted, StudyDate
+from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm, HoneyForm
+from .models import Study, Comment, Accepted, StudyDate, Honey
+
 from accounts.models import User
 import requests
 import json
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import get_user_model
+
 # Create your views here.
 # 카카오톡 나에게 보내기 메시지 url
-url="https://kapi.kakao.com/v2/api/talk/memo/default/send"
+url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
+
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, "home.html")
 
 
 def index(request):
-    studies = Study.objects.order_by('-pk')
+    studies = Study.objects.order_by("-pk")
     context = {
-        'studies': studies,
+        "studies": studies,
     }
-    return render(request, 'reviews/index.html', context)
+    return render(request, "reviews/index.html", context)
+
 
 @login_required
 def create(request):
@@ -52,7 +56,7 @@ def create(request):
             date.save()
             Aform = Accepted(joined=True, study=study, users=study.host)
             Aform.save()
-            return redirect('reviews:index')
+            return redirect("reviews:index")
     else:
         study_form = StudyForm()
         study_date = StudyDateForm()
@@ -74,14 +78,13 @@ def detail(request, study_pk):
             break
     else:
         user_accepted = False
-    context = {'study' : study,
+    context = {
+        "study": study,
+        "cnt": cnt,
+        "check": user_accepted,
+    }
 
-               'cnt':cnt,
-               'check':user_accepted
-               }
-
-    return render(request,'reviews/detail.html', context)
-
+    return render(request, "reviews/detail.html", context)
 
 
 def userlist(request, study_pk):
@@ -94,13 +97,9 @@ def userlist(request, study_pk):
             break
     else:
         user_accepted = False
-    context = {
-        'members':users,
-        'study':study,
-        'cnt':cnt,
-        'check':user_accepted
-    }
-    return render(request, 'reviews/userlist.html', context)
+    context = {"members": users, "study": study, "cnt": cnt, "check": user_accepted}
+    return render(request, "reviews/userlist.html", context)
+
 
 @login_required
 def update(request, study_pk):
@@ -108,7 +107,7 @@ def update(request, study_pk):
     date = StudyDate.objects.filter(study_id=study_pk)
     if study.isactive:
         if request.user == study.host:
-            if request.method == 'POST':
+            if request.method == "POST":
                 study_form = StudyForm(request.POST, request.FILES, instance=study)
                 study_date = StudyDateForm(request.POST, instance=date[0])
                 if study_form.is_valid() and study_date.is_valid():
@@ -135,28 +134,33 @@ def update(request, study_pk):
                 }
             return render(request, 'reviews/form.html', context)
         else:
-            return redirect('reviews:detail', study_pk)
+            return redirect("reviews:detail", study_pk)
+
 
 @login_required
 def delete(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     if study.isactive:
         study.delete()
-    return redirect('reviews:index')
+    return redirect("reviews:index")
+
 
 @login_required
 def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
     accepted = Accepted.objects.filter(study_id=study_pk)
     users = Accepted.objects.filter(users_id=user_pk)
+
+
+
     token = study.host.token
     if study.limits > len(accepted):
         for joined in users:
             if joined in accepted:
-                messages.warning(request, '이미 가입신청 한 그룹입니다.')
-                return redirect('reviews:detail', study_pk)
+                messages.warning(request, "이미 가입신청 한 그룹입니다.")
+                return redirect("reviews:detail", study_pk)
         else:
-            Aform = Accepted(joined=False,study=study,users=request.user)
+            Aform = Accepted(joined=False, study=study, users=request.user)
             Aform.save()
             accepted_now = Accepted.objects.filter(study_id=study_pk)
             if token:
@@ -201,8 +205,9 @@ def join(request, study_pk, user_pk):
             messages.success(request, '가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.')
             return redirect('reviews:detail', study_pk)
     else:
-        messages.success(request, '모집인원이 가득 찬 그룹입니다.')
-        return redirect('reviews:detail', study_pk)
+        messages.success(request, "모집인원이 가득 찬 그룹입니다.")
+        return redirect("reviews:detail", study_pk)
+
 
 @login_required
 def study_accepted(request, study_id, users_id):
@@ -213,11 +218,12 @@ def study_accepted(request, study_id, users_id):
         if request.user == study.host:
             aform.joined = True
             aform.save()
-            return redirect('reviews:userlist', study_id)
+            return redirect("reviews:userlist", study_id)
         else:
-            return redirect('reviews:userlist', study_id)
+            return redirect("reviews:userlist", study_id)
     else:
-        return redirect('reviews:index')
+        return redirect("reviews:index")
+
 
 @login_required
 def study_kick(request, study_id, users_id):
@@ -227,13 +233,13 @@ def study_kick(request, study_id, users_id):
     if study.isactive:
         if request.user == study.host and user != study.host:
             aform.delete()
-            return redirect('reviews:userlist', study_id)
+            return redirect("reviews:userlist", study_id)
         elif request.user == user and user != study.host:
             aform.delete()
-            return redirect('reviews:userlist', study_id)
+            return redirect("reviews:userlist", study_id)
         else:
-            return redirect('reviews:userlist', study_id)
-    return redirect('reviews:index')
+            return redirect("reviews:userlist", study_id)
+    return redirect("reviews:index")
 
 
 @login_required
@@ -242,72 +248,83 @@ def gathering(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     message = request.POST["message"]
     if request.user == study.host:
-        try: image_url = study.image.url
-        except: image_url = ''
-        data = {"template_object": json.dumps({
-                "object_type": "feed",
-                "content": {
-                    "title": f"{request.user}님의 메시지",
-                    "description": f"{message}",
-                    "image_url": f"https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png",
-                    # "image_url": f"http://localhost:8000{image_url}",
-                    "image_width": 800,
-                    "image_height": 550,
-                    "link": {
-                        "web_url": "https://google.com",
-                        "mobile_web_url": "https://google.com",
-                        "android_execution_params": "contentId=100",
-                        "ios_execution_params": "contentId=100"
-                    }
-                },
-                "buttons": [
-                    {
-                        "title": "웹으로 이동",
+        try:
+            image_url = study.image.url
+        except:
+            image_url = ""
+        data = {
+            "template_object": json.dumps(
+                {
+                    "object_type": "feed",
+                    "content": {
+                        "title": f"{request.user}님의 메시지",
+                        "description": f"{message}",
+                        "image_url": f"https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png",
+                        # "image_url": f"http://localhost:8000{image_url}",
+                        "image_width": 800,
+                        "image_height": 550,
                         "link": {
                             "web_url": "https://google.com",
-                            "mobile_web_url": "https://google.com"
-                        }
-                    },
-                    {
-                        "title": "앱으로 이동",
-                        "link": {
+                            "mobile_web_url": "https://google.com",
                             "android_execution_params": "contentId=100",
-                            "ios_execution_params": "contentId=100"
-                        }
-                    }
-                ]
-                })}
+                            "ios_execution_params": "contentId=100",
+                        },
+                    },
+                    "buttons": [
+                        {
+                            "title": "웹으로 이동",
+                            "link": {
+                                "web_url": "https://google.com",
+                                "mobile_web_url": "https://google.com",
+                            },
+                        },
+                        {
+                            "title": "앱으로 이동",
+                            "link": {
+                                "android_execution_params": "contentId=100",
+                                "ios_execution_params": "contentId=100",
+                            },
+                        },
+                    ],
+                }
+            )
+        }
         for user in accepted:
             token = user.users.token
             if token:
-                headers={"Authorization" : "Bearer " + token}
+                headers = {"Authorization": "Bearer " + token}
                 response = requests.post(url, headers=headers, data=data)
                 print(str(response.json()))
-                messages.success(request, '메시지 전송이 완료되었습니다.')
+                messages.success(request, "메시지 전송이 완료되었습니다.")
             else:
-                print('no')
-        return redirect('reviews:detail', study_pk)
+                print("no")
+        return redirect("reviews:detail", study_pk)
     else:
-        return redirect('reivews:index')
+        return redirect("reivews:index")
+
+
 # ==================================comment=======================
+
 
 def done(request, study_pk):
     study = Study.objects.get(pk=study_pk)
     study.isactive = False
     study.save()
-    return redirect('reviews:detail', study_pk)
+    return redirect("reviews:detail", study_pk)
+
 
 def review(request, study_id):
     study = Study.objects.get(pk=study_id)
-    comments = Comment.objects.all().order_by('-pk')
+    comments = Comment.objects.all().order_by("-pk")
     comment_form = CommentForm()
     context = {
-        'review': study,
-        'comment_form' : comment_form,
-        'comments': comments,
+        "review": study,
+        "comment_form": comment_form,
+        "comments": comments,
     }
 
-    return render(request, 'reviews/review.html', context)
+    return render(request, "reviews/review.html", context)
+
 
 @login_required
 def comment_create(request, pk):
@@ -321,25 +338,25 @@ def comment_create(request, pk):
 
         comment.save()
 
-        comments = Comment.objects.filter(study_id=pk).order_by('-pk')
+        comments = Comment.objects.filter(study_id=pk).order_by("-pk")
         comments_data = []
         for co in comments:
-            co.created_at = co.created_at.strftime('%Y-%m-%d %H:%M')
+            co.created_at = co.created_at.strftime("%Y-%m-%d %H:%M")
             comments_data.append(
                 {
-                    'request_user_pk': request.user.pk,
-                    'comment_pk': co.pk,
-                    'user_pk': co.user.pk,
-                    'username': co.user.username,
-                    'content': co.content,
-                    'created_at': co.created_at,
-                    'updated_at': co.updated_at,
-                    'study_id': co.study_id,
-                })
-        context = {
-            'comments_data': comments_data
-        }
+                    "request_user_pk": request.user.pk,
+                    "comment_pk": co.pk,
+                    "user_pk": co.user.pk,
+                    "username": co.user.username,
+                    "content": co.content,
+                    "created_at": co.created_at,
+                    "updated_at": co.updated_at,
+                    "study_id": co.study_id,
+                }
+            )
+        context = {"comments_data": comments_data}
         return JsonResponse(context)
+
 
 @login_required
 def comment_update(request, pk, comment_pk):
@@ -347,28 +364,28 @@ def comment_update(request, pk, comment_pk):
         jsonObject = json.loads(request.body)
 
         comment = Comment.objects.get(pk=comment_pk)
-        comment.comment_content = jsonObject.get('content')
+        comment.comment_content = jsonObject.get("content")
         comment.save()
 
-        comments = Comment.objects.filter(study_id=pk).order_by('-pk')
+        comments = Comment.objects.filter(study_id=pk).order_by("-pk")
         comments_data = []
         for co in comments:
-            co.created_at = co.created_at.strftime('%Y-%m-%d %H:%M')
+            co.created_at = co.created_at.strftime("%Y-%m-%d %H:%M")
             comments_data.append(
                 {
-                    'request_user_pk': request.user.pk,
-                    'comment_pk': co.pk,
-                    'user_pk': co.user.pk,
-                    'username': co.user.username,
-                    'content': co.content,
-                    'created_at': co.created_at,
-                    'updated_at': co.updated_at,
-                    'study_id': co.study_id,
-                })
-        context = {
-            'comments_data': comments_data
-        }
+                    "request_user_pk": request.user.pk,
+                    "comment_pk": co.pk,
+                    "user_pk": co.user.pk,
+                    "username": co.user.username,
+                    "content": co.content,
+                    "created_at": co.created_at,
+                    "updated_at": co.updated_at,
+                    "study_id": co.study_id,
+                }
+            )
+        context = {"comments_data": comments_data}
         return JsonResponse(context)
+
 
 @login_required
 def comment_delete(request, pk, comment_pk):
@@ -376,24 +393,25 @@ def comment_delete(request, pk, comment_pk):
         comment = Comment.objects.get(pk=comment_pk)
         comment.delete()
 
-        comments = Comment.objects.filter(study_id=pk).order_by('-pk')
+        comments = Comment.objects.filter(study_id=pk).order_by("-pk")
         comments_data = []
         for co in comments:
-            co.created_at = co.created_at.strftime('%Y-%m-%d %H:%M')
+            co.created_at = co.created_at.strftime("%Y-%m-%d %H:%M")
             comments_data.append(
-                {'request_user_pk': request.user.pk,
-                 'comment_pk': co.pk,
-                 'user_pk': co.user.pk,
-                 'username': co.user.username,
-                 'content': co.content,
-                 'created_at': co.created_at,
-                 'updated_at': co.updated_at,
-                 'study_id': co.study_id,
-                 })
-        context = {
-            'comments_data': comments_data
-        }
+                {
+                    "request_user_pk": request.user.pk,
+                    "comment_pk": co.pk,
+                    "user_pk": co.user.pk,
+                    "username": co.user.username,
+                    "content": co.content,
+                    "created_at": co.created_at,
+                    "updated_at": co.updated_at,
+                    "study_id": co.study_id,
+                }
+            )
+        context = {"comments_data": comments_data}
         return JsonResponse(context)
+
 
 # Google Calendar Test
 def test_calendar(request):
@@ -466,3 +484,61 @@ def google_code(request):
     else:
         print('일정이 성공적으로 등록되지 못했습니다. 오류메시지 : ' + str(response.json()))
     return redirect('reviews:test_calendar')
+
+def likes(request, study_pk, user_pk):
+    study = get_object_or_404(Study, pk=study_pk)
+    rated = get_object_or_404(get_user_model(), pk=user_pk)
+    rating = get_object_or_404(get_user_model(), pk=request.user.pk)
+    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+
+    if rated == request.user:
+        messages.warning(request, '본인을 평가할 수 없습니다.')
+
+    else:
+        if check:
+            honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)
+            if honey.like == True:
+                honey.delete()
+            else:
+                honey.dislike = False
+                honey.like = True
+                honey.save()
+        else:
+            honeyform = HoneyForm(request)
+            honey = honeyform.save(commit=False)
+            honey.study = study
+            honey.rating_user = rating
+            honey.rated_user = rated
+            honey.like = True
+            honey.save()
+
+    return redirect('reviews:userlist', study_pk)
+    
+def dislikes(request, study_pk, user_pk):
+    study = get_object_or_404(Study, pk=study_pk)
+    rated = get_object_or_404(get_user_model(), pk=user_pk)
+    rating = get_object_or_404(get_user_model(), pk=request.user.pk)
+    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+
+    if rated == request.user:
+        messages.warning(request, '본인을 평가할 수 없습니다.')
+
+    else:
+        if check:
+            honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)
+            if honey.dislike == True:
+                honey.delete()
+            else:
+                honey.dislike = True
+                honey.like = False
+                honey.save()
+        else:
+            honeyform = HoneyForm(request)
+            honey = honeyform.save(commit=False)
+            honey.study = study
+            honey.rating_user = rating
+            honey.rated_user = rated
+            honey.dislike = True
+            honey.save()
+
+    return redirect('reviews:userlist', study_pk)

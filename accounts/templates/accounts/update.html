@@ -5,7 +5,7 @@
 
 <div class="container">
   <h1 class="text-center">회원정보 수정</h1>
-  <form id="update-form" action="" method="POST" class="form">
+  <form action="" class="form" method="POST">
     {% csrf_token %}
     {% for update_field in update_form %}
     {% bootstrap_field update_field %}
@@ -13,58 +13,70 @@
     {% for auth_field in auth_form %}
     {% if auth_field.name == "phone" %}
     {% if user.is_phone_active %}
+    <!-- 인증된 유저 -->
     {% bootstrap_field auth_field %}
-    <form>
-      <div id="phone-div" class="d-flex mb-3">
-        <button id="get-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 10rem;">다시
-          인증하기</button>
-        <p id="already-auth-user" class="mx-3 my-0 d-flex justify-content-center align-items-center"
-          style="font-weight: bolder;">이미 인증을 완료한
-          사용자입니다.</p>
-        <input id="auth-phone" class="form-control d-none" name="auth-phone-input" type="text" placeholder="인증번호 입력"
-          style="width: 10rem;">
-        <input id="auth-phone-submit" class="form-control btn btn-primary d-none mx-3" type="submit" value="인증하기"
-          data-account-id="{{ user.pk }}" style="width: 10rem;">
-        <p id="auth-timer" class="d-none d-flex justify-content-start align-items-center"
-          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
-        <p id="help-text" class="d-none d-flex justify-content-start align-items-center"
-          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
-      </div>
-    </form>
+
+    <div id="phone-div" class="d-flex mb-3">
+      <button id="get-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 8rem;">번호
+        변경하기</button>
+      <p id="already-auth-user" class="mx-3 my-0 d-flex justify-content-center align-items-center"
+        style="font-weight: bolder;">이미 인증된 사용자입니다.</p>
+      <input id="auth-phone" class="form-control d-none" name="auth-phone-input" type="text" placeholder="인증번호 입력"
+        style="width: 8rem;">
+      <button id="auth-phone-submit" class="form-control btn btn-primary d-none mx-3" type="button"
+        data-account-id="{{ user.pk }}" style="width: 8rem;">인증</button>
+      <p id="auth-timer" class="d-none d-flex justify-content-start align-items-center"
+        style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+      <p id="help-text" class="d-none d-flex justify-content-start align-items-center"
+        style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+    </div>
+
     {% else %}
+    <!-- 아직 인증이 안된 유저 -->
     {% bootstrap_field auth_field %}
-    <form>
-      <div class="d-flex mb-3">
-        <button id="get-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 10rem;">인증번호
-          받기</button>
-        <input id="auth-phone" class="form-control d-none" name="auth-phone-input" type="text" placeholder="인증번호 입력"
-          style="width: 10rem;">
-        <input id="auth-phone-submit" class="form-control btn btn-primary d-none mx-3" type="submit" value="인증하기"
-          data-account-id="{{ user.pk }}" style="width: 10rem;">
-        <p id="auth-timer" class="d-none d-flex justify-content-start align-items-center"
-          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
-        <p id="help-text" class="d-none d-flex justify-content-start align-items-center"
-          style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
-      </div>
-    </form>
+    <div class="d-flex mb-3">
+      <button id="get-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 8rem;">인증번호
+        받기</button>
+      <input id="auth-phone" class="form-control d-none" name="auth-phone-input" type="text" placeholder="인증번호 입력"
+        style="width: 8rem;">
+      <button id="auth-phone-submit" class="form-control btn btn-primary d-none mx-3" type="button"
+        data-account-id="{{ user.pk }}" style="width: 8rem;">인증하기</button>
+      <p id="auth-timer" class="d-none d-flex justify-content-start align-items-center"
+        style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+      <p id="help-text" class="d-none d-flex justify-content-start align-items-center"
+        style="width: auto; margin: 0; color:rgb(206, 34, 34); font-weight: bolder;"></p>
+    </div>
     {% endif %}
     {% elif auth_field.name == "email" %}
+    {% if user.is_email_active %}
+    <!-- 이메일 인증된 유저 -->
     {% bootstrap_field auth_field %}
-    <div id="email-div">
-      <button id="auth-email" class="btn btn-primary" data-account-id="{{ user.pk }}">인증메일 발송</button>
-      <input>
-      <input>
+    <div id="email-div" class="d-flex mb-3">
+      <button id="get-email-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 8rem;">메일
+        변경하기</button>
+      <p id="already-email-auth-user" class="mx-3 my-0 d-flex justify-content-center align-items-center"
+        style="font-weight: bolder;">이미 인증된 사용자입니다.</p>
+      <div id="email-help-text" class="mx-3 my-0 d-none d-flex justify-content-start align-items-center text-primary">
+        <span class="visually-hidden">보내는 중...</span>
+      </div>
+    </div>
+    {% else %}
+    <!-- 아직 이메일 인증 안된 유저 -->
+    {% bootstrap_field auth_field %}
+    <div class="d-flex mb-3">
+      <button id="get-email-auth-btn" class="btn btn-primary" data-account-id="{{ user.pk }}" style="width: 8rem;">인증메일
+        발송</button>
+      <div id="email-help-text" class="mx-3 my-0 d-none d-flex justify-content-start align-items-center text-primary">
+        <span class="visually-hidden">보내는 중...</span>
+      </div>
     </div>
     {% endif %}
+    {% endif %}
     {% endfor %}
-    <div>
-      <p class="mb-2">주소</p>
-      <input class="form-control my-2" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
-      {% bootstrap_form location_form %}
-    </div>
-    <div class="mt-5">
-      {% bootstrap_button button_type="submit" content="수정완료" button_class="btn btn-primary" %}
-    </div>
+    <p class="mb-2">주소</p>
+    <input class="form-control my-2" type="button" onclick="execDaumPostcode()" value="우편번호 찾기"><br>
+    {% bootstrap_form address_form %}
+    {% bootstrap_button button_type="submit" content="수정완료" %}
   </form>
 </div>
 
@@ -102,9 +114,9 @@
           // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
         }
         // 우편번호와 주소 정보를 해당 필드에 넣는다.
-        document.getElementById("id_location").value = addr;
+        document.getElementById("id_address").value = addr;
         // 커서를 상세주소 필드로 이동한다.
-        document.getElementById("id_detail_location").focus();
+        document.getElementById("id_detail_address").focus();
       }
     }).open();
   }
@@ -121,10 +133,10 @@
   const helpText = document.getElementById("help-text");
   const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
   getAuthBtn.addEventListener("click", (event) => {
+    event.preventDefault();
     if (phoneId.value.length === 11 && !(isNaN(phoneId.value))) {
       let formData = new FormData();
       formData.append("phone", phoneId.value);
-      event.preventDefault();
       axios({
         method: 'post',
         url: `/accounts/${event.target.dataset.accountId}/update/check/`,
@@ -154,7 +166,7 @@
             formData.append("phone", phoneId.value);
             axios({
               method: 'post',
-              url: `/accounts/${event.target.dataset.accountId}/update/phone_auth/`,
+              url: `/accounts/${event.target.dataset.accountId}/update/phone-auth/`,
               headers: { 'X-CSRFToken': csrftoken },
               data: formData,
             })
@@ -191,13 +203,13 @@
     formData2.append("phone", phoneId.value);
     axios({
       method: 'post',
-      url: `/accounts/${event.target.dataset.accountId}/update/check_auth/`,
+      url: `/accounts/${event.target.dataset.accountId}/update/check-auth/`,
       headers: { 'X-CSRFToken': csrftoken },
       data: formData2,
     })
       .then(response => {
         if (response.data.isPhoneActive === true) {
-          authPhoneSubmit.setAttribute("value", response.data.authErrorOrSuccess);
+          authPhoneSubmit.textContent = response.data.authErrorOrSuccess;
           authPhoneSubmit.setAttribute("disabled", true);
           authPhone.setAttribute("disabled", true);
           phoneId.setAttribute("disabled", true);
@@ -211,45 +223,35 @@
 <script>
   /////////////////////////////////////////////////////// 이메일 인증 ///////////////////////////////////////////////////////
   const emailId = document.getElementById("id_email");
-  const authEmailBtn = document.getElementById("auth-email");
+  const getEmailAuthBtn = document.getElementById("get-email-auth-btn");
+  const emailhelpText = document.getElementById("email-help-text");
   let emailValidate = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-  authEmailBtn.addEventListener("click", (event) => {
+  getEmailAuthBtn.addEventListener("click", (event) => {
     event.preventDefault();
     if (emailId.value.match(emailValidate) != null) {
-      // 1. 버튼 누르면 폼 만들고 내용물 담아서 바꾼다음 보여주기
-      // 버튼 누르면 새 인증 폼 만들기
-      const authEmailForm = document.createElement("form");
-      authEmailForm.id = "auth-email-form";
-      // 폼 안에 담길 내용물 만들기
-      const authNumberInput = document.createElement("input");
-      const submitAuthNumberBtn = document.createElement("input");
-      authNumberInput.setAttribute("id", "email");
-      authNumberInput.setAttribute("name", "auth-email-input");
-      authNumberInput.setAttribute("type", "text");
-      authNumberInput.setAttribute("class", "form-control w-25");
-      authNumberInput.setAttribute("placeholder", "인증번호 입력");
-      submitAuthNumberBtn.setAttribute("id", "auth-email-submit");
-      submitAuthNumberBtn.setAttribute("type", "submit");
-      submitAuthNumberBtn.setAttribute("class", "form-control w-25");
-      submitAuthNumberBtn.setAttribute("value", "인증하기");
-      // 내용물을 폼에 담기
-      authEmailForm.appendChild(authNumberInput);
-      authEmailForm.appendChild(submitAuthNumberBtn);
-      // div 안의 내용물 추가하기
-      const emailDiv = document.getElementById("email-div");
-      emailDiv.innerText = '';
-      emailDiv.appendChild(authEmailForm);
-      // 2. 버튼 누르면 url 타고가서 유저가 입력해야 될 인증메일 생성
+      if (document.querySelector("#already-email-auth-user") != null) {
+        const emailDiv = document.getElementById("email-div");
+        const alreadyEmailAuthUser = document.querySelector("#already-email-auth-user");
+        emailDiv.removeChild(alreadyEmailAuthUser);
+      };
       const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-      const formData = new FormData();
-      formData.append("email", emailId.value);
+      let formData3 = new FormData();
+      formData3.append("email_address", emailId.value);
+      emailhelpText.classList.remove("d-none");
+      emailhelpText.classList.add("spinner-border");
+      getEmailAuthBtn.textContent = "전송 중"
+      getEmailAuthBtn.setAttribute("disabled", true);
+      emailId.setAttribute("disabled", true);
       axios({
         method: 'post',
-        url: `/accounts/${event.target.dataset.accountId}/update/email_auth/`,
+        url: `/accounts/${event.target.dataset.accountId}/update/send-email/`,
         headers: { 'X-CSRFToken': csrftoken },
-        data: formData,
+        data: formData3,
       })
         .then(response => {
+          emailhelpText.classList.remove("spinner-border");
+          emailhelpText.textContent = response.data.emailSendMessage;
+          getEmailAuthBtn.textContent = "전송 완료"
         });
     } else {
       emailId.focus();
