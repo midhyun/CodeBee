@@ -35,7 +35,6 @@ def create(request):
         temp = request.POST['tag']
         if temp:
             tags = json.loads(temp)
-            print(type(tags))
             for t in tags:
                 tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
@@ -68,8 +67,16 @@ def create(request):
 
 
 def detail(request, study_pk):
-
     study = Study.objects.get(pk=study_pk)
+    if request.method =='POST':
+        form = StudyDateForm(request.POST)
+        if form.is_valid():
+            temp = form.save(commit=False)
+            temp.study = study
+            temp.save()
+            return redirect("reviews:detail", study_pk)
+    dates = StudyDate.objects.filter(study_id=study_pk)
+    form = StudyDateForm()
     cnt = len(Accepted.objects.filter(study=study))
     users = Accepted.objects.filter(study_id=study_pk)
     for user in users:
@@ -79,6 +86,8 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {
+        "form": form,
+        "dates": dates,
         "study": study,
         "cnt": cnt,
         "check": user_accepted,
@@ -108,6 +117,12 @@ def update(request, study_pk):
     if study.isactive:
         if request.user == study.host:
             if request.method == "POST":
+                tag = ''
+                temp = request.POST['tag']
+                if temp:
+                    tags = json.loads(temp)
+                    for t in tags:
+                        tag += t['value'] + ','
                 study_form = StudyForm(request.POST, request.FILES, instance=study)
                 study_date = StudyDateForm(request.POST, instance=date[0])
                 if study_form.is_valid() and study_date.is_valid():
@@ -118,6 +133,7 @@ def update(request, study_pk):
                     study.location = request.POST['location']
                     study.X = request.POST['X']
                     study.Y = request.POST['Y']
+                    study.tag = tag
                     study.host = request.user
                     study.save()
                     study_form.save()
@@ -129,6 +145,8 @@ def update(request, study_pk):
                 study_form = StudyForm(instance=study)
                 study_date = StudyDateForm(instance=date[0])
             context = {
+                'study': study,
+                'date': date,
                 'study_form': study_form,
                 'study_date': study_date,
                 }
@@ -542,3 +560,8 @@ def dislikes(request, study_pk, user_pk):
             honey.save()
 
     return redirect('reviews:userlist', study_pk)
+
+def del_date(request, date_pk, study_pk):
+    date = StudyDate.objects.get(pk=date_pk)
+    date.delete()
+    return redirect('reviews:detail', study_pk)

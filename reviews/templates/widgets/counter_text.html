@@ -1,0 +1,9 @@
+{% include 'django/forms/widgets/textarea.html' %}
+
+<span id="counter_{{widget.attrs.id}}"></span>
+
+<script>
+    document.querySelector('#{{widget.attrs.id}}').addEventListener("input", function(){
+        document.querySelector("#counter_{{ widget.attrs.id}}").innerHTML = this.value.length + '/500';
+    })
+</script>
