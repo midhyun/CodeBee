@@ -45,6 +45,7 @@ ADDED_APPS = [
     # https://pypi.org/project/django-cleanup/
     "django_cleanup.apps.CleanupConfig",
     'django.forms',
+    'gcalendar',
 ]
 
 DEFAULT_APPS = [
