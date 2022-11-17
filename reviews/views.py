@@ -35,7 +35,6 @@ def create(request):
         temp = request.POST['tag']
         if temp:
             tags = json.loads(temp)
-            print(type(tags))
             for t in tags:
                 tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
@@ -108,6 +107,12 @@ def update(request, study_pk):
     if study.isactive:
         if request.user == study.host:
             if request.method == "POST":
+                tag = ''
+                temp = request.POST['tag']
+                if temp:
+                    tags = json.loads(temp)
+                    for t in tags:
+                        tag += t['value'] + ','
                 study_form = StudyForm(request.POST, request.FILES, instance=study)
                 study_date = StudyDateForm(request.POST, instance=date[0])
                 if study_form.is_valid() and study_date.is_valid():
@@ -118,6 +123,7 @@ def update(request, study_pk):
                     study.location = request.POST['location']
                     study.X = request.POST['X']
                     study.Y = request.POST['Y']
+                    study.tag = tag
                     study.host = request.user
                     study.save()
                     study_form.save()
