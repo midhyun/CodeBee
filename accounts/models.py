@@ -40,19 +40,23 @@ class User(AbstractUser):
     fullname = models.CharField(
         max_length=20,
         null=True,
+        blank=True,
     )
     nickname = models.CharField(
         max_length=20,
         null=True,
+        blank=True,
     )
     phone = models.CharField(
         max_length=13,
         validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
         null=True,
+        blank=True,
     )
     profile_picture = ProcessedImageField(
         upload_to="profile_pictures/",
         null=True,
+        blank=True,
         processors=[ResizeToFill(128, 128)],
         format="JPEG",
         options={
@@ -61,20 +65,23 @@ class User(AbstractUser):
     )
     address = models.CharField(max_length=100)
     detail_address = models.CharField(max_length=30)
-    location = models.CharField(max_length=100, null=True)
     # 다른 유저와 상호작용 필드
     likes = models.ManyToManyField("self", symmetrical=False, related_name="ls")
     dislikes = models.ManyToManyField("self", symmetrical=False, related_name="ds")
     # 소셜 아이디 관련 필드
     is_social_account = models.BooleanField(default=False)
-    git_username = models.CharField(null=True, max_length=50)
-    boj_username = models.CharField(null=True, max_length=50)
-    social_id = models.CharField(null=True, max_length=100)
-    social_profile_picture = models.CharField(null=True, max_length=150)
+    git_username = models.CharField(null=True, blank=True, max_length=50)
+    boj_username = models.CharField(null=True, blank=True, max_length=50)
+    social_id = models.CharField(null=True, blank=True, max_length=100)
+    social_profile_picture = models.CharField(null=True, blank=True, max_length=150)
     # 인증 필드
     is_phone_active = models.BooleanField(default=False)
     is_email_active = models.BooleanField(default=False)
-    token = models.CharField(max_length=150, null=True)
+    token = models.CharField(
+        max_length=150,
+        null=True,
+        blank=True,
+    )
 
 
 load_dotenv()
