@@ -22,7 +22,7 @@
       <!-- 이름, 이메일, 깃허브 -->
       <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
         <p class="fw-bold">
-          {{ person.nickname }}
+          {{ person.nickname|default_if_none:" 어딘가의 드비" }}
         </p>
         <p>
           {% if person.email %}
@@ -81,57 +81,28 @@
         <!-- 참여한 스터디 -->
         <div class="tab">
           <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
-          <label for="tab-2" class="tab-label">참여한 스터디</label>
+          <label for="tab-2" class="tab-label">About{{ person.nickname|default_if_none:" 어딘가의 드비" }}</label>
           <div class="tab-content">
             <section class="">
-              {% for deactive in deactives %}
-                <div class="row d-flex">
-                  <div class="col-3 h-100">
-                    <a href="{% url 'reviews:detail' deactive.pk %}">
-                      {% if deactive.image %}
-                        <img src="{{ deactive.image.url }}" class="card-img-top" alt="스터디 대문사진">
-                      {% endif %}
-                    </a>
-                  </div>
-                  <div class="col-8">
-                    <div class="h-100">
-                      <p class="text-muted">모집마감일|{{ deactive.deadline }}</p>
-                      {% for comment in deactive.comment_set.all %}
-                        <!-- 작성자의 리뷰가 있을 경우 -->
-                        {% if comment.user == person %}
-                          <a href="{% url 'reviews:detail' deactive.pk %}">
-
-                            <div class="study-content yes-review shadow-sm hi">{{ comment.content }}
-                              <p class="created_at">
-                                <!-- 작성일자 : ~시간 전 표시 -->
-                                {% if comment.created_string == False %}
-                                  <!-- 7일이 지나면 날짜로 출력 -->
-                                  {{ comment.created_at|date:'m월 d일' }}
-                                {% else %}
-                                  <!-- 7일이 지나기 전이라면 함수 대입한 결과 -->
-                                  {{ comment.created_string }}
-                                {% endif %}
-                                작성된 리뷰입니다.
-                              </p>
-                            </div>
-                          </a>
-                        {% endif %}
-                        {% empty %}
-                        <div class="d-flex justify-content-center align-items-center none-review">
-                          <img src="{% static '/accounts/image/write.png' %}" width="42px;" alt="">
-                          <span class="text-muted">리뷰를 작성하지 않은 스터디입니다.</span>
-                          {% if user == person %}
-                            <a href="{% url 'reviews:detail' deactive.pk %}">
-                              <button class="creview">지금 작성하러 가기</button>
-                            </a>
-                          {% endif %}
-                        </div>
-                      </div>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endfor %}
-
+              <!-- 제목 영역 -->
+              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님의 github 활동입니다</h2>
+              <!-- 깃허브 영역 -->
+              <div class="detail-content">
+                등록된 깃허브가 없어요.
+              </div>
+              <!-- 제목 영역 -->
+              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님의 스터디 참여 내역입니다</h2>
+              <!-- 내용 영역 -->
+              <div class="detail-content">
+                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님은 django 스터디를 가장 많이 참여하였습니다.</p>
+                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님은 온라인 3회, 오프라인 0회 스터디에 참여하였습니다.</p>
+              </div>
+              <!-- 제목 영역 -->
+              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님의 최근 리뷰 활동입니다</h2>
+              <!-- 내용 영역 -->
+              <div class="detail-content">
+                아직 작성된 리뷰가 없어요.
+              </div>
             </section>
           </div>
         </div>

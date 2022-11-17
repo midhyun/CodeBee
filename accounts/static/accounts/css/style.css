@@ -543,3 +543,16 @@ input[type=password]{
     margin: 1rem 0px;
   }
 /** Navbar */
+
+/* about 유저 */
+.detail-header {
+  background-color: rgba(3, 126, 65, 0.377);
+  font-size: 24px;
+  padding: 5px;
+  font-weight: 700;
+  color: #4b4c4e;
+}
+
+.detail-content {
+  min-height: 200px;
+}
