@@ -34,7 +34,7 @@
                 </button>
                 <div id="comment-{{ comment.pk }}-update-form" class="display-none">
                     <input id="comment-{{ comment.pk }}-update-content" type="text"
-                           value="{{ comment.comment_content }}">
+                           value="{{ comment.content }}">
                     <button id="comment-{{ comment.pk }}-update-btn" class="btn btn-primary"
                             data-review-id="{{ review.pk }}" data-comment-id="{{ comment.pk }}"
                             onclick="updateComment(this.id)">확인
