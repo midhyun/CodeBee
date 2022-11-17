@@ -75,7 +75,7 @@
     const bg = document.getElementById('bg')
 
     window.addEventListener('scroll', () => {
-      bg.style.opacity = 1 - window.pageYOffset / 300 + ''
+      bg.style.opacity = 1 - window.scrollY / 300 + ''
     })
   </script>
 </body>

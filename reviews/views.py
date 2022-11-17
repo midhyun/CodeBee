@@ -308,11 +308,11 @@ def done(request, study_pk):
 
 
 def review(request, study_id):
-    study = Study.objects.get(pk=study_id)
+    study = Study.objects.filter(pk=study_id)
     comments = Comment.objects.all().order_by("-pk")
     comment_form = CommentForm()
     context = {
-        "review": study,
+        "reviews": study,
         "comment_form": comment_form,
         "comments": comments,
     }
@@ -358,7 +358,7 @@ def comment_update(request, pk, comment_pk):
         jsonObject = json.loads(request.body)
 
         comment = Comment.objects.get(pk=comment_pk)
-        comment.comment_content = jsonObject.get("content")
+        comment.content = jsonObject.get("content")
         comment.save()
 
         comments = Comment.objects.filter(study_id=pk).order_by("-pk")
