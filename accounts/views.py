@@ -10,7 +10,8 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from .models import AuthPhone
+from .models import AuthPhone, User, UserToken
+from django.views import View
 from dotenv import load_dotenv
 from django.http import JsonResponse
 from django.shortcuts import resolve_url
@@ -49,7 +50,6 @@ GITHUB_CLIENT_SECRET = os.getenv("GITHUB_CLIENT_SECRET")
 
 from reviews.models import Study, Accepted
 from django.contrib import messages
-from .models import User
 
 
 # 소셜 로그인에 필요한 토큰 생성
@@ -185,6 +185,7 @@ def social_signup_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
+        print(u_info)
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -421,7 +422,6 @@ def index(request):
             "persons": persons,
         },
     )
-
 
 def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
