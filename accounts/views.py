@@ -438,7 +438,7 @@ def detail(request, user_pk):
     party = person.accepted_set.all().filter(joined=True)
     # print(party)
     studys = party.values('study')
-    print(studys)
+    # print(studys)
     
     lan_dict = {}
     
