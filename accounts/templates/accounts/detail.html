@@ -34,6 +34,12 @@
         <p>
           깃허브
         </p>
+      <!-- 꿀단지 이미지 -->
+          <div>
+            <span class="icons" style="background: url('/static/accounts/image/honey.png') 0px 0px / 100px no-repeat;">
+              <span class="icons2" style="padding-top: calc({{ honey }}*2px); background: url('/static/accounts/image/honey_fill.png') 0px calc({{ honey }}*2px - 100px) / 100px no-repeat;"></span>
+              </span>
+          </div>
 
       </div>
     </header>
@@ -97,8 +103,11 @@
                 님의 스터디 참여 내역입니다</h2>
               <!-- 내용 영역 -->
               <div class="detail-content">
-                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
-                  님은 django 스터디를 가장 많이 참여하였습니다.</p>
+                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은 
+                  {% for lang in langs %}
+                  <span class="{{ lang }}">{{ lang }}</span> 
+                  {% endfor %}
+                  스터디를 가장 많이 참여하였습니다.</p>
                 <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
                   님은 온라인 3회, 오프라인 0회 스터디에 참여하였습니다.</p>
               </div>
@@ -110,16 +119,11 @@
                 아직 작성된 리뷰가 없어요.
               </div>
             </section>
-            <!-- 꿀단지 이미지 -->
-            <span class="icons">
-              <span class="icons2"></span>
-              </span>
+
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
 
 {% endblock content %}

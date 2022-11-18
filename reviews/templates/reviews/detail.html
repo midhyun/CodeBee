@@ -147,15 +147,15 @@
         {% endif %}
       </p>
       <div class="dropdown">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          스터디 일정
+        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          스터디 일정 <span class="badge text-bg-danger">{{dates|length}}</span>
         </button>
         <ul class="dropdown-menu dropdown-menu" style="width:600px">
-          <li><a class="dropdown-item active" href="#">스터디 일정</a></li>
+          <li><a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item active" href="#">스터디 일정</a></li>
           {% for date in dates %}
-          <li><div class="dropdown-item d-flex justify-content-between" ><div style="width:25px">{{ forloop.counter }}회</div> <div>시작: {{date.study_at|date:'y년m월d일 h:i'}} / 종료: {{date.study_end|date:'y년m월d일 h:i'}}</div>
+          <li id="{{ forloop.counter }}dateitem"><div class="dropdown-item d-flex justify-content-between" ><div style="width:25px">{{ forloop.counter }}회</div> <div>시작: {{date.study_at|date:'y년m월d일 h:i'}} / 종료: {{date.study_end|date:'y년m월d일 h:i'}}</div>
             {% if request.user == study.host %}
-              <div id="{{ forloop.counter }}btn" onclick="deletedate(this)" data-date-id="{{date.pk}}" data-study-id="{{study.pk}}">
+              <div data-loop-id="{{forloop.counter}}" onclick="deletedate(this)" data-date-id="{{date.pk}}">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" style="color:red" viewBox="0 0 16 16">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
               <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
@@ -299,19 +299,22 @@
     // marker.setMap(null);
     </script>
 <script>
+var test = document.getElementById('testaxios')
+console.log(test)
+
 function deletedate(event) {
-  console.log(event)
-  const datePk = event.target.dataset.dateId
-  const studyPk = event.target.dataset.studyId
+  console.log(event.dataset.dateId)
+  const datePk = event.dataset.dateId
+  const loopId = event.dataset.loopId
   console.log(datePk)
   axios({
     method: 'get',
-    url: `/reviews/del_date/${datePk}/${studyPk}`
+    url: `/reviews/del_date/${datePk}`
   })
   .then(response => {
-    event.parentNode.removeChild(event)
-  })
-}
+    const el = document.getElementById(`${loopId}dateitem`)
+    el.remove()
+  })};
 
 </script>
     {% endblock %}
