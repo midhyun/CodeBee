@@ -438,7 +438,7 @@ def detail(request, user_pk):
 
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
-    honey = 70 + plus - minus
+    honey = 15 + plus - minus
     
     return render(
         request,
@@ -447,6 +447,7 @@ def detail(request, user_pk):
             "person": person,
             "studies": studies,
             "deactives": deactives,
+            "honey" : honey,
         },
     )
 
