@@ -89,6 +89,7 @@
     </div>
   </div>
 </div>
+<p></p>
 {% else %}
 <div class="container my-3 position-relative" style="width:60%">
   <div class="d-flex align-items-end justify-content-center" style="position:relative; height:200px">
@@ -162,7 +163,7 @@
         <input name="X" type="hidden" value="{{ study.X }}">
         <input name="Y" type="hidden" value="{{ study.Y }}">
         <div class="mb-3"><label for="id_tag" class="form-label">태그 작성</label>
-        <input id="id_tag" name='tag' placeholder="#해시태그 #최대5개" type="hidden"></div>
+        <input id="id_tag" name='tag' placeholder="#해시태그 #최대5개" type="hidden" value="[{'value':'가'},{'value':'나'},{'value':'다'}]"></div>
         <div class="d-grid gap-2">
           <button type="submit" class="btn" style="background-color: rgb(245, 132, 12); color: white;">등록
           </button>
@@ -179,9 +180,14 @@
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
 <script>
+  var tags = JSON.parse("{{ tag|escapejs }}")
+  let whitelist = tags['tags'];
   var input = document.studyform.tag
       new Tagify(input, {
+          enforceWhitelist: false,
+          whitelist: whitelist,
           maxTags : 5
       })
+ 
 </script>
 {% endblock content %}

@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm, HoneyForm
-from .models import Study, Comment, Accepted, StudyDate, Honey
+from .models import Study, Comment, Accepted, StudyDate, Honey, Tag
 from accounts.models import User
 import requests
 import json
@@ -36,6 +36,8 @@ def create(request):
             tags = json.loads(temp)
             for t in tags:
                 tag += t['value'] + ','
+                try: Tag(tag=t['value']).save()
+                except: pass
         study_form = StudyForm(request.POST, request.FILES)
         study_date = StudyDateForm(request.POST)
         if study_form.is_valid() and study_date.is_valid():
@@ -56,9 +58,12 @@ def create(request):
             Aform.save()
             return redirect("reviews:index")
     else:
+        tag = {'tags':["python","java","pug","react","vue","c++","sass","javascript","html","css","django","spring","ruby"] + list(Tag.objects.all().values_list('tag', flat=True))}
+        tagify = json.dumps(tag)
         study_form = StudyForm()
         study_date = StudyDateForm()
     context = {
+        'tag': tagify,
         'study_form': study_form,
         'study_date': study_date,
     }
