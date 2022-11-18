@@ -561,3 +561,31 @@ def del_date(request, date_pk):
     date = StudyDate.objects.get(pk=date_pk)
     date.delete()
     return JsonResponse({})
+
+def search(request):
+    search = request.GET.get('search')
+    field = request.GET.get('field')
+    if field == '1' or not field:
+        users = User.objects.filter(username__contains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user)
+        studies += Study.objects.filter(tag__icontains=search) or Study.objects.filter(title__contains=search) or Study.objects.filter(categorie__contains=search)
+    elif field == '2':
+        studies = Study.objects.filter(title__contains=search)
+    elif field == '3':
+        users = User.objects.filter(username__contains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user)
+    elif field == '4':
+        studies = Study.objects.filter(categorie__contains=search)
+    elif field == '5':
+        studies = Study.objects.filter(tag__contains=search)
+    elif field == '6':
+        studies = Study.objects.filter(location__contains=search)
+    context = {
+        'studies':studies
+    }
+    return render(request, 'reviews/search.html', context)
+
