@@ -558,13 +558,34 @@ input[type=password]{
 }
 
 .icons {
-  padding-top: 50px;
-  background: url('/static/accounts/image/honey.png') 0px 0px / 50px no-repeat;
+  padding-top: 100px;
 }
 
 .icons2 {
-  padding-left: 50px;
-  padding-top: 30.2px;
+  padding-left: 100px;
   overflow: hidden;
-  background: url('/static/accounts/image/honey_fill.png') 0px calc(30.2px - 50px) / 50px no-repeat;
 }
+
+/* 언어별 컬러 주기 */
+.Python {
+  background-color: #f5a666;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: white;
+  margin: 0px 4px;
+}
+
+.Javascript {
+  background-color: #F7E018;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: rgb(88, 88, 88);
+  margin: 0px 4px;  
+}
+
