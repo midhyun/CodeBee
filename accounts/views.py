@@ -185,7 +185,7 @@ def social_signup_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
-        print(u_info)
+    print(u_info)
     if service_name == "kakao":
         login_data = {
             "kakao": {
