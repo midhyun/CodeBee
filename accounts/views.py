@@ -391,7 +391,7 @@ def update(request, user_pk):
         }
         return render(request, "accounts/update.html", context)
     else:
-        messages.warning('본인만 수정할 수 있습니다.')
+        messages.warning(request, '본인만 수정할 수 있습니다.')
         return redirect('reviews:index')
 
 def login(request):
