@@ -85,25 +85,35 @@
           <div class="tab-content">
             <section class="">
               <!-- 제목 영역 -->
-              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님의 github 활동입니다</h2>
+              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+                님의 github 활동입니다</h2>
               <!-- 깃허브 영역 -->
               <div class="detail-content">
                 등록된 깃허브가 없어요.
               </div>
               <!-- 제목 영역 -->
-              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님의 스터디 참여 내역입니다</h2>
+              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+                님의 스터디 참여 내역입니다</h2>
               <!-- 내용 영역 -->
               <div class="detail-content">
-                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님은 django 스터디를 가장 많이 참여하였습니다.</p>
-                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님은 온라인 3회, 오프라인 0회 스터디에 참여하였습니다.</p>
+                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+                  님은 django 스터디를 가장 많이 참여하였습니다.</p>
+                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+                  님은 온라인 3회, 오프라인 0회 스터디에 참여하였습니다.</p>
               </div>
               <!-- 제목 영역 -->
-              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }} 님의 최근 리뷰 활동입니다</h2>
+              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+                님의 최근 리뷰 활동입니다</h2>
               <!-- 내용 영역 -->
               <div class="detail-content">
                 아직 작성된 리뷰가 없어요.
               </div>
             </section>
+            <!-- 꿀단지 이미지 -->
+            <span class="icons">
+              <span class="icons2"></span>
+              </span>
+            </div>
           </div>
         </div>
       </div>

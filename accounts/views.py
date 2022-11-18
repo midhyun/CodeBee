@@ -180,7 +180,7 @@ def social_login_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
-        print(u_info)
+    print(u_info)
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -235,7 +235,7 @@ def social_login_callback(request, service_name):
                 if u_info["avatar_url"]
                 else None,
                 "nickname": u_info["bio"] if u_info["bio"] else None,
-                "email": u_info["email"] if u_info["email"] else None,
+                "email": u_info["email"] if "email" in u_info else None,
                 "phone": None,
                 ### 깃허브에서만 가져오는 항목 ###
                 "git_username": u_info["login"],
@@ -256,7 +256,7 @@ def social_login_callback(request, service_name):
         user.nickname = (
             user_info["nickname"] if user_info["nickname"] else user_info["username"]
         )
-        user.email = user_info["email"]
+        user.email = user_info["email"] if user_info["email"] else 'pokemon@master.com'
         user.phone = user_info["phone"]
         user.set_password(str(state_token))
         user.is_social_account = True

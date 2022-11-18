@@ -556,3 +556,15 @@ input[type=password]{
 .detail-content {
   min-height: 200px;
 }
+
+.icons {
+  padding-top: 50px;
+  background: url('/static/accounts/image/honey.png') 0px 0px / 50px no-repeat;
+}
+
+.icons2 {
+  padding-left: 50px;
+  padding-top: 30.2px;
+  overflow: hidden;
+  background: url('/static/accounts/image/honey_fill.png') 0px calc(30.2px - 50px) / 50px no-repeat;
+}
