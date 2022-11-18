@@ -5,6 +5,7 @@ import json
 # Create your views here.
 def test(request):
     return render(request, 'gcalendar/test.html')
+
 client_id = "503216611677-g9p12g4p2an35h2srqknqhg6p1s4469o.apps.googleusercontent.com"
 client_secret = "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"
 redirect_uri = "http://localhost:8000/gcalendar/google_code"
@@ -105,7 +106,7 @@ def google_code(request):
     return redirect('gcalendar:test')
 
 def calendar_event(request):
-    token = UserToken.objects.get(user=request.user)
+    token = request.user.token
     url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?key=AIzaSyDpJRl5rjY_ntaBs09g7FqPns-9lOPnyLQ'
     headers = {
         "Authorization": 'Bearer' + token,
@@ -127,7 +128,7 @@ def calendar_event(request):
     }
     response = requests.post(url, headers=headers, data=data)
     if response.json().get('code') == 200:
-            print('리프레시 후 일정이 성공적으로 등록되었습니다.')
+            print('일정이 성공적으로 등록되었습니다.')
     else:
-        print('리프레시 후 오류메시지:' + str(response.json()))
-    pass
+        print('오류메시지:' + str(response.json()))
+    return redirect('gcalendar:test')

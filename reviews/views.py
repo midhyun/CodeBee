@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm, HoneyForm
 from .models import Study, Comment, Accepted, StudyDate, Honey
-
 from accounts.models import User
 import requests
 import json
@@ -579,7 +578,7 @@ def dislikes(request, study_pk, user_pk):
 
     return redirect('reviews:userlist', study_pk)
 
-def del_date(request, date_pk, study_pk):
+def del_date(request, date_pk):
     date = StudyDate.objects.get(pk=date_pk)
     date.delete()
-    return redirect('reviews:detail', study_pk)
+    return JsonResponse({})
