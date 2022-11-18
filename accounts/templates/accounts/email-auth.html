@@ -4,12 +4,12 @@
 {% block content %}
 
 <div class="container">
-  {% if user.is_email_auth %}
-  <h1 class="text-center">이미 인증된 유저입니다.</h1>
+  {% if success %}
+  <h1 class="text-center">{{ msg }}</h1>
   <a href="{% url 'accounts:test' %}" class="text-center">메인 페이지로 가기</a>
   {% else %}
-  <h1 class="text-center">인증이 완료되었습니다.</h1>
-  <p class="text-center">이제 이 창을 닫으셔도 됩니다.</p>
+  <h1 class="text-center">인증 실패 : {{ msg }}</h1>
+  <p class="text-center">관리자에게 문의하세요.</p>
   <a href="{% url 'accounts:test' %}" class="text-center">메인 페이지로 가기</a>
   {% endif %}
 </div>

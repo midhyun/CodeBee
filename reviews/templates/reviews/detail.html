@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
 {% load static %}
-
+{% load django_bootstrap5 %}
 {% if study.isactive == True %}
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
@@ -71,11 +71,6 @@
       </div>
     </div>
     {% endif %}
-    {% if user.g_token %}
-    <button class="btn btn-primary">구글캘린더</button>
-    {% else %}
-    
-    {% endif %}
   </div>
   <!-- 스터디 정보 -->
   <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
@@ -102,9 +97,56 @@
         {% if study.location_type == False %}
         <span>모임장소: {{ study.location }}</span>
         {% elif study.location_type == True %}
-        <span>온라인으로 진행됩니다.</span>
+        <span>온라인: {{ study.location }}</span>
         {% endif %}
       </p>
+      <div class="dropdown">
+        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          스터디 일정
+        </button>
+        <ul class="dropdown-menu dropdown-menu" style="width:600px">
+          <li><a class="dropdown-item active" href="#">스터디 일정</a></li>
+          {% for date in dates %}
+          <li><div class="dropdown-item d-flex justify-content-between" ><div style="width:25px">{{ forloop.counter }}회</div> <div>시작: {{date.study_at|date:'y년m월d일 h:i'}} / 종료: {{date.study_end|date:'y년m월d일 h:i'}}</div>
+            {% if request.user == study.host %}
+              <div id="{{ forloop.counter }}btn" onclick="deletedate(this)" data-date-id="{{date.pk}}" data-study-id="{{study.pk}}">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" style="color:red" viewBox="0 0 16 16">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+            </svg></div>
+            {% endif %}
+          </div></li>
+          {% endfor %}
+          {% if request.user == study.host %}
+          <li><hr class="dropdown-divider"></li>
+          <li><div style="cursor:pointer" class="dropdown-item text-center" data-bs-toggle="modal" data-bs-target="#exampleModal2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+          </svg> 스터디 추가</div></li>
+          {% endif %}
+        </ul>
+        <!-- 스터디 추가 Modal -->
+        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">스터디 일정 추가하기</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form action="" method="POST">
+                  {% csrf_token %}
+                  {% bootstrap_form form %}
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary">Save changes</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     {% if study.location_type == False %}
     <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
@@ -161,9 +203,20 @@
         {% if study.location_type == False %}
         <span>모임장소: {{ study.location }}</span>
         {% elif study.location_type == True %}
-        <span>온라인으로 진행됩니다.</span>
+        <span>온라인: {{ study.location }}</span>
         {% endif %}
       </p>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          스터디 일정
+        </button>
+        <ul class="dropdown-menu dropdown-menu-dark">
+          <li><a class="dropdown-item active" href="#">스터디 일정</a></li>
+          {% for date in dates %}
+          <li><a class="dropdown-item" href="#">시작:{{date.study_at.isoformat}}종료:{{date.study_end.isoformat}}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
     {% if study.location_type == False %}
     <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
@@ -172,6 +225,7 @@
 </div>
 {% endif %}
 
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script type="text/javascript"
   src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
   <script>
@@ -199,4 +253,20 @@
     // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
     // marker.setMap(null);
     </script>
+<script>
+function deletedate(event) {
+  console.log(event)
+  const datePk = event.target.dataset.dateId
+  const studyPk = event.target.dataset.studyId
+  console.log(datePk)
+  axios({
+    method: 'get',
+    url: `/reviews/del_date/${datePk}/${studyPk}`
+  })
+  .then(response => {
+    event.parentNode.removeChild(event)
+  })
+}
+
+</script>
     {% endblock %}

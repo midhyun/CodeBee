@@ -8,7 +8,11 @@
     <h1 class="text-center">회원가입</h1>
   </div>
   <div>
+    {% if request.resolver_match.url_name == "signup" %}
     <form action="" method="POST" class="form" enctype="multipart/form-data">
+    {% else %}
+    <form action="{% url 'accounts:signup' %}" method="POST" class="form" enctype="multipart/form-data">
+    {% endif %}
       {% csrf_token %}
       <!-- 아이디, 비빌번호 -->
       <div class="card m-4">
@@ -33,6 +37,12 @@
           {% bootstrap_form address_form %}
         </div>
       </div>
+      {% if request.resolver_match.url_name != "signup" %}
+      <!-- SNS 가입자 자동입력 -->
+      <div>
+        {% bootstrap_form sns_signup_form %}
+      </div>
+      {% endif %}
       <!-- 왼료 버튼 -->
       <div class="d-flex mb-5">
         {% bootstrap_button button_type="submit" content="완료" style="width: 7rem;" %}

@@ -67,8 +67,16 @@ def create(request):
 
 
 def detail(request, study_pk):
-
     study = Study.objects.get(pk=study_pk)
+    if request.method =='POST':
+        form = StudyDateForm(request.POST)
+        if form.is_valid():
+            temp = form.save(commit=False)
+            temp.study = study
+            temp.save()
+            return redirect("reviews:detail", study_pk)
+    dates = StudyDate.objects.filter(study_id=study_pk)
+    form = StudyDateForm()
     cnt = len(Accepted.objects.filter(study=study))
     users = Accepted.objects.filter(study_id=study_pk)
     for user in users:
@@ -78,6 +86,8 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {
+        "form": form,
+        "dates": dates,
         "study": study,
         "cnt": cnt,
         "check": user_accepted,
@@ -550,3 +560,8 @@ def dislikes(request, study_pk, user_pk):
             honey.save()
 
     return redirect('reviews:userlist', study_pk)
+
+def del_date(request, date_pk, study_pk):
+    date = StudyDate.objects.get(pk=date_pk)
+    date.delete()
+    return redirect('reviews:detail', study_pk)
