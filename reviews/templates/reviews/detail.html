@@ -102,8 +102,8 @@
         {% endif %}
       </p>
       <div class="dropdown">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          스터디 일정
+        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          스터디 일정 <span class="badge text-bg-danger">{{dates|length}}</span>
         </button>
         <ul class="dropdown-menu dropdown-menu" style="width:600px">
           <li><a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item active" href="#">스터디 일정</a></li>
