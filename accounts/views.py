@@ -636,3 +636,6 @@ def check_email_auth(request, uidb64, token, uemailb64):
             "error": "토큰 값이 다릅니다.",
         }
     return render(request, "accounts/email-auth.html", context)
+
+def test2(request):
+    return render(request, 'accounts/test2.html')

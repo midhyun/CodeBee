@@ -7,42 +7,18 @@
 {% endblock css %}
 {% block content %}
 
-    <header class="container-fluid index-header ">
-        <div class="row text-center">
-            {% if request.user.is_authenticated %}
-                <h1>
-                    {{ request.user }}
-                    <a class="text-white" href="{% url 'accounts:logout' %}">로그아웃</a>
-
-                </h1>
-            {% else %}
-                <h1 class="text-white ">
-                    <a href="{% url 'accounts:login' %}">로그인 하러가기</a>
-                </h1>
-            {% endif %}
-
-            <a href="{% url 'reviews:create' %}">스터디 만들기</a>
-        </div>
-    <div class="row" >
-
-
-
-    </div>
-
-        <div class="row justify-content-md-center ">
-
-            <div class="col-md-auto ">
-
-
-                <form action="{% url 'reviews:search' %}" class="search-box">
-                    <input type="text" name="search" placeholder=" "/>
-                    <button type="submit"></button>
-                </form>
-
-            </div>
-
-        </div>
-    </header>
+        <form action="{% url 'reviews:search' %}" class="search-box">
+          <select class="post-color select_boder mx-1" aria-label="Default select example" name='field'>
+            <option value="1">전체</option>
+            <option value="2">스터디명</option>
+            <option value="3">스터디장</option>
+            <option value="4">과목</option>
+            <option value="5">태그</option>
+            <option value="6">장소</option>
+          </select>
+          <input type="text" name="search" placeholder=" "/>
+          <button type="submit"></button>
+        </form>
     <!-- 헤더 이미지 영역 -->
 
 
