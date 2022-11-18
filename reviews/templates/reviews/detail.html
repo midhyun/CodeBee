@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
-{% block content %}
 {% load static %}
+{% block css %}
+  <link rel="stylesheet" href="{% static 'reviews/css/detail.css' %}">
+{% endblock css %}
+
+{% block content %}
 {% load django_bootstrap5 %}
 {% if study.isactive == True %}
 <div class="container">
@@ -8,9 +12,9 @@
   <div class="my-5">
     <span style="font-size: 3rem">{{study.title}}</span>
     {% if cnt == study.limits %}
-      <span class="ms-3 text-danger">모집마감</span>
+      <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-danger">모집마감</span>
     {% else %}
-    <span class="ms-3 text-primary">모집중</span>
+    <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-primary">모집중</span>
 
     
     {% endif %}
@@ -20,7 +24,30 @@
     <div class="text-end mx-5">
       <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
       <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
-      <a class="ms-3 btn btn-success" href="{% url 'reviews:done' study.pk %}">활동완료</a>
+      
+      <button type="button" class="btn btn-success ms-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        활동완료
+      </button>
+      
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">활동 완료</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 text-start lh-lg modal-text">
+              활동 완료 시 스터디가 비활성화 상태로 전환되고 스터디 정보를 수정하거나 다시 활성화 상태로 전환할 수 없습니다. 
+              <br><span class='text-danger'>계속 진행하기를 누르면 스터디가 종료됩니다.</span>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">아니요 돌아갈래요.</button>
+              <a class="ms-3 btn btn-success" href="{% url 'reviews:done' study.pk %}">계속 진행하기</a>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     {% else %}
     {% if check %}
@@ -43,20 +70,24 @@
     <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">
       {{study.title }}</a>
     <a class="btn btn-outline-primary  me-5" href="">후기</a>
-    <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께하는 드비들</button>
     
     <!-- 유저 목록 오프캔버스 -->
+    <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께하는 드비들</button>
     <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
       <div class="offcanvas-header">
         <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
       </div>
       <div class="offcanvas-body">
+        
         {% for member in members %}
         {% if member.joined == True %}
         <div>
           <div class="pb-3 mt-2 border-bottom">
             <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+            {% if member.users == user %}
+            <span>(나)</span>
+            {% endif %}
             {% if study.host == member.users %}
             <button class="text-end btn btn-primary m-0" disabled>스터디장</button>
             <p><p class="my-4"></p>
@@ -77,6 +108,9 @@
         <div>
           <div class="pb-3 mt-2 border-bottom">
             <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+            {% if member.users == user %}
+            <span>(나)</span>
+            {% endif %}
             <button class="text-end btn btn-secondary m-0" disabled>대기중</button>
             {% if study.host == user %}
             <p class="text-end">
@@ -199,12 +233,14 @@
     {% endif %}
   </div>
 </div>
+
+
 <!-- 활동 종료 -->
 {% elif study.isactive == False %}
 <div class="container">
   <!-- 스터디 이름, 모집여부 -->
   <div class="my-5">
-    <span style="font-size: 3rem">{{study.title}}  <span class="ms-3 opacity-50">(활동종료)</span></span>
+    <span style="font-size: 3rem">{{study.title}}  <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-danger">활동종료</span></span>
     <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
     {% if request.user.is_authenticated %}
     {% if study.host == user %}
@@ -225,8 +261,38 @@
   </div>
   <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
   <div class="ms-3 mb-5 d-flex">
-    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
-    <a class="btn btn-outline-primary  me-5" href="">후기</a>
+    <a class="btn btn-outline-primary me-5 disabled" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+    <a class="btn btn-outline-primary me-5 disabled" href="">후기</a>
+    
+    <!-- 유저 목록 오프캔버스 -->
+    <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께했던 드비들</button>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">함께했던 드비들</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        {% for member in members %}
+        {% if member.joined == True %}
+        <div>
+          <div class="pb-3 mt-2 border-bottom">
+            <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+            {% if member.users == user %}
+            <span>(나)</span>
+            {% endif %}
+            {% if study.host == member.users %}
+            <button class="text-end btn btn-primary m-0" disabled>스터디장</button>
+            <p><p class="my-4"></p>
+            {% else %}
+            <button class="text-end btn btn-warning m-0" disabled>참여</button>
+            <p><p class="my-4"></p>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
   </div>
   <!-- 스터디 정보 -->
   <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
