@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from django.http import JsonResponse
 from django.shortcuts import resolve_url
 from pjt.settings import EMAIL_HOST_USER
-from reviews.models import Study, Accepted
+from reviews.models import Study, Accepted, Honey
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login as user_login
@@ -427,7 +427,7 @@ def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
     studies = []
     deactives = []
-
+    
     for accept in accepts:
         if accept.joined:
             studies.append(accept.study)
@@ -436,6 +436,10 @@ def detail(request, user_pk):
             deactives.append(study)
     person = get_object_or_404(get_user_model(), pk=user_pk)
 
+    plus = Honey.objects.filter(rated_user=person, like=True).count()
+    minus = Honey.objects.filter(rated_user=person, dislike=True).count()
+    honey = 70 + plus - minus
+    
     return render(
         request,
         "accounts/detail.html",

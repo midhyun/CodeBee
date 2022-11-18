@@ -97,16 +97,26 @@ def detail(request, study_pk):
 
 
 def userlist(request, study_pk):
-    users = Accepted.objects.filter(study_id=study_pk)
+    members = Accepted.objects.filter(study_id=study_pk)
     study = Study.objects.get(pk=study_pk)
     cnt = len(Accepted.objects.filter(study=study))
-    for user in users:
+    request_check = get_object_or_404(get_user_model(), pk=request.user.pk)
+    joined = True
+    if not members.filter(users=request_check).exists():
+        joined = False
+    for user in members:
         if user.users == request.user:
             user_accepted = True
             break
     else:
         user_accepted = False
-    context = {"members": users, "study": study, "cnt": cnt, "check": user_accepted}
+    context = {
+        "members": members, 
+        "study": study, 
+        "cnt": cnt, 
+        "check": user_accepted,
+        'request_check': joined
+        }
     return render(request, "reviews/userlist.html", context)
 
 
@@ -508,10 +518,14 @@ def likes(request, study_pk, user_pk):
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
     check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+    join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
 
     if rated == request.user:
         messages.warning(request, '본인을 평가할 수 없습니다.')
 
+    elif not join_user:
+        messages.warning(request, '스터디 참가자들만 평가 가능합니다.')
+        
     else:
         if check:
             honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)
@@ -537,10 +551,14 @@ def dislikes(request, study_pk, user_pk):
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
     check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+    join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
 
     if rated == request.user:
         messages.warning(request, '본인을 평가할 수 없습니다.')
 
+    elif not join_user:
+        messages.warning(request, '스터디 참가자들만 평가 가능합니다.')
+    
     else:
         if check:
             honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)

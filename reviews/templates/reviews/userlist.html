@@ -157,8 +157,10 @@
       {% if member.joined == True %}
       <div class="pb-3 mt-2 border-bottom">
         <a href="{% url 'accounts:detail' member.users.pk %}"  class="m-0">{{ member.users }}</a>
+        {% if request_check %}
         <a href="{% url 'reviews:likes' study.pk member.users.pk %}">좋아요</a>
         <a href="{% url 'reviews:dislikes' study.pk member.users.pk %}">싫어요</a>
+        {% endif %}
         {% if user == study.host %}
         {% if member.users != study.host %}
         <p class="text-end m-0">
@@ -171,6 +173,8 @@
           </span>
         </p>
         {% endif %}
+        {% else %}
+        <p></p>
         {% endif %}
         <span>{{ member.joindate }}</span>
       </div>
