@@ -447,6 +447,7 @@ def detail(request, user_pk):
             "person": person,
             "studies": studies,
             "deactives": deactives,
+            'honey':honey
         },
     )
 

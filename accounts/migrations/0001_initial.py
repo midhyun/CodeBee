@@ -61,6 +61,8 @@ class Migration(migrations.Migration):
                 ('is_phone_active', models.BooleanField(default=False)),
                 ('is_email_active', models.BooleanField(default=False)),
                 ('token', models.CharField(blank=True, max_length=150, null=True)),
+                ('g_token', models.CharField(blank=True, max_length=150, null=True)),
+
                 ('dislikes', models.ManyToManyField(related_name='ds', to=settings.AUTH_USER_MODEL)),
                 ('groups', models.ManyToManyField(blank=True, help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.', related_name='user_set', related_query_name='user', to='auth.Group', verbose_name='groups')),
                 ('likes', models.ManyToManyField(related_name='ls', to=settings.AUTH_USER_MODEL)),
