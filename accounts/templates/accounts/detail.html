@@ -105,7 +105,7 @@
               <div class="detail-content">
                 <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은 
                   {% for lang in langs %}
-                  <span>{{ lang }}</span> 
+                  <span class="{{ lang }}">{{ lang }}</span> 
                   {% endfor %}
                   스터디를 가장 많이 참여하였습니다.</p>
                 <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}

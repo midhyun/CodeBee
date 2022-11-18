@@ -565,3 +565,27 @@ input[type=password]{
   padding-left: 100px;
   overflow: hidden;
 }
+
+/* 언어별 컬러 주기 */
+.Python {
+  background-color: #f5a666;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: white;
+  margin: 0px 4px;
+}
+
+.Javascript {
+  background-color: #F7E018;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 8px;
+  padding-right: 8px;
+  color: rgb(88, 88, 88);
+  margin: 0px 4px;  
+}
+
