@@ -351,45 +351,48 @@ def signup(request):
 
 @login_required
 def update(request, user_pk):
-    user = get_object_or_404(get_user_model(), pk=user_pk)
-    if request.method == "POST":
-        update_form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
-        address_form = AddressForm(request.POST, instance=user)
-        auth_form = AuthForm(request.POST, instance=user)
-        if update_form.is_valid() and address_form.is_valid() and auth_form.is_valid():
-            user = update_form.save(commit=False)
-            user.address = request.POST["address"]
-            user.detail_address = request.POST["detail_address"]
-            auth = auth_form.save(commit=False)
-            # 휴대폰 번호
-            if auth.phone:
-                auth.phone = (
-                    request.POST["phone"][:3]
-                    + "-"
-                    + request.POST["phone"][3:7]
-                    + "-"
-                    + request.POST["phone"][7:]
-                )
-            auth.save()
-            user.save()
-            return redirect("accounts:detail", user_pk)
+    if request.user.pk == user_pk:
+        user = get_object_or_404(get_user_model(), pk=user_pk)
+        if request.method == "POST":
+            update_form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
+            address_form = AddressForm(request.POST, instance=user)
+            auth_form = AuthForm(request.POST, instance=user)
+            if update_form.is_valid() and address_form.is_valid() and auth_form.is_valid():
+                user = update_form.save(commit=False)
+                user.address = request.POST["address"]
+                user.detail_address = request.POST["detail_address"]
+                auth = auth_form.save(commit=False)
+                # 휴대폰 번호
+                if auth.phone:
+                    auth.phone = (
+                        request.POST["phone"][:3]
+                        + "-"
+                        + request.POST["phone"][3:7]
+                        + "-"
+                        + request.POST["phone"][7:]
+                    )
+                auth.save()
+                user.save()
+                return redirect("accounts:detail", user_pk)
+        else:
+            update_form = CustomUserChangeForm(instance=user)
+            address_form = AddressForm(instance=user)
+            if user.phone:
+                phone = user.phone
+                phone = "".join(phone.split("-"))
+                user.phone = phone
+            auth_form = AuthForm(instance=user)
+            auth_form.fields["phone"].widget.attrs["maxlength"] = 11
+        context = {
+            "address_form": address_form,
+            "update_form": update_form,
+            "auth_form": auth_form,
+            "user": user,
+        }
+        return render(request, "accounts/update.html", context)
     else:
-        update_form = CustomUserChangeForm(instance=user)
-        address_form = AddressForm(instance=user)
-        if user.phone:
-            phone = user.phone
-            phone = "".join(phone.split("-"))
-            user.phone = phone
-        auth_form = AuthForm(instance=user)
-        auth_form.fields["phone"].widget.attrs["maxlength"] = 11
-    context = {
-        "address_form": address_form,
-        "update_form": update_form,
-        "auth_form": auth_form,
-        "user": user,
-    }
-    return render(request, "accounts/update.html", context)
-
+        messages.warning(request, '본인만 수정할 수 있습니다.')
+        return redirect('reviews:index')
 
 def login(request):
     if request.method == "POST":
