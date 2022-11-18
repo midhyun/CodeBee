@@ -10,14 +10,13 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from .models import AuthPhone, User, UserToken
-from django.views import View
 from dotenv import load_dotenv
+from .models import AuthPhone, User
 from django.http import JsonResponse
 from django.shortcuts import resolve_url
 from pjt.settings import EMAIL_HOST_USER
-from reviews.models import Study, Accepted, Honey
 from django.contrib.auth import get_user_model
+from reviews.models import Study, Accepted, Honey
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login as user_login
 from django.contrib.auth import logout as user_logout
@@ -273,7 +272,7 @@ def social_signup_callback(request, service_name):
 
 
 # 소셜로그인 연결 끊기
-def sns_withdrawal(request, service_name):
+def sns_logout(request, service_name):
     social_id = request.user.social_id
     user = get_object_or_404(get_user_model(), social_id=social_id)
     access_token = user.token
@@ -297,10 +296,10 @@ def sns_withdrawal(request, service_name):
             "success": "success",
             "msg": "정상적으로 해지되었습니다.",
         }
-    except Exception:
+    except Exception as error:
         context = {
-            "error": "에러가 발생했습니다.",
-            "error": Exception,
+            "error_msg": "에러가 발생했습니다.",
+            "error_code": error,
         }
     return render(request, "accounts/sns-disconnect.html", context)
 
@@ -428,7 +427,7 @@ def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
     studies = []
     deactives = []
-    
+
     for accept in accepts:
         if accept.joined:
             studies.append(accept.study)
@@ -440,7 +439,7 @@ def detail(request, user_pk):
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
     honey = 70 + plus - minus
-    
+
     return render(
         request,
         "accounts/detail.html",

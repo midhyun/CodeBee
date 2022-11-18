@@ -1,7 +1,5 @@
 from django.shortcuts import render, redirect
-from accounts.models import User, UserToken
 import requests
-import json
 # Create your views here.
 def test(request):
     return render(request, 'gcalendar/test.html')
