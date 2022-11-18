@@ -435,6 +435,30 @@ def detail(request, user_pk):
         if not study.isactive:
             deactives.append(study)
     person = get_object_or_404(get_user_model(), pk=user_pk)
+    party = person.accepted_set.all().filter(joined=True)
+    # print(party)
+    studys = party.values('study')
+    print(studys)
+    
+    lan_dict = {}
+    
+    for study in studys:
+        pk = study.get('study')
+        study_ = Study.objects.get(pk=pk)
+        lan_dict[study_.categorie] = lan_dict.get(study_.categorie, 0) + 1
+    
+    # print(lan_dict)
+    val_ = list(lan_dict.values())
+    most = max(val_)
+    # print(most)
+    
+    langs = []
+    for k, v in lan_dict.items():
+        if v == most:
+            langs.append(k)
+         
+        
+        
 
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
@@ -448,6 +472,7 @@ def detail(request, user_pk):
             "studies": studies,
             "deactives": deactives,
             "honey" : honey,
+            "langs" : langs,
         },
     )
 
