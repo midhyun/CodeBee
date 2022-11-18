@@ -543,3 +543,28 @@ input[type=password]{
     margin: 1rem 0px;
   }
 /** Navbar */
+
+/* about 유저 */
+.detail-header {
+  background-color: rgba(3, 126, 65, 0.377);
+  font-size: 24px;
+  padding: 5px;
+  font-weight: 700;
+  color: #4b4c4e;
+}
+
+.detail-content {
+  min-height: 200px;
+}
+
+.icons {
+  padding-top: 50px;
+  background: url('/static/accounts/image/honey.png') 0px 0px / 50px no-repeat;
+}
+
+.icons2 {
+  padding-left: 50px;
+  padding-top: 30.2px;
+  overflow: hidden;
+  background: url('/static/accounts/image/honey_fill.png') 0px calc(30.2px - 50px) / 50px no-repeat;
+}

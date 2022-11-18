@@ -8,6 +8,7 @@ from accounts.models import User
 import requests
 import json
 from django.contrib import messages
+from django.conf import settings
 from django.contrib.auth import get_user_model
 
 # Create your views here.
@@ -32,10 +33,10 @@ def create(request):
     if request.method == 'POST':
         tag = ''
         temp = request.POST['tag']
-        tags = json.loads(temp)
-        print(type(tags))
-        for t in tags:
-            tag += t['value'] + ','
+        if temp:
+            tags = json.loads(temp)
+            for t in tags:
+                tag += t['value'] + ','
         study_form = StudyForm(request.POST, request.FILES)
         study_date = StudyDateForm(request.POST)
         if study_form.is_valid() and study_date.is_valid():
@@ -66,8 +67,16 @@ def create(request):
 
 
 def detail(request, study_pk):
-
     study = Study.objects.get(pk=study_pk)
+    if request.method =='POST':
+        form = StudyDateForm(request.POST)
+        if form.is_valid():
+            temp = form.save(commit=False)
+            temp.study = study
+            temp.save()
+            return redirect("reviews:detail", study_pk)
+    dates = StudyDate.objects.filter(study_id=study_pk)
+    form = StudyDateForm()
     cnt = len(Accepted.objects.filter(study=study))
     users = Accepted.objects.filter(study_id=study_pk)
     for user in users:
@@ -77,6 +86,8 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {
+        "form": form,
+        "dates": dates,
         "study": study,
         "cnt": cnt,
         "check": user_accepted,
@@ -116,17 +127,23 @@ def update(request, study_pk):
     if study.isactive:
         if request.user == study.host:
             if request.method == "POST":
+                tag = ''
+                temp = request.POST['tag']
+                if temp:
+                    tags = json.loads(temp)
+                    for t in tags:
+                        tag += t['value'] + ','
                 study_form = StudyForm(request.POST, request.FILES, instance=study)
                 study_date = StudyDateForm(request.POST, instance=date[0])
                 if study_form.is_valid() and study_date.is_valid():
                     study = study_form.save(commit=False)
-                    study.categorie = request.POST["categorie"]
-                    study.study_type = request.POST["study_type"]
-                    study.location_type = request.POST["location_type"]
-                    study.location = request.POST["location"]
-                    study.X = request.POST["X"]
-                    study.Y = request.POST["Y"]
-                    study.deadline = request.POST["deadline"]
+                    study.categorie = request.POST['categorie']
+                    study.study_type = request.POST['study_type']
+                    study.location_type = request.POST['location_type']
+                    study.location = request.POST['location']
+                    study.X = request.POST['X']
+                    study.Y = request.POST['Y']
+                    study.tag = tag
                     study.host = request.user
                     study.save()
                     study_form.save()
@@ -138,6 +155,8 @@ def update(request, study_pk):
                 study_form = StudyForm(instance=study)
                 study_date = StudyDateForm(instance=date[0])
             context = {
+                'study': study,
+                'date': date,
                 'study_form': study_form,
                 'study_date': study_date,
                 }
@@ -323,11 +342,11 @@ def done(request, study_pk):
 
 
 def review(request, study_id):
-    study = Study.objects.get(pk=study_id)
+    study = Study.objects.filter(pk=study_id)
     comments = Comment.objects.all().order_by("-pk")
     comment_form = CommentForm()
     context = {
-        "review": study,
+        "reviews": study,
         "comment_form": comment_form,
         "comments": comments,
     }
@@ -373,7 +392,7 @@ def comment_update(request, pk, comment_pk):
         jsonObject = json.loads(request.body)
 
         comment = Comment.objects.get(pk=comment_pk)
-        comment.comment_content = jsonObject.get("content")
+        comment.content = jsonObject.get("content")
         comment.save()
 
         comments = Comment.objects.filter(study_id=pk).order_by("-pk")
@@ -424,8 +443,75 @@ def comment_delete(request, pk, comment_pk):
 
 # Google Calendar Test
 def test_calendar(request):
-    print(request.POST)
+
     return render(request, 'reviews/test.html')
+# 콜
+def google_call(request):
+    # if request.user.g_token:
+    #     return render(request, 'reviews/test.html')
+    # else:
+    #     url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com&redirect_uri=http://localhost:8000/reviews/google_code&response_type=code&scope=https://www.googleapis.com/auth/calendar'
+    #     return redirect(url)
+    url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com&redirect_uri=http://localhost:8000/reviews/google_code&response_type=code&scope=https://www.googleapis.com/auth/calendar'
+    return redirect(url)
+# 콜백
+def google_code(request):
+    url = 'https://oauth2.googleapis.com/token'
+    data = {
+                "grant_type": "authorization_code",
+                "redirect_uri": "http://localhost:8000/reviews/google_code",
+                "client_id": "503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com",  # 배포시 보안적용 해야함
+                "client_secret": "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",  # 배포시 보안적용 해야함
+                "project_id":"keen-button-368611",
+                "state": request.GET.get("state"),
+                "code": request.GET.get("code"),
+            }
+    res = requests.post(url, data=data).json()
+    token = res['access_token']
+    re_token = res['refresh_token']
+    print(token)
+    user_ = get_user_model().objects.get(pk=request.user.pk)
+    user_.g_token = token
+    user_.save()
+    url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=none&key=AIzaSyB86Erv475UlH5VfgBaSCA53hPcnoR46IA'
+    headers = {
+        "Authorization": 'Bearer' + token,
+        "Accept": 'application/json',
+        "Content-Type": 'application/json',
+    }
+    # data = {
+    #     "end":{
+    #         "dateTime":schedule.study_end.strftime("%Y-%m-%dT%H:%M:%S"),
+    #         "timeZone":"Asia/Seoul"
+    #     },
+    #     "start":{
+    #         "dateTime":schedule.study_at.strftime("%Y-%m-%dT%H:%M:%S"),
+    #         "timeZone":"Asia/Seoul"
+    #     },
+    #     "summary": study.title,
+    #     "location":study.location,
+    #     "description": study.content
+    # }
+    data = {
+    "end":{
+        "dateTime":'2022-11-18T13:00:00',
+        "timeZone":"Asia/Seoul"
+    },
+    "start":{
+        "dateTime":'2022-11-18T13:00:00',
+        "timeZone":"Asia/Seoul"
+    },
+    "summary": 'test',
+    "location":'test',
+    "description": 'test'
+}
+
+    response = requests.post(url, headers=headers, data=data)
+    if response.json().get('code') == 200:
+        print('일정이 성공적으로 등록되었습니다.')
+    else:
+        print('일정이 성공적으로 등록되지 못했습니다. 오류메시지 : ' + str(response.json()))
+    return redirect('reviews:test_calendar')
 
 def likes(request, study_pk, user_pk):
     study = get_object_or_404(Study, pk=study_pk)
@@ -492,3 +578,8 @@ def dislikes(request, study_pk, user_pk):
             honey.save()
 
     return redirect('reviews:userlist', study_pk)
+
+def del_date(request, date_pk, study_pk):
+    date = StudyDate.objects.get(pk=date_pk)
+    date.delete()
+    return redirect('reviews:detail', study_pk)

@@ -47,6 +47,12 @@ class User(AbstractUser):
         null=True,
         blank=True,
     )
+    email = models.EmailField(
+        null=True,
+        blank=True,
+        max_length=254,
+        verbose_name="이메일 주소",
+    )
     phone = models.CharField(
         max_length=13,
         validators=[MinLengthValidator(11), MaxLengthValidator(11), input_only_number],
@@ -72,16 +78,21 @@ class User(AbstractUser):
     is_social_account = models.BooleanField(default=False)
     git_username = models.CharField(null=True, blank=True, max_length=50)
     boj_username = models.CharField(null=True, blank=True, max_length=50)
+    service_name = models.CharField(null=True, max_length=20)
     social_id = models.CharField(null=True, blank=True, max_length=100)
     social_profile_picture = models.CharField(null=True, blank=True, max_length=150)
     # 인증 필드
     is_phone_active = models.BooleanField(default=False)
     is_email_active = models.BooleanField(default=False)
-    token = models.CharField(
-        max_length=150,
-        null=True,
-        blank=True,
-    )
+    token = models.CharField(max_length=150, null=True, blank=True)
+    g_token = models.CharField(max_length=150, null=True, blank=True)
+
+    @property
+    def full_name(self):
+        return f"{self.last_name}{self.first_name}"
+
+    def __str__(self):
+        return self.username
 
 
 load_dotenv()
@@ -126,3 +137,9 @@ class AuthPhone(TimeStampedModel):
         }
         # 여기서 인증번호가 보내짐
         requests.post(url, json=data, headers=headers)
+
+class UserToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='usertoken')
+    service_name = models.CharField(max_length=10)
+    token = models.CharField(max_length=300)
+    re_token = models.CharField(max_length=300, null=True)

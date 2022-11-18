@@ -20,6 +20,9 @@ urlpatterns = [
     path('<int:study_pk>/gathering', views.gathering, name='gathering'),
     path('test_calendar', views.test_calendar, name='test_calendar'),
     path('<int:study_pk>/done/',views.done, name='done'),
+    path('google_code', views.google_code, name='google_code'),
+    path('google_call', views.google_call, name='google_call'),
     path('likes/<int:study_pk>/<int:user_pk>/', views.likes, name='likes'),
     path('dislikes/<int:study_pk>/<int:user_pk>/', views.dislikes, name='dislikes'),
+    path('del_date/<int:date_pk>/<int:study_pk>', views.del_date, name='del_date'),
 ]

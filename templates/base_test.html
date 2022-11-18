@@ -21,9 +21,9 @@
 </head>
 
 <body>
-<div class="container-fluid" id="bg">
+<div class="container-fluid nav_bg" id="bg">
 <nav >
-    <a href="#"><img src="{% static "logo_white.png" %}" width="80"></a>
+    <a href="#"><img src="{% static "logo_yw.png" %}" width="80"></a>
     <a href="#">HOME</a>
     <a href="#">CODING</a>
     <a href="#">GUITAR</a>
@@ -48,7 +48,7 @@
     const bg = document.getElementById('bg')
 
     window.addEventListener('scroll', () => {
-      bg.style.opacity = 1 - window.pageYOffset / 300 + ''
+      bg.style.opacity = 1 - window.scrollY / 300 + ''
     })
   </script>
 </body>

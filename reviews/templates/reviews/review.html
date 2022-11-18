@@ -1,53 +1,51 @@
+{% extends 'base.html' %}
 {% load django_bootstrap5 %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-    <div>
-        <a id="review-{{ review.pk }}-comments" type="button" onclick="getComment(this.id)">댓글보기</a> |
-        <a id="review-{{ review.pk }}-comment-create" type="button" onclick="getCreateComment(this.id)">댓글달기</a>
-    </div>
-    <br>
-    <form id="review-{{ review.pk }}-comment-create-form" data-review-id="{{ review.pk }}"
-          class="display-none"
-          onsubmit="submitComment(this.id)">
-        {% csrf_token %}
-        {% bootstrap_form comment_form %}
-        {% bootstrap_button button_type="submit" content="OK" %}
-    </form>
-    <div id="review-{{ review.pk }}-comments-list" data-review-id="{{ review.pk }}">
-    {% for comment in comments %}
-        {% if review.pk == comment.study_id %}
-            <span>{{ comment.user }} | {{ comment.content }} | {{ comment.created_at }}</span>
-            {% if user.pk == comment.user_id %}
-                <button id="comment-{{ comment.pk }}-update" data-review-id="{{ review.pk }}"
-                        data-comment-id="{{ comment.pk }}" class="btn btn-outline-success"
-                        onclick="getUpdateComment(this.id)">수정
-                </button>
-                <button id="comment-{{ comment.pk }}-delete" data-review-id="{{ review.pk }}"
-                        data-comment-id="{{ comment.pk }}" class="btn btn-outline-danger"
-                        onclick="deleteComment(this.id)">삭제
-                </button>
-                <div id="comment-{{ comment.pk }}-update-form" class="display-none">
-                    <input id="comment-{{ comment.pk }}-update-content" type="text"
-                           value="{{ comment.comment_content }}">
-                    <button id="comment-{{ comment.pk }}-update-btn" class="btn btn-primary"
-                            data-review-id="{{ review.pk }}" data-comment-id="{{ comment.pk }}"
-                            onclick="updateComment(this.id)">확인
+{% block content %}
+    {% for review in reviews %}
+        <div>
+            <a id="review-{{ review.pk }}-comments" type="button" onclick="getComment(this.id)">댓글보기</a> |
+            <a id="review-{{ review.pk }}-comment-create" type="button" onclick="getCreateComment(this.id)">댓글달기</a>
+        </div>
+        <br>
+        <form id="review-{{ review.pk }}-comment-create-form" data-review-id="{{ review.pk }}"
+              class="display-none"
+              onsubmit="submitComment(this.id)">
+            {% csrf_token %}
+            {% bootstrap_form comment_form %}
+            {% bootstrap_button button_type="submit" content="OK" %}
+        </form>
+        <div id="review-{{ review.pk }}-comments-list" data-review-id="{{ review.pk }}" class="display-none">
+        {% for comment in comments %}
+            {% if review.pk == comment.study_id %}
+                <span>{{ comment.user }} | {{ comment.content }} | {{ comment.created_at }}</span>
+                {% if user.pk == comment.user_id %}
+                    <button id="comment-{{ comment.pk }}-update" data-review-id="{{ review.pk }}"
+                            data-comment-id="{{ comment.pk }}" class="btn btn-outline-success"
+                            onclick="getUpdateComment(this.id)">수정
                     </button>
-                </div>
+                    <button id="comment-{{ comment.pk }}-delete" data-review-id="{{ review.pk }}"
+                            data-comment-id="{{ comment.pk }}" class="btn btn-outline-danger"
+                            onclick="deleteComment(this.id)">삭제
+                    </button>
+                    <div id="comment-{{ comment.pk }}-update-form" class="display-none">
+                        <input id="comment-{{ comment.pk }}-update-content" type="text"
+                               value="{{ comment.content }}">
+                        <button id="comment-{{ comment.pk }}-update-btn" class="btn btn-primary"
+                                data-review-id="{{ review.pk }}" data-comment-id="{{ comment.pk }}"
+                                onclick="updateComment(this.id)">확인
+                        </button>
+                    </div>
+                {% endif %}
+                <br>
             {% endif %}
-            <br>
-        {% endif %}
+        {% endfor %}
     {% endfor %}
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+        {#axios.defaults.baseURL = '/reviews/{{ review.pk }}';#}
 
         const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
 
@@ -72,24 +70,25 @@
             event.preventDefault();
             const commentForm = document.querySelector(`#${e}`)
 
+            const pk = event.target.dataset.reviewId
+
             axios({
                 method: 'post',
-                url: `/reviews/${event.target.dataset.reviewId}/comments/`,
+                url: `/reviews/${pk}/comments/`,
                 headers: {'X-CSRFToken': csrftoken},
                 data: new FormData(commentForm)
             })
                 .then(response => {
                     const commentsList = document.querySelector(`#review-${response.data.comments_data[0].study_id}-comments-list`)
-                    console.log(commentsList)
                     commentsList.textContent = "";
                     for (let i = 0; i < response.data.comments_data.length; i++) {
                         if (response.data.comments_data[i].request_user_pk === response.data.comments_data[i].user_pk) {
                             commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
             <div id="comment-${response.data.comments_data[i].comment_pk}-update-form" class="display-none">
             <input id="comment-${response.data.comments_data[i].comment_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
             </div><br>`)
                         } else {
                             commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span><br>`)
@@ -112,25 +111,26 @@
 
         const updateComment = function (e) {
             const commentValue = document.querySelector(`#comment-${event.target.dataset.commentId}-update-content`).value
+            const pk1 = event.target.dataset.reviewId
+
 
             axios({
                 method: 'post',
-                url: `/reviews/${event.target.dataset.reviewId}/${event.target.dataset.commentId}/update/`,
+                url: `/reviews/${pk1}/${event.target.dataset.commentId}/update/`,
                 headers: {'X-CSRFToken': csrftoken},
                 data: {'content': commentValue}
             })
                 .then(response => {
                     const commentsList = document.querySelector(`#review-${response.data.comments_data[0].study_id}-comments-list`)
-                    {#commentsList.textContent = "";#}
-
+                    commentsList.textContent = "";
                     for (let i = 0; i < response.data.comments_data.length; i++) {
                         if (response.data.comments_data[i].request_user_pk === response.data.comments_data[i].user_pk) {
                             commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
             <div id="comment-${response.data.comments_data[i].comment_pk}-update-form" class="display-none">
             <input id="comment-${response.data.comments_data[i].comment_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
             </div><br>`)
                         } else {
                             commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span><br>`)
@@ -142,7 +142,6 @@
 
         const deleteComment = function (e) {
             const reviewPk = event.target.dataset.reviewId
-            console.log(reviewPk)
             if (confirm("정말 삭제하시겠습니까??") == true) {
                 axios({
                     method: 'post',
@@ -156,11 +155,11 @@
                         for (let i = 0; i < response.data.comments_data.length; i++) {
                             if (response.data.comments_data[i].request_user_pk === response.data.comments_data[i].user_pk) {
                                 commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
-            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
             <div id="comment-${response.data.comments_data[i].comment_pk}-update-form" class="display-none">
             <input id="comment-${response.data.comments_data[i].comment_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
-            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].review_pk}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
+            <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
             </div><br>`)
                             } else {
                                 commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span><br>`)
@@ -172,6 +171,6 @@
                 return;
             }
         }
-</script>
-</body>
-</html>
+    </script>
+
+{% endblock content %}
