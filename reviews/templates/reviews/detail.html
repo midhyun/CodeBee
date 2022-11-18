@@ -11,9 +11,7 @@
       <span class="ms-3 text-danger">모집마감</span>
     {% else %}
     <span class="ms-3 text-primary">모집중</span>
-    {% if request.user.is_authenticated %}
-    <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
-    {% endif %}
+
     
     {% endif %}
     <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
@@ -27,8 +25,12 @@
     {% else %}
     {% if check %}
     <div class="text-end mx-5">
-      <a class="btn btn-danger text-decoration-none text-light"
+      <a class="btn btn-danger text-decoration-none text-light fs-4"
         href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+    </div>
+    {% else %}
+    <div class="text-end mx-5">
+      <a class=" btn btn-primary fs-4" href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
     </div>
     {% endif %}
     {% endif %}
@@ -40,8 +42,56 @@
   <div class="ms-3 mb-5 d-flex">
     <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">
       {{study.title }}</a>
-    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
     <a class="btn btn-outline-primary  me-5" href="">후기</a>
+    <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께하는 드비들</button>
+    
+    <!-- 유저 목록 오프캔버스 -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        {% for member in members %}
+        {% if member.joined == True %}
+        <div>
+          <div class="pb-3 mt-2 border-bottom">
+            <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+            {% if study.host == member.users %}
+            <button class="text-end btn btn-primary m-0" disabled>스터디장</button>
+            <p><p class="my-4"></p>
+            {% else %}
+            <button class="text-end btn btn-warning m-0" disabled>활동중</button>
+            {% if study.host == user %}
+            <p class="text-end m-0">
+              <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
+            </p>
+            {% else %}
+            <p><p class="my-4"></p>
+            {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        {% else %}
+        <!-- 신청 대기준인 멤버 뱃지로 표시 -->
+        <div>
+          <div class="pb-3 mt-2 border-bottom">
+            <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+            <button class="text-end btn btn-secondary m-0" disabled>대기중</button>
+            {% if study.host == user %}
+            <p class="text-end">
+              <a href="{% url 'reviews:study_accepted' study.pk member.users.id %}">승락</a>
+              <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
+            </p>
+            {% else %}
+            <p><p class="my-4"></p>
+            {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+      </div>
+    </div>
     {% if study.host == user %}
     <!-- 그룹원 호출 버튼 -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
@@ -75,11 +125,6 @@
   </div>
   <!-- 스터디 정보 -->
   <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
-    {% if request.user.is_authenticated %}
-    <div class="mb-3">
-      <a href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
-    </div>
-    {% endif%}
       {% if post.image %}
       <img src="{{ study.image.url }}" alt="">
       {% endif %}
@@ -102,15 +147,15 @@
         {% endif %}
       </p>
       <div class="dropdown">
-        <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          스터디 일정
+        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          스터디 일정 <span class="badge text-bg-danger">{{dates|length}}</span>
         </button>
         <ul class="dropdown-menu dropdown-menu" style="width:600px">
-          <li><a class="dropdown-item active" href="#">스터디 일정</a></li>
+          <li><a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item active" href="#">스터디 일정</a></li>
           {% for date in dates %}
-          <li><div class="dropdown-item d-flex justify-content-between" ><div style="width:25px">{{ forloop.counter }}회</div> <div>시작: {{date.study_at|date:'y년m월d일 h:i'}} / 종료: {{date.study_end|date:'y년m월d일 h:i'}}</div>
+          <li id="{{ forloop.counter }}dateitem"><div class="dropdown-item d-flex justify-content-between" ><div style="width:25px">{{ forloop.counter }}회</div> <div>시작: {{date.study_at|date:'y년m월d일 h:i'}} / 종료: {{date.study_end|date:'y년m월d일 h:i'}}</div>
             {% if request.user == study.host %}
-              <div id="{{ forloop.counter }}btn" onclick="deletedate(this)" data-date-id="{{date.pk}}" data-study-id="{{study.pk}}">
+              <div data-loop-id="{{forloop.counter}}" onclick="deletedate(this)" data-date-id="{{date.pk}}">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" style="color:red" viewBox="0 0 16 16">
               <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
               <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
@@ -181,7 +226,6 @@
   <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
   <div class="ms-3 mb-5 d-flex">
     <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
-    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:userlist' study.pk %}">유저목록</a>
     <a class="btn btn-outline-primary  me-5" href="">후기</a>
   </div>
   <!-- 스터디 정보 -->
@@ -255,19 +299,22 @@
     // marker.setMap(null);
     </script>
 <script>
+var test = document.getElementById('testaxios')
+console.log(test)
+
 function deletedate(event) {
-  console.log(event)
-  const datePk = event.target.dataset.dateId
-  const studyPk = event.target.dataset.studyId
+  console.log(event.dataset.dateId)
+  const datePk = event.dataset.dateId
+  const loopId = event.dataset.loopId
   console.log(datePk)
   axios({
     method: 'get',
-    url: `/reviews/del_date/${datePk}/${studyPk}`
+    url: `/reviews/del_date/${datePk}`
   })
   .then(response => {
-    event.parentNode.removeChild(event)
-  })
-}
+    const el = document.getElementById(`${loopId}dateitem`)
+    el.remove()
+  })};
 
 </script>
     {% endblock %}

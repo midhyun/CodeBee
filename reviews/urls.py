@@ -7,7 +7,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('create/', views.create, name='create'),
     path('<int:study_pk>/', views.detail, name='detail'),
-    path('<int:study_pk>/userlist', views.userlist, name='userlist'),
     path('<int:study_pk>/update/', views.update, name='update'),
     path('<int:study_pk>/delete/', views.delete, name='delete'),
     path('<int:study_pk>/join/<int:user_pk>', views.join, name='join'),
@@ -24,5 +23,5 @@ urlpatterns = [
     path('google_call', views.google_call, name='google_call'),
     path('likes/<int:study_pk>/<int:user_pk>/', views.likes, name='likes'),
     path('dislikes/<int:study_pk>/<int:user_pk>/', views.dislikes, name='dislikes'),
-    path('del_date/<int:date_pk>/<int:study_pk>', views.del_date, name='del_date'),
+    path('del_date/<int:date_pk>', views.del_date, name='del_date'),
 ]

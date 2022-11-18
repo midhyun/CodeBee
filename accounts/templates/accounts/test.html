@@ -10,9 +10,9 @@
 <a href="{% url 'accounts:logout' %}" class="btn btn-primary">로그아웃</a>
 {{ service_name }}
 {% if service_name == "kakao" %}
-<a href="{% url 'accounts:sns-withdrawal' kakao %}" class="btn btn-primary">카카오 계정 연결끊기</a>
+<a href="{% url 'accounts:sns-logout' service_name %}" class="btn btn-primary">카카오 계정 연결끊기</a>
 {% elif service_name == "google" %}
-<a href="{% url 'accounts:sns-withdrawal' google %}" class="btn btn-primary">구글 계정 연결끊기</a>
+<a href="{% url 'accounts:sns-logout' service_name %}" class="btn btn-primary">구글 계정 연결끊기</a>
 {% else %}
 {% endif %}
 <a href="{% url 'accounts:update' user.pk %}" class="btn btn-primary">내정보 수정</a>
