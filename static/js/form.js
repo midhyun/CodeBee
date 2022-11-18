@@ -308,8 +308,3 @@ kakao.maps.event.addListener(map, 'click', function (mouseEvent) {
   document.studyform.Y.value = latlng['Ma']
 
 });
-
-var input = document.getElementById("id_tag")
-new Tagify(input, {
-        maxTags : 5
-    })

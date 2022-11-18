@@ -78,3 +78,6 @@ class Honey(models.Model):
     rated_user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='rdu')
     like = models.BooleanField(default=False)
     dislike = models.BooleanField(default=False)
+
+class Tag(models.Model):
+    tag = models.CharField(max_length=20, unique=True)
