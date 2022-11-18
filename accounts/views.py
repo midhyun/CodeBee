@@ -238,38 +238,38 @@ def social_signup_callback(request, service_name):
             },
         }
     user_info = login_data[service_name]
-    # if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
-    # user = get_user_model().objects.get(social_id=user_info["social_id"])
-    # user.token = access_token
-    # user.save()
-    # else:
-    social_data = {
-        # 소셜 서비스 구분
-        "social_id": str(user_info["social_id"]),
-        "service_name": service_name,
-        "is_social_account": True,
-        # 유저 토큰 가져오기
-        "token": access_token,
-    }
-    data = {
-        # 일반 정보
-        "social_profile_picture": user_info["social_profile_picture"],
-        "nickname": user_info["nickname"],
-        "email": user_info["email"],
-        "phone": user_info["phone"],
-        # 깃허브에서만 가져오는 항목
-        "git_username": (u_info["login"] if service_name == "github" else None),
-    }
-    signup_form = CustomUserCreationForm(initial=data)
-    sns_signup_form = SNSUserSignupForm(initial=social_data)
-    signup_form.fields["phone"].widget.attrs["maxlength"] = 11
-    address_form = AddressForm()
-    context = {
-        "signup_form": signup_form,
-        "address_form": address_form,
-        "sns_signup_form": sns_signup_form,
-    }
-    return render(request, "accounts/signup.html", context)
+    if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
+        user = get_user_model().objects.get(social_id=user_info["social_id"])
+        user_login(request, user)
+        return redirect(request.GET.get("next") or "accounts:test")
+    else:
+        social_data = {
+            # 소셜 서비스 구분
+            "social_id": str(user_info["social_id"]),
+            "service_name": service_name,
+            "is_social_account": True,
+            # 유저 토큰 가져오기
+            "token": access_token,
+        }
+        data = {
+            # 일반 정보
+            "social_profile_picture": user_info["social_profile_picture"],
+            "nickname": user_info["nickname"],
+            "email": user_info["email"],
+            "phone": user_info["phone"],
+            # 깃허브에서만 가져오는 항목
+            "git_username": (u_info["login"] if service_name == "github" else None),
+        }
+        signup_form = CustomUserCreationForm(initial=data)
+        sns_signup_form = SNSUserSignupForm(initial=social_data)
+        signup_form.fields["phone"].widget.attrs["maxlength"] = 11
+        address_form = AddressForm()
+        context = {
+            "signup_form": signup_form,
+            "address_form": address_form,
+            "sns_signup_form": sns_signup_form,
+        }
+        return render(request, "accounts/signup.html", context)
 
 
 # 소셜로그인 연결 끊기
@@ -422,6 +422,7 @@ def index(request):
             "persons": persons,
         },
     )
+
 
 def detail(request, user_pk):
     accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
