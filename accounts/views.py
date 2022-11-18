@@ -466,7 +466,7 @@ def detail(request, user_pk):
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
     honey = 15 + plus - minus
-    
+    Std_cnt = Accepted.objects.filter(users_id=user_pk, joined=True).count()
     return render(
         request,
         "accounts/detail.html",
@@ -476,7 +476,8 @@ def detail(request, user_pk):
             "deactives": deactives,
             "honey" : honey,
             "langs" : langs,
-            'honey':honey
+            'honey':honey,
+            'std_cnt':Std_cnt,
         },
     )
 
