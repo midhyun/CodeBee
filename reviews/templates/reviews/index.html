@@ -1,4 +1,5 @@
 {% extends 'base_test.html' %}
+{% load django_bootstrap5 %}
 {% load static %}
 {% load sass_tags %}
 {% block css %}
@@ -48,7 +49,7 @@
 
     <!-- 스터디 제목, 기간, 설명 -->
     <div class="container paper shadow content testboard" style="padding: 50px;">
-        <div class="row-cols-1  row-cols-md-2 row-cols-lg-4 g-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
             {% for study in studies %}
                 <div class="col">
                     <div class="card h-100 w-100 shadow h-100 p-3">
@@ -59,7 +60,7 @@
                         {% endif %}
                         <div class="card-body ">
                             <h5 class="card-title text-center mb-5">{{ study.title }}</h5>
-                            <div class="d-flex justify-content-between m-auto" style="height: 64px">
+                            <div class="d-flex justify-content-between" style="height: 64px">
                                 <!-- 장단기 -->
                                 <div class="d-flex flex-column justify-content-center">
                                     <img src="">
