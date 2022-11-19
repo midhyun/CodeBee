@@ -5,7 +5,6 @@
 }
 
 html, body {
-  font-family: Raleway, sans-serif;
   width: 100%;
   height: 100%;
   padding: 0;
@@ -251,14 +250,14 @@ nav a:nth-child(4):hover ~ #indicator {
   outline: none;
   border-radius: 25px;
   transition: all .5s ease-in-out;
-  background-color: #22a6b3;
+  background-color: #F2F2F2;
   padding-right: 40px;
   display :inline-block;
   color: #fff;
 }
 
 .input-search::placeholder {
-  color: rgba(255, 255, 255, .5);
+  color: rgb(83, 83, 83);
   font-size: 18px;
   letter-spacing: 2px;
   font-weight: 100;
@@ -287,7 +286,7 @@ nav a:nth-child(4):hover ~ #indicator {
   width: 380px;
   border-radius: 0;
   background-color: transparent;
-  border-bottom: 1px solid rgba(255, 255, 255, .5);
+  border-bottom: 2px solid rgb(83, 83, 83);
   transition: all 500ms cubic-bezier(0, 0.110, 0.35, 2);
 }
 
@@ -366,5 +365,3 @@ nav a:nth-child(4):hover ~ #indicator {
     background-position: 0 0;
   }
 }
-
-

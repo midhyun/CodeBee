@@ -14,10 +14,14 @@
     <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css"/>
     <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
-
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
+<style>
+    body{
+        font-family: 'NanumSquareNeo';
+    }
+</style>
 </head>
 
 <body>
@@ -60,37 +64,33 @@
 </script>
 <div class="container-fluid nav_bg" id="bg">
     <nav>
-        <a href="{% url 'home' %}"><img src="{% static "logo_yw.png" %}" width="80"></a>
+        <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="80"></a>
         <a href="{% url 'reviews:index' %}">코드비 찾기</a>
         <a href="{% url 'reviews:create' %}">코드비 모으기</a>
         <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비 정보</a>
-        <div class="offcanvas offcanvas-end bg-dark" tabindex="-1" id="offcanvasRight"
-             aria-labelledby="offcanvasRightLabel">
-            <div class="offcanvas-header">
-                <h5 id="offcanvasRightLabel">코드비 정보</h5>
-                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                        aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-
-                {% if request.user.is_authenticated %}
-                    <h1>
-                        <a class="text-white" href="{% url 'accounts:test' %}">내 정보</a>
-                    </h1>
-                    <h1>
-                        {{ request.user }}
-                        <a class="text-white" href="{% url 'accounts:logout' %}">로그아웃</a>
-
-                    </h1>
-                {% else %}
-                    <h1>
-                        <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
-                    </h1>
-                {% endif %}
-            </div>
-        </div>
         <div id="indicator"></div>
     </nav>
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasRight"
+         aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+            <h5 id="offcanvasRightLabel">코드비 정보</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <hr style="color:white; border: solid 2px">
+        <div class="offcanvas-body">
+            {% if request.user.is_authenticated %}
+                <p><a class="anc" href="{% url 'accounts:test' %}">내 정보</a></p>
+                <h1>
+                    {{ request.user }}
+                    <a class="text-white" href="{% url 'accounts:logout' %}">로그아웃</a>
+                </h1>
+            {% else %}
+                <h1>
+                    <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
+                </h1>
+            {% endif %}
+        </div>
+    </div>
 </div>
 {% if messages %}
 {% for message in messages %}
@@ -102,8 +102,9 @@
 {% block content %}
 
 {% endblock content %}
+<div style="height:80px"></div>
 <footer class="align-items-center no-gutters row"
-        style="position:sticky; background:rgb(83, 83, 83); height:80px; bottom:0">
+        style="position:sticky; background:rgb(83, 83, 83); height:80px; bottom:0; z-index:3;">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">
         <div class="justify-content-between no-gutters row">
