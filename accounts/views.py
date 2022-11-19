@@ -10,14 +10,13 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from .models import AuthPhone, User, UserToken
-from django.views import View
 from dotenv import load_dotenv
+from .models import AuthPhone, User
 from django.http import JsonResponse
 from django.shortcuts import resolve_url
 from pjt.settings import EMAIL_HOST_USER
-from reviews.models import Study, Accepted, Honey
 from django.contrib.auth import get_user_model
+from reviews.models import Study, Accepted, Honey
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.auth import login as user_login
 from django.contrib.auth import logout as user_logout
@@ -238,42 +237,42 @@ def social_signup_callback(request, service_name):
             },
         }
     user_info = login_data[service_name]
-    # if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
-    # user = get_user_model().objects.get(social_id=user_info["social_id"])
-    # user.token = access_token
-    # user.save()
-    # else:
-    social_data = {
-        # 소셜 서비스 구분
-        "social_id": str(user_info["social_id"]),
-        "service_name": service_name,
-        "is_social_account": True,
-        # 유저 토큰 가져오기
-        "token": access_token,
-    }
-    data = {
-        # 일반 정보
-        "social_profile_picture": user_info["social_profile_picture"],
-        "nickname": user_info["nickname"],
-        "email": user_info["email"],
-        "phone": user_info["phone"],
-        # 깃허브에서만 가져오는 항목
-        "git_username": (u_info["login"] if service_name == "github" else None),
-    }
-    signup_form = CustomUserCreationForm(initial=data)
-    sns_signup_form = SNSUserSignupForm(initial=social_data)
-    signup_form.fields["phone"].widget.attrs["maxlength"] = 11
-    address_form = AddressForm()
-    context = {
-        "signup_form": signup_form,
-        "address_form": address_form,
-        "sns_signup_form": sns_signup_form,
-    }
-    return render(request, "accounts/signup.html", context)
+    if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
+        user = get_user_model().objects.get(social_id=user_info["social_id"])
+        user_login(request, user)
+        return redirect(request.GET.get("next") or "accounts:test")
+    else:
+        social_data = {
+            # 소셜 서비스 구분
+            "social_id": str(user_info["social_id"]),
+            "service_name": service_name,
+            "is_social_account": True,
+            # 유저 토큰 가져오기
+            "token": access_token,
+        }
+        data = {
+            # 일반 정보
+            "social_profile_picture": user_info["social_profile_picture"],
+            "nickname": user_info["nickname"],
+            "email": user_info["email"],
+            "phone": user_info["phone"],
+            # 깃허브에서만 가져오는 항목
+            "git_username": (u_info["login"] if service_name == "github" else None),
+        }
+        signup_form = CustomUserCreationForm(initial=data)
+        sns_signup_form = SNSUserSignupForm(initial=social_data)
+        signup_form.fields["phone"].widget.attrs["maxlength"] = 11
+        address_form = AddressForm()
+        context = {
+            "signup_form": signup_form,
+            "address_form": address_form,
+            "sns_signup_form": sns_signup_form,
+        }
+        return render(request, "accounts/signup.html", context)
 
 
 # 소셜로그인 연결 끊기
-def sns_withdrawal(request, service_name):
+def sns_logout(request, service_name):
     social_id = request.user.social_id
     user = get_object_or_404(get_user_model(), social_id=social_id)
     access_token = user.token
@@ -297,10 +296,10 @@ def sns_withdrawal(request, service_name):
             "success": "success",
             "msg": "정상적으로 해지되었습니다.",
         }
-    except Exception:
+    except Exception as error:
         context = {
-            "error": "에러가 발생했습니다.",
-            "error": Exception,
+            "error_msg": "에러가 발생했습니다.",
+            "error_code": error,
         }
     return render(request, "accounts/sns-disconnect.html", context)
 
@@ -352,45 +351,48 @@ def signup(request):
 
 @login_required
 def update(request, user_pk):
-    user = get_object_or_404(get_user_model(), pk=user_pk)
-    if request.method == "POST":
-        update_form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
-        address_form = AddressForm(request.POST, instance=user)
-        auth_form = AuthForm(request.POST, instance=user)
-        if update_form.is_valid() and address_form.is_valid() and auth_form.is_valid():
-            user = update_form.save(commit=False)
-            user.address = request.POST["address"]
-            user.detail_address = request.POST["detail_address"]
-            auth = auth_form.save(commit=False)
-            # 휴대폰 번호
-            if auth.phone:
-                auth.phone = (
-                    request.POST["phone"][:3]
-                    + "-"
-                    + request.POST["phone"][3:7]
-                    + "-"
-                    + request.POST["phone"][7:]
-                )
-            auth.save()
-            user.save()
-            return redirect("accounts:detail", user_pk)
+    if request.user.pk == user_pk:
+        user = get_object_or_404(get_user_model(), pk=user_pk)
+        if request.method == "POST":
+            update_form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
+            address_form = AddressForm(request.POST, instance=user)
+            auth_form = AuthForm(request.POST, instance=user)
+            if update_form.is_valid() and address_form.is_valid() and auth_form.is_valid():
+                user = update_form.save(commit=False)
+                user.address = request.POST["address"]
+                user.detail_address = request.POST["detail_address"]
+                auth = auth_form.save(commit=False)
+                # 휴대폰 번호
+                if auth.phone:
+                    auth.phone = (
+                        request.POST["phone"][:3]
+                        + "-"
+                        + request.POST["phone"][3:7]
+                        + "-"
+                        + request.POST["phone"][7:]
+                    )
+                auth.save()
+                user.save()
+                return redirect("accounts:detail", user_pk)
+        else:
+            update_form = CustomUserChangeForm(instance=user)
+            address_form = AddressForm(instance=user)
+            if user.phone:
+                phone = user.phone
+                phone = "".join(phone.split("-"))
+                user.phone = phone
+            auth_form = AuthForm(instance=user)
+            auth_form.fields["phone"].widget.attrs["maxlength"] = 11
+        context = {
+            "address_form": address_form,
+            "update_form": update_form,
+            "auth_form": auth_form,
+            "user": user,
+        }
+        return render(request, "accounts/update.html", context)
     else:
-        update_form = CustomUserChangeForm(instance=user)
-        address_form = AddressForm(instance=user)
-        if user.phone:
-            phone = user.phone
-            phone = "".join(phone.split("-"))
-            user.phone = phone
-        auth_form = AuthForm(instance=user)
-        auth_form.fields["phone"].widget.attrs["maxlength"] = 11
-    context = {
-        "address_form": address_form,
-        "update_form": update_form,
-        "auth_form": auth_form,
-        "user": user,
-    }
-    return render(request, "accounts/update.html", context)
-
+        messages.warning(request, '본인만 수정할 수 있습니다.')
+        return redirect('reviews:index')
 
 def login(request):
     if request.method == "POST":
@@ -423,30 +425,79 @@ def index(request):
         },
     )
 
-def detail(request, user_pk):
-    accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
-    studies = []
-    deactives = []
-    
-    for accept in accepts:
-        if accept.joined:
-            studies.append(accept.study)
-    for study in studies:
-        if not study.isactive:
-            deactives.append(study)
-    person = get_object_or_404(get_user_model(), pk=user_pk)
 
+def detail(request, user_pk):
+    # 유저 정보
+    person = get_object_or_404(get_user_model(), pk=user_pk)
+    accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
-    honey = 70 + plus - minus
+    honey = 15 + plus - minus
+    if not len(accepts):
+        return render(request, "accounts/detail.html", {"person": person,
+                                                        "honey": honey,})
     
+    # 유저가 참여했지만 리뷰를 작성하지 않은 스터디 목록
+    partys = Accepted.objects.filter(joined=True, users=person, study__isactive=False)
+    # print(deactive_study)
+    
+    uncomment_study = []
+    for party in partys:
+        study = party.study
+        if not study.comment_set.all().filter(user=person).exists():
+            uncomment_study.append(study)
+    # print(uncomment_study)
+    
+    deactives = []
+    online = []
+    offline= []
+    for accept in accepts:
+        if not accept.study.isactive:
+            deactives.append(accept.study)
+        if not accept.study.location_type:
+            offline.append(accept.study)
+        else:
+            online.append(accept.study)
+            
+    # 유저가 참여한 스터디
+    party = person.accepted_set.all().filter(joined=True)
+    # print(party)
+    studys = party.values('study')
+    # print(studys)
+    
+    lan_dict = {}
+    
+    for study in studys:
+        pk = study.get('study')
+        study_ = Study.objects.get(pk=pk)
+        lan_dict[study_.categorie] = lan_dict.get(study_.categorie, 0) + 1
+    
+    # print(lan_dict)
+    val_ = list(lan_dict.values())
+    most = max(val_)
+    # print(most)
+    
+    langs = []
+    for k, v in lan_dict.items():
+        if v == most:
+            langs.append(k)
+
+    Std_cnt = Accepted.objects.filter(users_id=user_pk, joined=True).count()
     return render(
         request,
         "accounts/detail.html",
-        {
+        context= {
             "person": person,
-            "studies": studies,
+            "accepts" : accepts,
             "deactives": deactives,
+            "honey" : honey,
+            "online" : online,
+            "offline" : offline,
+            "langs" : langs,
+            "party" : party,
+            'honey':honey,
+            'std_cnt':Std_cnt,
+            "uncomment_study" : uncomment_study,
         },
     )
 
@@ -635,3 +686,6 @@ def check_email_auth(request, uidb64, token, uemailb64):
             "error": "토큰 값이 다릅니다.",
         }
     return render(request, "accounts/email-auth.html", context)
+
+def test2(request):
+    return render(request, 'accounts/test2.html')

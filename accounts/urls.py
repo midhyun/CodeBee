@@ -14,13 +14,9 @@ urlpatterns = [
     path("<int:user_pk>/update/", views.update, name="update"),
     re_path(
         r"^login/(?P<service_name>[^/]+)/$", views.social_signup_request, name="social"
-    ),  # signup/ 으로 바꾸고 싶은데 모든 사이트 설정 다 바꿔주기 귀찮아서 그냥 안함
-    re_path(r"^login/(?P<service_name>[^/]+)/callback/$", views.social_signup_callback),
-    re_path(
-        r"^sns-withdrawal/(?P<service_name>)/$",
-        views.sns_withdrawal,
-        name="sns-withdrawal",
     ),
+    re_path(r"^login/(?P<service_name>[^/]+)/callback/$", views.social_signup_callback),
+    path("sns-logout/<str:service_name>/", views.sns_logout, name="sns-logout"),
     path("<int:user_pk>/likes/", views.likes, name="likes"),
     path("<int:user_pk>/dislikes/", views.dislikes, name="dislikes"),
     path("<int:user_pk>/password/", views.password_change, name="password-change"),
@@ -33,4 +29,5 @@ urlpatterns = [
         views.check_email_auth,
         name="check-email-auth",
     ),
+    path('test2/',views.test2, name='test2')
 ]

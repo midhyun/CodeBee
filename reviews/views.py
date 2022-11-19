@@ -2,8 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm, HoneyForm
-from .models import Study, Comment, Accepted, StudyDate, Honey
-
+from .models import Study, Comment, Accepted, StudyDate, Honey, Tag
 from accounts.models import User
 import requests
 import json
@@ -37,6 +36,8 @@ def create(request):
             tags = json.loads(temp)
             for t in tags:
                 tag += t['value'] + ','
+                try: Tag(tag=t['value']).save()
+                except: pass
         study_form = StudyForm(request.POST, request.FILES)
         study_date = StudyDateForm(request.POST)
         if study_form.is_valid() and study_date.is_valid():
@@ -57,9 +58,12 @@ def create(request):
             Aform.save()
             return redirect("reviews:index")
     else:
+        tag = {'tags':["python","java","pug","react","vue","c++","sass","javascript","html","css","django","spring","ruby"] + list(Tag.objects.all().values_list('tag', flat=True))}
+        tagify = json.dumps(tag)
         study_form = StudyForm()
         study_date = StudyDateForm()
     context = {
+        'tag': tagify,
         'study_form': study_form,
         'study_date': study_date,
     }
@@ -86,6 +90,7 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {
+        'members': users,
         "form": form,
         "dates": dates,
         "study": study,
@@ -96,28 +101,6 @@ def detail(request, study_pk):
     return render(request, "reviews/detail.html", context)
 
 
-def userlist(request, study_pk):
-    members = Accepted.objects.filter(study_id=study_pk)
-    study = Study.objects.get(pk=study_pk)
-    cnt = len(Accepted.objects.filter(study=study))
-    request_check = get_object_or_404(get_user_model(), pk=request.user.pk)
-    joined = True
-    if not members.filter(users=request_check).exists():
-        joined = False
-    for user in members:
-        if user.users == request.user:
-            user_accepted = True
-            break
-    else:
-        user_accepted = False
-    context = {
-        "members": members, 
-        "study": study, 
-        "cnt": cnt, 
-        "check": user_accepted,
-        'request_check': joined
-        }
-    return render(request, "reviews/userlist.html", context)
 
 
 @login_required
@@ -246,9 +229,9 @@ def study_accepted(request, study_id, users_id):
         if request.user == study.host:
             aform.joined = True
             aform.save()
-            return redirect("reviews:userlist", study_id)
+            return redirect("reviews:detail", study_id)
         else:
-            return redirect("reviews:userlist", study_id)
+            return redirect("reviews:detail", study_id)
     else:
         return redirect("reviews:index")
 
@@ -261,12 +244,12 @@ def study_kick(request, study_id, users_id):
     if study.isactive:
         if request.user == study.host and user != study.host:
             aform.delete()
-            return redirect("reviews:userlist", study_id)
+            return redirect("reviews:detail", study_id)
         elif request.user == user and user != study.host:
             aform.delete()
-            return redirect("reviews:userlist", study_id)
+            return redirect("reviews:detail", study_id)
         else:
-            return redirect("reviews:userlist", study_id)
+            return redirect("reviews:detail", study_id)
     return redirect("reviews:index")
 
 
@@ -579,7 +562,35 @@ def dislikes(request, study_pk, user_pk):
 
     return redirect('reviews:userlist', study_pk)
 
-def del_date(request, date_pk, study_pk):
+def del_date(request, date_pk):
     date = StudyDate.objects.get(pk=date_pk)
     date.delete()
-    return redirect('reviews:detail', study_pk)
+    return JsonResponse({})
+
+def search(request):
+    search = request.GET.get('search')
+    field = request.GET.get('field')
+    if field == '1' or not field:
+        users = User.objects.filter(username__contains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user)
+        studies += Study.objects.filter(tag__icontains=search) or Study.objects.filter(title__contains=search) or Study.objects.filter(categorie__contains=search)
+    elif field == '2':
+        studies = Study.objects.filter(title__contains=search)
+    elif field == '3':
+        users = User.objects.filter(username__contains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user)
+    elif field == '4':
+        studies = Study.objects.filter(categorie__contains=search)
+    elif field == '5':
+        studies = Study.objects.filter(tag__contains=search)
+    elif field == '6':
+        studies = Study.objects.filter(location__contains=search)
+    context = {
+        'studies':studies
+    }
+    return render(request, 'reviews/search.html', context)
+

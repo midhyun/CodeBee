@@ -92,6 +92,13 @@
         <div id="indicator"></div>
     </nav>
 </div>
+{% if messages %}
+{% for message in messages %}
+  <div class="my-0 alert alert-{{ message.tags }}">
+    {{ message }}
+  </div>
+{% endfor %}
+{% endif %}
 {% block content %}
 
 {% endblock content %}
