@@ -10,10 +10,18 @@
 
   <div class="container">
     <!-- 스터디 이름, 모집여부 -->
-    <div class="row row-cols-1 my-5 justify-content-center">
+    <div class="position-relative row row-cols-1 my-5 justify-content-center">
+      <!-- 스터디 리모콘 -->
+
+      <div class="col-1 position-relative">
+        <div style="position:fixed;" class="d-flex flex-column">
+          <a href="{% url 'reviews:index' %}"><button class="btn btn-outline-dark mb-1"><i class="bi bi-arrow-left-short fw-bold fs-4"></i></button></a>
+          <button class="btn btn-outline-success mb-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#userlistcanvas" aria-controls="offcanvasRight"><i class="bi bi-list fw-bold fs-4"></i></button>
+        </div>
+      </div>
       <!-- 스터디 헤더 -->
       <div class="col-8">
-        <p class="my-0"><i class="bi bi-code-square"></i> CodeBee</p>
+        <p class="my-0"><i class="bi bi-code-square"></i> {% if study.location_type %} <a style="text-decoration:none; color:black" href="{% url 'reviews:offline_board' %}">오프라인</a> {% else %}<a style="text-decoration:none; color:black" href="{% url 'reviews:online_board' %}">온라인</a>{% endif %} CodeBee</p>
         <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
         {% if cnt == study.limits %}
         <span class="badge text-bg-secondary">모집마감</span>
@@ -88,15 +96,12 @@
             </div>
           </div>
         </div>
-      </div>
-      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
-      <div class="col-8 my-5">
-            <!-- 스터디 내용, 유저목록 탭 -->
+                    <!-- 스터디 내용, 유저목록 탭 -->
         
         <!-- NAVTAP -->
-        <ul class="nav nav-tabs d-flex justify-content-between" id="myTab" role="tablist">
+        <ul class="nav nav-tabs d-flex justify-content-between mt-3" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Home</button>
+            <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Content</button>
           </li>
           <div class="d-flex">
           <li class="nav-item" role="presentation">
@@ -215,7 +220,7 @@
                     <span class="badge bg-dark">스터디장</span>
                         <p class="my-4"></p>
                       {% else %}
-                      <span class="badge bg-success">활동중</span>
+                      <span class="badge bg-success">참여중</span>
                         {% if study.host == user %}
                           <p class="text-end m-0">
                             <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
@@ -249,6 +254,8 @@
                 </div>
         </div>
       </div>
+      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+
     </div>
 
 
