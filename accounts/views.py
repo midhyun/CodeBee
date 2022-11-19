@@ -427,6 +427,7 @@ def index(request):
 
 
 def detail(request, user_pk):
+    # 유저 정보
     person = get_object_or_404(get_user_model(), pk=user_pk)
     accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
     plus = Honey.objects.filter(rated_user=person, like=True).count()
@@ -435,6 +436,17 @@ def detail(request, user_pk):
     if not len(accepts):
         return render(request, "accounts/detail.html", {"person": person,
                                                         "honey": honey,})
+    
+    # 유저가 참여했지만 리뷰를 작성하지 않은 스터디 목록
+    partys = Accepted.objects.filter(joined=True, users=person, study__isactive=False)
+    # print(deactive_study)
+    
+    uncomment_study = []
+    for party in partys:
+        study = party.study
+        if not study.comment_set.all().filter(user=person).exists():
+            uncomment_study.append(study)
+    # print(uncomment_study)
     
     deactives = []
     online = []
@@ -447,6 +459,7 @@ def detail(request, user_pk):
         else:
             online.append(accept.study)
             
+    # 유저가 참여한 스터디
     party = person.accepted_set.all().filter(joined=True)
     # print(party)
     studys = party.values('study')
@@ -468,9 +481,7 @@ def detail(request, user_pk):
     for k, v in lan_dict.items():
         if v == most:
             langs.append(k)
-    plus = Honey.objects.filter(rated_user=person, like=True).count()
-    minus = Honey.objects.filter(rated_user=person, dislike=True).count()
-    honey = 15 + plus - minus
+
     Std_cnt = Accepted.objects.filter(users_id=user_pk, joined=True).count()
     return render(
         request,
@@ -486,6 +497,7 @@ def detail(request, user_pk):
             "party" : party,
             'honey':honey,
             'std_cnt':Std_cnt,
+            "uncomment_study" : uncomment_study,
         },
     )
 
