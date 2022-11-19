@@ -1,30 +1,18 @@
 @charset "UTF-8";
 @import url("https://fonts.googleapis.com/css?family=Raleway:400,400i,700");
+* { box-sizing: border-box; }
+
 html, body { font-family: Raleway, sans-serif; width: 100%; height: 100%; padding: 0; margin: 0; }
-
-.search-box { font-size: 20px; border: solid 0.3em #000000; display: inline-block; position: relative; border-radius: 2.5em; }
-
-.search-box input[type="text"] { font-family: inherit; font-weight: bold; width: 2.5em; height: 2.5em; padding: 0.3em 2.1em 0.3em 0.4em; border: none; box-sizing: border-box; border-radius: 2.5em; transition: width 800ms cubic-bezier(0.68, -0.55, 0.27, 1.55) 150ms; }
-
-.search-box input[type="text"]:focus { outline: none; }
-
-.search-box input[type="text"]:focus, .search-box input[type="text"]:not(:placeholder-shown) { width: 18em; transition: width 800ms cubic-bezier(0.68, -0.55, 0.27, 1.55); }
-
-.search-box input[type="text"]:focus + button[type="reset"], .search-box input[type="text"]:not(:placeholder-shown) + button[type="reset"] { transform: rotate(-45deg) translateY(0); transition: transform 150ms ease-out 800ms; }
-
-.search-box input[type="text"]:focus + button[type="reset"]:after, .search-box input[type="text"]:not(:placeholder-shown) + button[type="reset"]:after { opacity: 1; transition: top 150ms ease-out 950ms, right 150ms ease-out 950ms, opacity 150ms ease 950ms; }
-
-.search-box button[type="reset"] { background-color: transparent; width: 1.4em; height: 1.4em; border: 0; padding: 0; outline: 0; display: flex; justify-content: center; align-items: center; position: absolute; top: 0.55em; right: 0.55em; transform: rotate(-45deg) translateY(2.2em); transition: transform 150ms ease-out 150ms; }
-
-.search-box button[type="reset"]:before, .search-box button[type="reset"]:after { content: ""; background-color: #000000; width: 0.3em; height: 1.4em; position: absolute; }
-
-.search-box button[type="reset"]:after { transform: rotate(90deg); opacity: 0; transition: transform 150ms ease-out, opacity 150ms ease-out; }
 
 .index-header { height: 500px; background: linear-gradient(17deg, #941bb1, #007bf7, #0093ef, #00a4d1, #00b1a6); }
 
 .content { /** min-height: calc(100vh - 80px);*/ }
 
 body { margin: 0; background: #F2F2F2; /*background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);*/ /*background-image: linear-gradient(to top, #5f72bd 0%, #9b23ea 100%);*/ }
+
+.cardlink { color: black; text-decoration: none; }
+
+.cardlink:hover { color: black; }
 
 nav { position: relative; width: 100%; display: table; margin: 0 auto; background: #292929; }
 
@@ -88,5 +76,37 @@ nav a:nth-child(4):hover ~ #indicator { left: 84%; background: linear-gradient(1
 .nav_bg { background: #292929; }
 
 .testboard { background-image: url(../../static/textured-paper.png); }
+
+/** ===========검색===========*/
+.search-box { width: fit-content; height: fit-content; position: relative; text-align: center; }
+
+.input-search { height: 50px; width: 50px; border-style: none; padding: 10px; font-size: 18px; letter-spacing: 2px; outline: none; border-radius: 25px; transition: all .5s ease-in-out; background-color: #22a6b3; padding-right: 40px; display: inline-block; color: #fff; }
+
+.input-search::placeholder { color: rgba(255, 255, 255, 0.5); font-size: 18px; letter-spacing: 2px; font-weight: 100; }
+
+.btn-search { width: 50px; height: 50px; border-style: none; font-size: 20px; font-weight: bold; outline: none; cursor: pointer; border-radius: 50%; position: absolute; right: 0; pointer-events: painted; }
+
+.btn-search:hover { transform: rotatey(720deg); transition: .90s; }
+
+.btn-search:focus ~ .input-search { width: 380px; border-radius: 0; background-color: transparent; border-bottom: 1px solid rgba(255, 255, 255, 0.5); transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2); }
+
+.input-search:focus { width: 380px; border-radius: 0px; background-color: transparent; border-bottom: 1px solid rgba(255, 255, 255, 0.5); transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2); }
+
+/** ========버튼효과=============*/
+.glow-on-hover { width: 220px; height: 50px; border: none; outline: none; color: #fff; background: #111; cursor: pointer; position: relative; z-index: 0; border-radius: 10px; }
+
+.glow-on-hover:before { content: ''; background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000); position: absolute; top: -2px; left: -2px; background-size: 400%; z-index: -1; filter: blur(5px); width: calc(100% + 4px); height: calc(100% + 4px); animation: glowing 20s linear infinite; opacity: 0; transition: opacity .3s ease-in-out; border-radius: 10px; }
+
+.glow-on-hover:active { color: #000; }
+
+.glow-on-hover:active:after { background: transparent; }
+
+.glow-on-hover:hover:before { opacity: 1; }
+
+.glow-on-hover:after { z-index: -1; content: ''; position: absolute; width: 100%; height: 100%; background: #111; left: 0; top: 0; border-radius: 10px; }
+
+@keyframes glowing { 0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; } }
 
 /*# sourceMappingURL=menu.css.map */
