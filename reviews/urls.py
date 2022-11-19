@@ -25,5 +25,6 @@ urlpatterns = [
     path('dislikes/<int:study_pk>/<int:user_pk>/', views.dislikes, name='dislikes'),
     path('del_date/<int:date_pk>', views.del_date, name='del_date'),
     path('search/', views.search, name='search'),
-    path('del_date/<int:date_pk>', views.del_date, name='del_date'),
+    path('offline_board', views.offline_board, name='offline_board'),
+    path('online_board', views.online_board, name='online_board')
 ]
