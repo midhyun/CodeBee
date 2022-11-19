@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from .forms import StudyForm, CommentForm, StudyDateForm, AcceptedForm, HoneyForm
-from .models import Study, Comment, Accepted, StudyDate, Honey
+from .models import Study, Comment, Accepted, StudyDate, Honey, Tag
 from accounts.models import User
 import requests
 import json
@@ -36,6 +36,8 @@ def create(request):
             tags = json.loads(temp)
             for t in tags:
                 tag += t['value'] + ','
+                try: Tag(tag=t['value']).save()
+                except: pass
         study_form = StudyForm(request.POST, request.FILES)
         study_date = StudyDateForm(request.POST)
         if study_form.is_valid() and study_date.is_valid():
@@ -56,9 +58,12 @@ def create(request):
             Aform.save()
             return redirect("reviews:index")
     else:
+        tag = {'tags':["python","java","pug","react","vue","c++","sass","javascript","html","css","django","spring","ruby"] + list(Tag.objects.all().values_list('tag', flat=True))}
+        tagify = json.dumps(tag)
         study_form = StudyForm()
         study_date = StudyDateForm()
     context = {
+        'tag': tagify,
         'study_form': study_form,
         'study_date': study_date,
     }
@@ -561,3 +566,31 @@ def del_date(request, date_pk):
     date = StudyDate.objects.get(pk=date_pk)
     date.delete()
     return JsonResponse({})
+
+def search(request):
+    search = request.GET.get('search')
+    field = request.GET.get('field')
+    if field == '1' or not field:
+        users = User.objects.filter(username__contains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user)
+        studies += Study.objects.filter(tag__icontains=search) or Study.objects.filter(title__contains=search) or Study.objects.filter(categorie__contains=search)
+    elif field == '2':
+        studies = Study.objects.filter(title__contains=search)
+    elif field == '3':
+        users = User.objects.filter(username__contains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user)
+    elif field == '4':
+        studies = Study.objects.filter(categorie__contains=search)
+    elif field == '5':
+        studies = Study.objects.filter(tag__contains=search)
+    elif field == '6':
+        studies = Study.objects.filter(location__contains=search)
+    context = {
+        'studies':studies
+    }
+    return render(request, 'reviews/search.html', context)
+

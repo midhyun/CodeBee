@@ -29,4 +29,5 @@ urlpatterns = [
         views.check_email_auth,
         name="check-email-auth",
     ),
+    path('test2/',views.test2, name='test2')
 ]

@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-
+{% load django_bootstrap5 %}
 {% block css %}
   <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
 {% endblock css %}
@@ -11,19 +11,22 @@
     <header class="row head p-5 shadow-lg">
       <div class="col-4">
         <div class="d-flex justify-content-center align-items-center h-100">
+          <div>
           {% if person.profile_picture %}
             <img src="{{ person.profile_picture.url }}" alt="" class="rounded-circle border border-5">
           {% else %}
             <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
+          <p class="fw-bold fs-4 text-center text-white mt-5">
+            {{ person.nickname|default_if_none:" 어딘가의 드비" }}
+          </p>
+          </div>
         </div>
       </div>
 
       <!-- 이름, 이메일, 깃허브 -->
       <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
-        <p class="fw-bold">
-          {{ person.nickname|default_if_none:" 어딘가의 드비" }}
-        </p>
+        
         <p>
           {% if person.email %}
             {{ person.email }}
@@ -31,14 +34,33 @@
             이메일이 존재하지 않습니다.
           {% endif %}
         </p>
-        <p></p>
-        <!-- 꿀단지 이미지 -->
-        <div>
-          <span class="icons" style="background: url('/static/accounts/image/honey.png') 0px 0px / 100px no-repeat;">
-            <span class="icons2" style="padding-top: calc({{ honey }}*2px); background: url('/static/accounts/image/honey_fill.png') 0px calc({{ honey }}*2px - 100px) / 100px no-repeat;"></span>
-          </span>
-        </div>
 
+          <table class="table" style="width:300px">
+            <thead>
+              <tr class="text-white">
+                <th scope="col">스터디</th>
+                <th scope="col">팔로잉</th>
+                <th scope="col">팔로워</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-white text-center">
+                <th scope="row">{{ std_cnt }}</th>
+                <td>0</td>
+                <td>0</td>
+              </tr>
+            </tbody>
+          </table>          
+      <!-- 꿀단지 이미지 -->
+      <div style="height:90px"></div>
+          <div>
+            <span class="icons" style="background: url('/static/accounts/image/honey.png') 0px 0px / 100px no-repeat;">
+              <span class="icons2" style="padding-top: calc({{ honey }}*2px); background: url('/static/accounts/image/honey_fill.png') 0px calc({{ honey }}*2px - 100px) / 100px no-repeat;"></span>
+              </span>
+              {{honey}} 단지 <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="단지는 스터디 종료 후 다른 드비분들이 평가한 점수예요. 최고 점수는 35점이고, 최저는 0점이예요. 스터디에 참여해서 단지를 모아보세요.">
+                <button style="width:40px; height:40px;" class="btn btn-secondary rounded-circle" type="button" disabled><span>i</span></button>
+              </span>
+          </div>
       </div>
     </header>
   </div>
@@ -89,6 +111,7 @@
           <label for="tab-2" class="tab-label">About{{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
           <div class="tab-content">
             <section class="">
+
               <!-- 제목 영역 -->
               <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
                 님의 github 활동입니다</h2>
@@ -163,5 +186,10 @@
   </div>
 </div>
 </div>
+
+<script>
+const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+</script>
 
 {% endblock content %}
