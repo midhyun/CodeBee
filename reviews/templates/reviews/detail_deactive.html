@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% block content %}
+<div class="container">
+    <!-- 스터디 이름, 모집여부 -->
+    <div class="my-5">
+      <span style="font-size: 3rem">{{study.title}}
+        <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-danger">활동종료</span></span>
+      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+      {% if request.user.is_authenticated %}
+        {% if study.host == user %}
+          <div class="text-end mx-5">
+            <a class="ms-3 btn btn-primary disabled" href="">수정</a>
+            <a class="ms-3 btn btn-danger disabled" href="">삭제</a>
+          </div>
+        {% else %}
+          {% if check %}
+            <div class="text-end mx-5">
+              <a class="btn btn-danger text-decoration-none text-light disabled" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+            </div>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+      <div class=""></div>
+    </div>
+    <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
+    <div class="ms-3 mb-5 d-flex">
+      <a class="btn btn-outline-primary me-5 disabled" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+      <a class="btn btn-outline-primary me-5 disabled" href="">후기</a>
+
+      <!-- 유저 목록 오프캔버스 -->
+      <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께했던 드비들</button>
+      <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasRightLabel">함께했던 드비들</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+          {% for member in members %}
+            {% if member.joined == True %}
+              <div>
+                <div class="pb-3 mt-2 border-bottom">
+                  <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+                  {% if member.users == user %}
+                    <span>(나)</span>
+                  {% endif %}
+                  {% if study.host == member.users %}
+                    <button class="text-end btn btn-primary m-0" disabled="disabled">스터디장</button>
+                    <p>
+                      <p class="my-4"></p>
+                    {% else %}
+                      <button class="text-end btn btn-warning m-0" disabled="disabled">참여</button>
+                      <p>
+                        <p class="my-4"></p>
+                      {% endif %}
+                    </div>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <!-- 스터디 정보 -->
+        <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
+          {% if post.image %}
+            <img src="{{ study.image.url }}" alt="">
+          {% endif %}
+          <p>스터디장:
+            {{ study.host }}</p>
+          <p>스터디 소개</p>
+          <p>{{ study.content }}</p>
+          <p>제한 인원:
+            {{ cnt }}
+            /
+            {{ study.limits }}</p>
+          <p>
+            {% if study.accepted_set.count == study.limits %}
+              <span>모집마감</span>
+            {% else %}
+              <span>가입 마감일:
+                {{ study.deadline }}</span>
+            {% endif %}
+          </p>
+          <p>
+            {% if study.location_type == False %}
+              <span>모임장소:
+                {{ study.location }}</span>
+            {% elif study.location_type == True %}
+              <span>온라인:
+                {{ study.location }}</span>
+            {% endif %}
+          </p>
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              스터디 일정
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li>
+                <a class="dropdown-item active" href="#">스터디 일정</a>
+              </li>
+              {% for date in dates %}
+                <li>
+                  <a class="dropdown-item" href="#">시작:{{date.study_at.isoformat}}종료:{{date.study_end.isoformat}}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        {% if study.location_type == False %}
+          <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+        {% endif %}
+      </div>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
+  <script>
+    var X = {
+        {
+          study.X
+        }
+      }
+      var Y = {
+          {
+            study.Y
+          }
+        }
+        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+          mapOption = {
+            center: new kakao
+              .maps
+              .LatLng(`${Y}`, `${X}`), // 지도의 중심좌표
+            level: 3 // 지도의 확대 레벨
+          };
+
+        var map = new kakao
+          .maps
+          .Map(mapContainer, mapOption); // 지도를 생성합니다
+
+        // 마커가 표시될 위치입니다
+        var markerPosition = new kakao
+          .maps
+          .LatLng(`${Y}`, `${X}`);
+
+        // 마커를 생성합니다
+        var marker = new kakao
+          .maps
+          .Marker({position: markerPosition});
+
+        // 마커가 지도 위에 표시되도록 설정합니다
+        marker.setMap(map);
+
+        // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
+        // marker.setMap(null);
+  </script>
+  <script>
+    var test = document.getElementById('testaxios')
+    console.log(test)
+
+    function deletedate(event) {
+      console.log(event.dataset.dateId)
+      const datePk = event.dataset.dateId
+      const loopId = event
+        .dataset
+        .loopId
+        console
+        .log(datePk)
+      axios({method: 'get', url: `/reviews/del_date/${datePk}`}).then(response => {
+        const el = document.getElementById(`${loopId}dateitem`)
+        el.remove()
+      })
+    };
+  </script>
+{% endblock %}
