@@ -12,7 +12,7 @@ body { margin: 0; background: #F2F2F2; /*background-image: linear-gradient(to to
 
 .cardlink { color: black; text-decoration: none; }
 
-.cardlink:hover { color: black; }
+.cardlink:hover { color: rgba(0, 0, 0, 0.6); }
 
 nav { position: relative; width: 100%; display: table; margin: 0 auto; background: #292929; }
 
@@ -51,6 +51,11 @@ nav a:nth-child(4):hover ~ #indicator { left: 84%; background: linear-gradient(1
 .card-image { height: 296px; object-fit: scale-down; }
 
 .card-body { height: 11rem; }
+
+/* 카드 그라데이션 */
+.card-grad { position: absolute; width: 100%; height: 100%; /*background: linear-gradient(0deg, rgba(255, 0, 186, 0.89) 0%, rgba(16, 9, 121, 0.8597689075630253) 35%, rgba(2, 0, 36, 0.4) 100%);*/ border-radius: 4px; }
+
+.card span { letter-spacing: 3px; background-color: #FDA790; font-size: 11px; color: white; padding: 3px 10px; }
 
 .members { margin: 3px; padding: 2px 2px; width: 15px; height: 15px; }
 
