@@ -1,387 +1,434 @@
 {% extends 'base_test.html' %}
-{% block content %}
 {% load static %}
 {% block css %}
   <link rel="stylesheet" href="{% static 'reviews/css/detail.css' %}">
 {% endblock css %}
 
 {% block content %}
-{% load django_bootstrap5 %}
-{% if study.isactive == True %}
-<div class="container">
-  <!-- 스터디 이름, 모집여부 -->
-  <div class="my-5">
-    <span style="font-size: 3rem">{{study.title}}</span>
-    {% if cnt == study.limits %}
-      <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-danger">모집마감</span>
-    {% else %}
-    <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-primary">모집중</span>
-
-    
-    {% endif %}
-    <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
-    {% if request.user.is_authenticated %}
-    {% if study.host == user %}
-    <div class="text-end mx-5">
-      <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
-      <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
-
-      <button type="button" class="btn btn-success ms-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        활동완료
-      </button>
-
-      <!-- Modal -->
-      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">활동 완료</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body px-4 text-start lh-lg modal-text">
-              활동 완료 시 스터디가 비활성화 상태로 전환되고 스터디 정보를 수정하거나 다시 활성화 상태로 전환할 수 없습니다.
-              <br><span class='text-danger'>계속 진행하기를 누르면 스터디가 종료됩니다.</span>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">아니요 돌아갈래요.</button>
-              <a class="ms-3 btn btn-success" href="{% url 'reviews:done' study.pk %}">계속 진행하기</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    {% else %}
-    {% if check %}
-    <div class="text-end mx-5">
-      <a class="btn btn-danger text-decoration-none text-light fs-4"
-        href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
-    </div>
-    {% else %}
-    <div class="text-end mx-5">
-      <a class=" btn btn-primary fs-4" href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
-    </div>
-    {% endif %}
-    {% endif %}
-    {% endif %}
-    <div class="">
-    </div>
-  </div>
-  <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
-  <div class="ms-3 mb-5 d-flex">
-    <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">
-      {{study.title }}</a>
-    <a class="btn btn-outline-primary  me-5" href="">후기</a>
-
-    <!-- 유저 목록 오프캔버스 -->
-    <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께하는 드비들</button>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body">
-
-        {% for member in members %}
-        {% if member.joined == True %}
-        <div>
-          <div class="pb-3 mt-2 border-bottom">
-            <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
-            {% if member.users == user %}
-            <span>(나)</span>
-            {% endif %}
-            {% if study.host == member.users %}
-            <button class="text-end btn btn-primary m-0" disabled>스터디장</button>
-            <p><p class="my-4"></p>
-            {% else %}
-            <button class="text-end btn btn-warning m-0" disabled>활동중</button>
-            {% if study.host == user %}
-            <p class="text-end m-0">
-              <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
-            </p>
-            {% else %}
-            <p><p class="my-4"></p>
-            {% endif %}
-            {% endif %}
-          </div>
-        </div>
+  {% load django_bootstrap5 %}
+  {% if study.isactive == True %}
+    <div class="container">
+      <!-- 스터디 이름, 모집여부 -->
+      <div class="my-5">
+        <span style="font-size: 3rem">{{study.title}}</span>
+        {% if cnt == study.limits %}
+          <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-danger">모집마감</span>
         {% else %}
-        <!-- 신청 대기준인 멤버 뱃지로 표시 -->
-        <div>
-          <div class="pb-3 mt-2 border-bottom">
-            <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
-            {% if member.users == user %}
-            <span>(나)</span>
-            {% endif %}
-            <button class="text-end btn btn-secondary m-0" disabled>대기중</button>
-            {% if study.host == user %}
-            <p class="text-end">
-              <a href="{% url 'reviews:study_accepted' study.pk member.users.id %}">승락</a>
-              <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
-            </p>
-            {% else %}
-            <p><p class="my-4"></p>
-            {% endif %}
-          </div>
-        </div>
-        {% endif %}
-        {% endfor %}
-      </div>
-    </div>
-    {% if study.host == user %}
-    <!-- 그룹원 호출 버튼 -->
-    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-      그룹원 호출
-    </button>
+          <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-primary">모집중</span>
 
-    <!-- 그룹원 호출 모달 -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">그룹원에게 카카오톡 알림 보내기</h1>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <form action="{% url 'reviews:gathering' study.pk %}" method="POST">
-            {% csrf_token %}
-            <div class="modal-body">
-              <label class="form-label" for="id_content">카카오톡 인증된 그룹원에게 일괄 메시지를 전송합니다.</label>
-              <textarea maxlength="200" name="message" cols="40" rows="10" class="form-control" placeholder="호출 메시지"
-                required="" id="id_content"></textarea>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="submit" class="btn btn-primary">Send message</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-    {% endif %}
-  </div>
-  <!-- 스터디 정보 -->
-  <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
-      {% if post.image %}
-      <img src="{{ study.image.url }}" alt="">
-      {% endif %}
-      <p>스터디장: {{ study.host }}</p>
-      <p>스터디 소개</p>
-      <p>{{ study.content }}</p>
-      <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
-      <p>
-        {% if study.accepted_set.count == study.limits %}
-        <span>모집마감</span>
-        {% else %}
-        <span>가입 마감일: {{ study.deadline }}</span>
         {% endif %}
-      </p>
-      <p>
-        {% if study.location_type == False %}
-        <span>모임장소: {{ study.location }}</span>
-        {% elif study.location_type == True %}
-        <span>온라인: {{ study.location }}</span>
-        {% endif %}
-      </p>
-      <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          스터디 일정 <span class="badge text-bg-danger">{{dates|length}}</span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu" style="width:600px">
-          <li><a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item active" href="#">스터디 일정</a></li>
-          {% for date in dates %}
-          <li id="{{ forloop.counter }}dateitem"><div class="dropdown-item d-flex justify-content-between" ><div style="width:25px">{{ forloop.counter }}회</div> <div>시작: {{date.study_at|date:'y년m월d일 h:i'}} / 종료: {{date.study_end|date:'y년m월d일 h:i'}}</div>
-            {% if request.user == study.host %}
-              <div data-loop-id="{{forloop.counter}}" onclick="deletedate(this)" data-date-id="{{date.pk}}">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" style="color:red" viewBox="0 0 16 16">
-              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
-            </svg></div>
-            {% endif %}
-          </div></li>
-          {% endfor %}
-          {% if request.user == study.host %}
-          <li><hr class="dropdown-divider"></li>
-          <li><div style="cursor:pointer" class="dropdown-item text-center" data-bs-toggle="modal" data-bs-target="#exampleModal2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-          </svg> 스터디 추가</div></li>
-          {% endif %}
-        </ul>
-        <!-- 스터디 추가 Modal -->
-        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">스터디 일정 추가하기</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+        {% if request.user.is_authenticated %}
+          {% if study.host == user %}
+            <div class="text-end mx-5">
+              <a class="ms-3 btn btn-primary" href="{% url 'reviews:update' study.pk %}">수정</a>
+              <a class="ms-3 btn btn-danger" href="{% url 'reviews:delete' study.pk %}">삭제</a>
+
+              <button type="button" class="btn btn-success ms-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                활동완료
+              </button>
+
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">활동 완료</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body px-4 text-start lh-lg modal-text">
+                      활동 완료 시 스터디가 비활성화 상태로 전환되고 스터디 정보를 수정하거나 다시 활성화 상태로 전환할 수 없습니다.
+                      <br>
+                      <span class='text-danger'>계속 진행하기를 누르면 스터디가 종료됩니다.</span>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">아니요 돌아갈래요.</button>
+                      <a class="ms-3 btn btn-success" href="{% url 'reviews:done' study.pk %}">계속 진행하기</a>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="modal-body">
-                <form action="" method="POST">
-                  {% csrf_token %}
-                  {% bootstrap_form form %}
+            </div>
+          {% else %}
+            {% if check %}
+              <div class="text-end mx-5">
+                <a class="btn btn-danger text-decoration-none text-light fs-4" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+              </div>
+            {% else %}
+              <div class="text-end mx-5">
+                <a class=" btn btn-primary fs-4" href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
+              </div>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+        <div class=""></div>
+      </div>
+      <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
+      <div class="ms-3 mb-5 d-flex">
+        <a class="btn btn-outline-primary  me-5" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">
+          {{study.title }}</a>
+        <a class="btn btn-outline-primary  me-5" href="">후기</a>
+
+        <!-- 유저 목록 오프캔버스 -->
+        <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께하는 드비들</button>
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+
+            {% for member in members %}
+              {% if member.joined == True %}
+                <div>
+                  <div class="pb-3 mt-2 border-bottom">
+                    <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+                    {% if member.users == user %}
+                      <span>(나)</span>
+                    {% endif %}
+                    {% if study.host == member.users %}
+                      <button class="text-end btn btn-primary m-0" disabled="disabled">스터디장</button>
+                      <p>
+                        <p class="my-4"></p>
+                      {% else %}
+                        <button class="text-end btn btn-warning m-0" disabled="disabled">활동중</button>
+                        {% if study.host == user %}
+                          <p class="text-end m-0">
+                            <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
+                          </p>
+                        {% else %}
+                          <p>
+                            <p class="my-4"></p>
+                          {% endif %}
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% else %}
+                    <!-- 신청 대기준인 멤버 뱃지로 표시 -->
+                    <div>
+                      <div class="pb-3 mt-2 border-bottom">
+                        <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+                        {% if member.users == user %}
+                          <span>(나)</span>
+                        {% endif %}
+                        <button class="text-end btn btn-secondary m-0" disabled="disabled">대기중</button>
+                        {% if study.host == user %}
+                          <p class="text-end">
+                            <a href="{% url 'reviews:study_accepted' study.pk member.users.id %}">승락</a>
+                            <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
+                          </p>
+                        {% else %}
+                          <p>
+                            <p class="my-4"></p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
                 </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Save changes</button>
+              </div>
+              {% if study.host == user %}
+                <!-- 그룹원 호출 버튼 -->
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                  그룹원 호출
+                </button>
+
+                <!-- 그룹원 호출 모달 -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">그룹원에게 카카오톡 알림 보내기</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form action="{% url 'reviews:gathering' study.pk %}" method="POST">
+                        {% csrf_token %}
+                        <div class="modal-body">
+                          <label class="form-label" for="id_content">카카오톡 인증된 그룹원에게 일괄 메시지를 전송합니다.</label>
+                          <textarea maxlength="200" name="message" cols="40" rows="10" class="form-control" placeholder="호출 메시지" required="" id="id_content"></textarea>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Send message</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
                 </div>
-              </form>
+              {% endif %}
+            </div>
+            <!-- 스터디 정보 -->
+            <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
+              {% if post.image %}
+                <img src="{{ study.image.url }}" alt="">
+              {% endif %}
+              <p>스터디장:
+                {{ study.host }}</p>
+              <p>스터디 소개</p>
+              <p>{{ study.content }}</p>
+              <p>제한 인원:
+                {{ cnt }}
+                /
+                {{ study.limits }}</p>
+              <p>
+                {% if study.accepted_set.count == study.limits %}
+                  <span>모집마감</span>
+                {% else %}
+                  <span>가입 마감일:
+                    {{ study.deadline }}</span>
+                {% endif %}
+              </p>
+              <p>
+                {% if study.location_type == False %}
+                  <span>모임장소:
+                    {{ study.location }}</span>
+                {% elif study.location_type == True %}
+                  <span>온라인:
+                    {{ study.location }}</span>
+                {% endif %}
+              </p>
+              <div class="dropdown">
+                <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  스터디 일정
+                  <span class="badge text-bg-danger">{{dates|length}}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu" style="width:600px">
+                  <li>
+                    <a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item active" href="#">스터디 일정</a>
+                  </li>
+                  {% for date in dates %}
+                    <li id="{{ forloop.counter }}dateitem">
+                      <div class="dropdown-item d-flex justify-content-between">
+                        <div style="width:25px">{{ forloop.counter }}회</div>
+                        <div>시작:
+                          {{date.study_at|date:'y년m월d일 h:i'}}
+                          / 종료:
+                          {{date.study_end|date:'y년m월d일 h:i'}}</div>
+                        {% if request.user == study.host %}
+                          <div data-loop-id="{{forloop.counter}}" onclick="deletedate(this)" data-date-id="{{date.pk}}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" style="color:red" viewbox="0 0 16 16">
+                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
+                            </svg>
+                          </div>
+                        {% endif %}
+                      </div>
+                    </li>
+                  {% endfor %}
+                  {% if request.user == study.host %}
+                    <li>
+                      <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                      <div style="cursor:pointer" class="dropdown-item text-center" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewbox="0 0 16 16">
+                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                        스터디 추가</div>
+                    </li>
+                  {% endif %}
+                </ul>
+                <!-- 스터디 추가 Modal -->
+                <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">스터디 일정 추가하기</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <form action="" method="POST">
+                          {% csrf_token %}
+                          {% bootstrap_form form %}
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary">Save changes</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% if study.location_type == False %}
+              <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- 활동 종료 -->
+      {% elif study.isactive == False %}
+        <div class="container">
+          <!-- 스터디 이름, 모집여부 -->
+          <div class="my-5">
+            <span style="font-size: 3rem">{{study.title}}
+              <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-danger">활동종료</span></span>
+            <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
+            {% if request.user.is_authenticated %}
+              {% if study.host == user %}
+                <div class="text-end mx-5">
+                  <a class="ms-3 btn btn-primary disabled" href="">수정</a>
+                  <a class="ms-3 btn btn-danger disabled" href="">삭제</a>
+                </div>
+              {% else %}
+                {% if check %}
+                  <div class="text-end mx-5">
+                    <a class="btn btn-danger text-decoration-none text-light disabled" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
+                  </div>
+                {% endif %}
+              {% endif %}
+            {% endif %}
+            <div class=""></div>
+          </div>
+          <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
+          <div class="ms-3 mb-5 d-flex">
+            <a class="btn btn-outline-primary me-5 disabled" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
+            <a class="btn btn-outline-primary me-5 disabled" href="">후기</a>
+
+            <!-- 유저 목록 오프캔버스 -->
+            <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께했던 드비들</button>
+            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+              <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasRightLabel">함께했던 드비들</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+              </div>
+              <div class="offcanvas-body">
+                {% for member in members %}
+                  {% if member.joined == True %}
+                    <div>
+                      <div class="pb-3 mt-2 border-bottom">
+                        <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
+                        {% if member.users == user %}
+                          <span>(나)</span>
+                        {% endif %}
+                        {% if study.host == member.users %}
+                          <button class="text-end btn btn-primary m-0" disabled="disabled">스터디장</button>
+                          <p>
+                            <p class="my-4"></p>
+                          {% else %}
+                            <button class="text-end btn btn-warning m-0" disabled="disabled">참여</button>
+                            <p>
+                              <p class="my-4"></p>
+                            {% endif %}
+                          </div>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+              <!-- 스터디 정보 -->
+              <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
+                {% if post.image %}
+                  <img src="{{ study.image.url }}" alt="">
+                {% endif %}
+                <p>스터디장:
+                  {{ study.host }}</p>
+                <p>스터디 소개</p>
+                <p>{{ study.content }}</p>
+                <p>제한 인원:
+                  {{ cnt }}
+                  /
+                  {{ study.limits }}</p>
+                <p>
+                  {% if study.accepted_set.count == study.limits %}
+                    <span>모집마감</span>
+                  {% else %}
+                    <span>가입 마감일:
+                      {{ study.deadline }}</span>
+                  {% endif %}
+                </p>
+                <p>
+                  {% if study.location_type == False %}
+                    <span>모임장소:
+                      {{ study.location }}</span>
+                  {% elif study.location_type == True %}
+                    <span>온라인:
+                      {{ study.location }}</span>
+                  {% endif %}
+                </p>
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    스터디 일정
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-dark">
+                    <li>
+                      <a class="dropdown-item active" href="#">스터디 일정</a>
+                    </li>
+                    {% for date in dates %}
+                      <li>
+                        <a class="dropdown-item" href="#">시작:{{date.study_at.isoformat}}종료:{{date.study_end.isoformat}}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+              {% if study.location_type == False %}
+                <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+              {% endif %}
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-    {% if study.location_type == False %}
-    <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
-    {% endif %}
-  </div>
-</div>
-
-
-<!-- 활동 종료 -->
-{% elif study.isactive == False %}
-<div class="container">
-  <!-- 스터디 이름, 모집여부 -->
-  <div class="my-5">
-    <span style="font-size: 3rem">{{study.title}}  <span class="ms-3 fs-4 text-light rounded-2 p-2 bg-danger">활동종료</span></span>
-    <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
-    {% if request.user.is_authenticated %}
-    {% if study.host == user %}
-    <div class="text-end mx-5">
-      <a class="ms-3 btn btn-primary disabled" href="">수정</a>
-      <a class="ms-3 btn btn-danger disabled" href="">삭제</a>
-    </div>
-    {% else %}
-    {% if check %}
-    <div class="text-end mx-5">
-      <a class="btn btn-danger text-decoration-none text-light disabled" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
-    </div>
-    {% endif %}
-    {% endif %}
-    {% endif %}
-    <div class="">
-    </div>
-  </div>
-  <!-- 스터디 메인, 유저목록, 후기 이동 버튼 -->
-  <div class="ms-3 mb-5 d-flex">
-    <a class="btn btn-outline-primary me-5 disabled" href="{% url 'reviews:detail' study.pk %}" aria-disabled="true">{{ study.title }}</a>
-    <a class="btn btn-outline-primary me-5 disabled" href="">후기</a>
-
-    <!-- 유저 목록 오프캔버스 -->
-    <button class="btn btn-primary me-5" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">함께했던 드비들</button>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasRightLabel">함께했던 드비들</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-      </div>
-      <div class="offcanvas-body">
-        {% for member in members %}
-        {% if member.joined == True %}
-        <div>
-          <div class="pb-3 mt-2 border-bottom">
-            <a href="{% url 'accounts:detail' member.users.pk %}">{{ member.users }}</a>
-            {% if member.users == user %}
-            <span>(나)</span>
-            {% endif %}
-            {% if study.host == member.users %}
-            <button class="text-end btn btn-primary m-0" disabled>스터디장</button>
-            <p><p class="my-4"></p>
-            {% else %}
-            <button class="text-end btn btn-warning m-0" disabled>참여</button>
-            <p><p class="my-4"></p>
-            {% endif %}
-          </div>
-        </div>
         {% endif %}
-        {% endfor %}
-      </div>
-    </div>
-  </div>
-  <!-- 스터디 정보 -->
-  <div class=" mb-5 p-3 border border-3 border-warning rounded-3">
-      {% if post.image %}
-      <img src="{{ study.image.url }}" alt="">
-      {% endif %}
-      <p>스터디장: {{ study.host }}</p>
-      <p>스터디 소개</p>
-      <p>{{ study.content }}</p>
-      <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
-      <p>
-        {% if study.accepted_set.count == study.limits %}
-        <span>모집마감</span>
-        {% else %}
-        <span>가입 마감일: {{ study.deadline }}</span>
-        {% endif %}
-      </p>
-      <p>
-        {% if study.location_type == False %}
-        <span>모임장소: {{ study.location }}</span>
-        {% elif study.location_type == True %}
-        <span>온라인: {{ study.location }}</span>
-        {% endif %}
-      </p>
-      <div class="dropdown">
-        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          스터디 일정
-        </button>
-        <ul class="dropdown-menu dropdown-menu-dark">
-          <li><a class="dropdown-item active" href="#">스터디 일정</a></li>
-          {% for date in dates %}
-          <li><a class="dropdown-item" href="#">시작:{{date.study_at.isoformat}}종료:{{date.study_end.isoformat}}</a></li>
-          {% endfor %}
-        </ul>
-      </div>
-    </div>
-    {% if study.location_type == False %}
-    <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
-    {% endif %}
-  </div>
-</div>
-{% endif %}
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script type="text/javascript"
-  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
-  <script>
-    var X = {{ study.X }}
-    var Y = {{ study.Y }}
-    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-        mapOption = {
-            center: new kakao.maps.LatLng(`${Y}`,`${X}`), // 지도의 중심좌표
-            level: 3 // 지도의 확대 레벨
-        };
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
+        <script>
+          var X = {
+              {
+                study.X
+              }
+            }
+            var Y = {
+                {
+                  study.Y
+                }
+              }
+              var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+                mapOption = {
+                  center: new kakao
+                    .maps
+                    .LatLng(`${Y}`, `${X}`), // 지도의 중심좌표
+                  level: 3 // 지도의 확대 레벨
+                };
 
-    var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+              var map = new kakao
+                .maps
+                .Map(mapContainer, mapOption); // 지도를 생성합니다
 
-    // 마커가 표시될 위치입니다
-    var markerPosition  = new kakao.maps.LatLng(`${Y}`,`${X}`);
+              // 마커가 표시될 위치입니다
+              var markerPosition = new kakao
+                .maps
+                .LatLng(`${Y}`, `${X}`);
 
-    // 마커를 생성합니다
-    var marker = new kakao.maps.Marker({
-        position: markerPosition
-    });
+              // 마커를 생성합니다
+              var marker = new kakao
+                .maps
+                .Marker({position: markerPosition});
 
-    // 마커가 지도 위에 표시되도록 설정합니다
-    marker.setMap(map);
+              // 마커가 지도 위에 표시되도록 설정합니다
+              marker.setMap(map);
 
-    // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
-    // marker.setMap(null);
-    </script>
-<script>
-var test = document.getElementById('testaxios')
-console.log(test)
+              // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
+              // marker.setMap(null);
+        </script>
+        <script>
+          var test = document.getElementById('testaxios')
+          console.log(test)
 
-function deletedate(event) {
-  console.log(event.dataset.dateId)
-  const datePk = event.dataset.dateId
-  const loopId = event.dataset.loopId
-  console.log(datePk)
-  axios({
-    method: 'get',
-    url: `/reviews/del_date/${datePk}`
-  })
-  .then(response => {
-    const el = document.getElementById(`${loopId}dateitem`)
-    el.remove()
-  })};
-
-</script>
-    {% endblock %}
+          function deletedate(event) {
+            console.log(event.dataset.dateId)
+            const datePk = event.dataset.dateId
+            const loopId = event
+              .dataset
+              .loopId
+              console
+              .log(datePk)
+            axios({method: 'get', url: `/reviews/del_date/${datePk}`}).then(response => {
+              const el = document.getElementById(`${loopId}dateitem`)
+              el.remove()
+            })
+          };
+        </script>
+      {% endblock %}
