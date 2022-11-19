@@ -10,19 +10,18 @@
 {% endblock css %}
 {% block content %}
 
-<header class="container-fluid index-header align-items-center">
-
-    <div class="search-box m-auto">
-        <button class="btn-search"><img src="{% static " new_logo.png" %}" width="30" alt=""></button>
+<header class="container align-items-center" >
+<div class="d-flex justify-content-end">
+    <div style="padding:20px 50px 0px"><div class="search-box">
+        <span class="fs-4"></span> <button class="btn-search"><img src="{% static 'new_logo.png' %}" width="30" alt=""></button>
         <input type="text" class="input-search" placeholder="찾고 싶은 코드비를 검색해보세요!">
-
-    </div>
-
+    </div></div>
+</div>
 </header>
 <!-- 헤더 이미지 영역 -->
 
 <!-- 스터디 제목, 기간, 설명 -->
-<div class="container paper shadow content testboard mt-3" style="padding: 50px;">
+<div class="container content mt-3" style="padding: 50px;">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
         {% for study in studies %}
         <div class="col">
