@@ -34,6 +34,7 @@
             이메일이 존재하지 않습니다.
           {% endif %}
         </p>
+
           <table class="table" style="width:300px">
             <thead>
               <tr class="text-white">
@@ -60,7 +61,6 @@
                 <button style="width:40px; height:40px;" class="btn btn-secondary rounded-circle" type="button" disabled><span>i</span></button>
               </span>
           </div>
-
       </div>
     </header>
   </div>
@@ -108,46 +108,88 @@
         <!-- 참여한 스터디 -->
         <div class="tab">
           <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
-          <label for="tab-2" class="tab-label">About{{ person.nickname|default_if_none:" 어딘가의 드비" }}</label>
+          <label for="tab-2" class="tab-label">About{{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
           <div class="tab-content">
             <section class="">
 
               <!-- 제목 영역 -->
-              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+              <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
                 님의 github 활동입니다</h2>
               <!-- 깃허브 영역 -->
               <div class="detail-content">
                 등록된 깃허브가 없어요.
               </div>
               <!-- 제목 영역 -->
-              <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+              <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
                 님의 스터디 참여 내역입니다</h2>
               <!-- 내용 영역 -->
-              <div class="detail-content">
-                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은 
-                  {% for lang in langs %}
-                  <span class="{{ lang }}">{{ lang }}</span> 
-                  {% endfor %}
-                  스터디를 가장 많이 참여하였습니다.</p>
-                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
-                  님은 온라인 3회, 오프라인 0회 스터디에 참여하였습니다.</p>
+              <div class="detail-content d-flex flex-column justify-content-center">
+                <div style="text-align:center; font-size: larger;">
+                  {% if accepts %}
+                    <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은
+                      {% for lang in langs %}
+                        <span class="{{ lang }}">{{ lang }}</span>
+                      {% endfor %}
+                      스터디를 가장 많이 참여하였습니다.</p>
+                    <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+                      님은 온라인<span class="study_count">{{ online|length }}</span>회, 오프라인<span class="study_count">{{ offline|length }}</span>회 스터디에 참여하였습니다.</p>
+                  {% else %}
+                    <p class="text-muted h-100">아직 참여한 스터디가 없습니다.</p>
+                    {% if user == person %}
+                      <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+                    {% endif %}
+                  {% endif %}
+                </div>
               </div>
               <!-- 제목 영역 -->
               <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
                 님의 최근 리뷰 활동입니다</h2>
               <!-- 내용 영역 -->
               <div class="detail-content">
-                아직 작성된 리뷰가 없어요.
-              </div>
-            </section>
+                {% comment %} 유저가 작성한 댓글이 하나라도 있다면, {% endcomment %}
+                {% if person.comment_set.all %}
+                  <div class="p-3 d-flex">
+                    {% for comment in person.comment_set.all %}
+                    <div class="review_card">
+                      <div class="review_info">
+                        {% if comment.study.image %}
+                        <img src="{{ comment.study.image.url }}" alt="">
+                        {% endif %}
+                        <div class="info_wrapper">
+                          <div class="review_title">{{ comment.study.title }}</div>
+                          <div class="review_date">{{ comment.created_at }} 작성</div>
+                        </div>
+                        
+                      </div>
+                      <div class="review_content">
+                        {{ comment.content|truncatechars:44 }}
+                      </div>
+                    </div>
+                    {% endfor %}
 
-            </div>
+                  {% else %}
+                  <div class="detail-content d-flex flex-column justify-content-center">
+                    <div style="text-align:center; font-size: larger;">
+                      <p>아직 작성된 리뷰가 없어요.</p>
+                      {% if user == person %}
+                      
+                    {% endif %}
+                    </div>
+                  </div>
+                  {% endif %}
+                  </div>
+
           </div>
         </div>
       </div>
     </div>
+  </div>
+</div>
+</div>
+
 <script>
 const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
 const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
+
 {% endblock content %}

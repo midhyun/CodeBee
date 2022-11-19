@@ -427,21 +427,30 @@ def index(request):
 
 
 def detail(request, user_pk):
-    accepts = Accepted.objects.filter(users=user_pk).order_by("-pk")
-    studies = []
-    deactives = []
-
-    for accept in accepts:
-        if accept.joined:
-            studies.append(accept.study)
-    for study in studies:
-        if not study.isactive:
-            deactives.append(study)
     person = get_object_or_404(get_user_model(), pk=user_pk)
+    accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
+    plus = Honey.objects.filter(rated_user=person, like=True).count()
+    minus = Honey.objects.filter(rated_user=person, dislike=True).count()
+    honey = 15 + plus - minus
+    if not len(accepts):
+        return render(request, "accounts/detail.html", {"person": person,
+                                                        "honey": honey,})
+    
+    deactives = []
+    online = []
+    offline= []
+    for accept in accepts:
+        if not accept.study.isactive:
+            deactives.append(accept.study)
+        if not accept.study.location_type:
+            offline.append(accept.study)
+        else:
+            online.append(accept.study)
+            
     party = person.accepted_set.all().filter(joined=True)
     # print(party)
     studys = party.values('study')
-    print(studys)
+    # print(studys)
     
     lan_dict = {}
     
@@ -459,10 +468,6 @@ def detail(request, user_pk):
     for k, v in lan_dict.items():
         if v == most:
             langs.append(k)
-         
-        
-        
-
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
     honey = 15 + plus - minus
@@ -470,12 +475,15 @@ def detail(request, user_pk):
     return render(
         request,
         "accounts/detail.html",
-        {
+        context= {
             "person": person,
-            "studies": studies,
+            "accepts" : accepts,
             "deactives": deactives,
             "honey" : honey,
+            "online" : online,
+            "offline" : offline,
             "langs" : langs,
+            "party" : party,
             'honey':honey,
             'std_cnt':Std_cnt,
         },
