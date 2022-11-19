@@ -97,8 +97,10 @@ def detail(request, study_pk):
         "cnt": cnt,
         "check": user_accepted,
     }
-
-    return render(request, "reviews/detail.html", context)
+    if study.isactive:
+        return render(request, "reviews/detail.html", context)
+    else:
+        return render(request, "reviews/detail_deactive.html", context)
 
 
 
