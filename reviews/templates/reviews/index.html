@@ -11,7 +11,19 @@
 {% block content %}
 
 <header class="container align-items-center">
-    <div class="d-flex justify-content-end">
+    <div class="d-flex justify-content-between">
+        <!-- 인덱스 카테고리 -->
+        <div style="padding: 20px 50px 0px; transform: translateY(12px)">
+            <form id="category_form" action="" method="GET">
+            <select name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
+                <option selected>스터디 카테고리</option>
+                <option >모든 스터디</option>
+                <option value="1">오프라인 스터디</option>
+                <option value="2">온라인 스터디</option>
+              </select>
+            </form>
+        </div>
+        <!-- 검색바 -->
         <div style="padding:20px 50px 0px">
             <div class="search-box">
                 <span class="fs-4"></span> <button class="btn-search"><img src="{% static 'new_logo.png' %}" width="30"
@@ -143,5 +155,9 @@
         {% endfor %}
     </div>
 </div>
-
+<script>
+    function study_onchange() {
+        document.querySelector('#category_form').submit()
+    }
+</script>
 {% endblock content %}
