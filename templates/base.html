@@ -3,64 +3,84 @@
 <!DOCTYPE html>
 <html lang="ko">
 
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block css %}{% endblock css %}
-    {% bootstrap_css %}{% bootstrap_javascript %}
-    <title>CodeBee</title>
-    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="/static/css/style.css">
-    <style>
-      body {
-        font-family: 'NanumSquareNeo';
-      }
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% block css %}{% endblock css %}
+  {% bootstrap_css %}{% bootstrap_javascript %}
+  <title>CodeBee</title>
+  <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
+  <style>
+    body {
+      font-family: 'NanumSquareNeo';
+      overflow-x: hidden;
+      z-index: -10;
+    }
 
-      a {
-        text-decoration: none;
-      }
-    </style>
-  </head>
+    a {
+      text-decoration: none;
+    }
+
+    .simplebar-scrollbar::before {
+      background-color: #ffa9bf;
+    }
+  </style>
+</head>
+
 <body>
-  <div style="height:68px"></div>
+  <!-- 상속받는 각 페이지에 적용해야 위쪽이 하얗게 나오지 않음 -->
+  <div id="main-top" style="height: 68px;"></div>
   <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
     <div class="container">
-      <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}" alt=""></a>
+      <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}"
+          alt=""></a>
       <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">일반 스터디</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">그룹 스터디</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">일반 스터디</a>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">그룹 스터디</a>
+          </li>
           <li class="nav-item"><a class="nav-link" href="#" style="color:white">그룹 모집 게시판</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a>
+          </li>
           <li class="nav-item"><a class="nav-link" href="#" style="color:white">고객센터</a></li>
         </ul>
         <ul class="ms-auto navbar-nav">
           {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내 스터디</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내
+              스터디</a></li>
           <li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a></li>
           {% else %}
           <li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a></li>
-          <li class="nav-item"><a href="{% url 'accounts:signup' %}" class="nav-link" style="color:white">회원가입</a></li>
+          <li class="nav-item"><a href="{% url 'accounts:signup' %}" class="nav-link" style="color:white">회원가입</a>
+          </li>
           {% endif %}
         </ul>
       </div>
     </div>
   </nav>
   {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-      </div>
-    {% endfor %}
+  {% for message in messages %}
+  <div class="alert alert-{{ message.tags }}">
+    {{ message }}
+  </div>
+  {% endfor %}
   {% endif %}
-  {% block content %}{% endblock content %}
-  <footer class="align-items-center no-gutters row" style="background:rgb(83, 83, 83); height:80px">
+  <!-- 본문 영역 시작 -->
+  <div id="main">
+    {% block content %}{% endblock content %}
+  </div>
+  <!-- 본문 영역 끝 -->
+  <footer id="main-footer" class="align-items-center no-gutters row" style="background:rgb(83, 83, 83); height: 80px;">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">
       <div class="justify-content-between no-gutters row">
@@ -71,13 +91,43 @@
     </div>
     <div class="col-4 col-md-3"></div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
   <script>
-    const bg = document.getElementById('bg')
+    const simpleBar = new SimpleBar(document.getElementById('main'));
 
-    window.addEventListener('scroll', () => {
-      bg.style.opacity = 1 - window.scrollY / 300 + ''
-    })
+    let main = document.getElementById("main");
+    let topHeight = document.getElementById("main-top").clientHeight;
+    let footerHeight = document.getElementById("main-footer").clientHeight;
+    function setScreenSize() {
+      let IntNowScreenHeight = window.innerHeight - topHeight - footerHeight; // 본문영역에 높이가 있는 div 추가되면 다시 계산하여 적용해야함
+      // footer 가 fixed 처럼 움직임
+      let StrNowScreenHeight = String(IntNowScreenHeight);
+      main.style.height = StrNowScreenHeight + "px";
+    };
+    window.addEventListener("load", setScreenSize);
+    const bg = document.getElementById('bg');
+    main.addEventListener("wheel", event => {
+      bg.style.opacity = 1 - simpleBar.getScrollElement().scrollTop / 1000 + '' // 논의 필요
+    });
+    window.addEventListener("resize", setScreenSize);
   </script>
+  <script>
+    const target = document.querySelector("body");
+    const modal = document.querySelectorAll(".modal");
+    let i = 0;
+    for (i; i < modal.length; i++) {
+      let modalBtn = document.querySelector(`#modal-btn${i}`);
+      const modalDict = {}
+      modalDict[`modal${i}`] = [modal[i], modalBtn];
+      modalDict[`modal${i}`][1].addEventListener("click", function () {
+        if (document.querySelector(".modal-backdrop") !== null) {
+          const modalBack = document.querySelector("#modal-back-div");
+          modalBack.appendChild(Object.values(modalDict)[0][0]);
+        };
+      });
+    };
+  </script>
+  <div id="modal-back-div"></div>
 </body>
 
 </html>

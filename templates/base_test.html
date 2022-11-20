@@ -5,51 +5,59 @@
 <html lang="ko">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% block css %}{% endblock css %}
-    {% bootstrap_css %}{% bootstrap_javascript %}
-    <title>CodeBee</title>
-    <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css"/>
-    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  {% block css %}{% endblock css %}
+  {% bootstrap_css %}{% bootstrap_javascript %}
+  <title>CodeBee</title>
+  <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css" />
+  <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
 
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
+  <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
 </head>
 
 <body>
-<div class="container-fluid nav_bg" id="bg">
-<nav >
-    <a href="#"><img src="{% static "logo_yw.png" %}" width="80"></a>
-    <a href="#">HOME</a>
-    <a href="#">CODING</a>
-    <a href="#">GUITAR</a>
-    <div id="indicator"></div>
-</nav>
-</div>
-{% block content %}
-
-{% endblock content %}
-<footer class="align-items-center no-gutters row" style="position:sticky; background:rgb(83, 83, 83); height:80px; bottom:0">
-    <div class="col-md-3"></div>
-    <div class="col-12 col-md-6">
-        <div class="justify-content-between no-gutters row">
-            <div class="p-2 col-12">
-                <p class="mb-0 text-white">@ Copyrights 2022 CodeBee All Rights Reserved</p>
-            </div>
-        </div>
+  <div id="scroll-area" class="simplebar-area" data-simplebar>
+    <div class="container-fluid nav_bg" id="bg">
+      <nav>
+        <a href="#"><img src="{% static " logo_yw.png" %}" width="80"></a>
+        <a href="#">HOME</a>
+        <a href="#">CODING</a>
+        <a href="#">GUITAR</a>
+        <div id="indicator"></div>
+      </nav>
     </div>
-    <div class="col-4 col-md-3"></div>
-</footer>
+    {% block content %}
+
+    {% endblock content %}
+    <footer class="align-items-center no-gutters row"
+      style="position:sticky; background:rgb(83, 83, 83); height:80px; bottom:0">
+      <div class="col-md-3"></div>
+      <div class="col-12 col-md-6">
+        <div class="justify-content-between no-gutters row">
+          <div class="p-2 col-12">
+            <p class="mb-0 text-white">@ Copyrights 2022 CodeBee All Rights Reserved</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-4 col-md-3"></div>
+    </footer>
+  </div>
+
   <script>
     const bg = document.getElementById('bg')
 
     window.addEventListener('scroll', () => {
       bg.style.opacity = 1 - window.scrollY / 300 + ''
     })
+  </script>
+  <script>
+    new SimpleBar(document.getElementById('scroll-area'));
   </script>
 </body>
 
