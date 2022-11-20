@@ -154,6 +154,21 @@
         </div>
         {% endfor %}
     </div>
+    <div class="row">
+        <div name="pagination" class="text-center mx-auto my-3">
+            {% if studies.has_previous %}
+            <a href="?page=1">맨 앞으로</a>
+            <a href="?page={{studies.previous_page_number}}">이전으로</a>
+            {% endif %}
+            <span>{{studies.number}}</span>
+            <span>/</span>
+            <span>{{studies.paginator.num_pages}}</span>
+            {% if studies.has_next %}
+                <a href="?page={{studies.next_page_number}}">다음으로</a>
+                <a href="?page={{studies.paginator.num_pages}}">맨 뒤로</a>
+            {% endif %}
+        </div>
+    </div>
 </div>
 <script>
     function study_onchange() {

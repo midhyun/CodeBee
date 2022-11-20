@@ -9,6 +9,7 @@ import json
 from django.contrib import messages
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 
 # Create your views here.
 # 카카오톡 나에게 보내기 메시지 url
@@ -27,8 +28,11 @@ def index(request):
         studies = Study.objects.filter(location_type=False).order_by("-pk")
     elif fill=='2':
         studies = Study.objects.filter(location_type=True).order_by("-pk")
+    paginator = Paginator(studies, 16)
+    page = request.GET.get('page')
+    posts = paginator.get_page(page)
     context = {
-        "studies": studies,
+        "studies": posts,
     }
     return render(request, "reviews/index.html", context)
 
