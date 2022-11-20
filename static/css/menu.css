@@ -83,7 +83,7 @@ nav a:nth-child(4):hover ~ #indicator { left: 84%; background: linear-gradient(1
 
 .btn-search:hover { transform: rotatey(720deg); transition: .90s; }
 
-.btn-search:focus ~ .input-search { width: 380px; border-radius: 0; background-color: transparent; border-bottom: 2px solid #535353; transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2); }
+.form-btn-search:focus ~ .input-search { width: 380px; border-radius: 0; background-color: transparent; border-bottom: 2px solid #535353; transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2); }
 
 .input-search:focus { width: 380px; border-radius: 0px; background-color: transparent; border-bottom: 2px solid #535353; transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2); }
 
@@ -105,3 +105,8 @@ nav a:nth-child(4):hover ~ #indicator { left: 84%; background: linear-gradient(1
   100% { background-position: 0 0; } }
 
 /*# sourceMappingURL=menu.css.map */
+
+.hide {
+  transition: .4s;
+  display: none;
+}
