@@ -2,10 +2,11 @@
 {% load static %}
 {% load sass_tags %}
 {% block css %}
-    <link href="{% sass_src 'css/menu.scss' %}" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link href="{% sass_src 'css/menu.scss' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
 {% endblock css %}
 {% block content %}
+
 
 <form action="{% url 'reviews:search' %}" class="search-box ">
     <select class="post-color select_boder mx-1" aria-label="Default select example" name='field'>
@@ -20,7 +21,6 @@
     <input class="input-search" type="text" name="search" placeholder=" "/>
 </form>
 <!-- 헤더 이미지 영역 -->
-
 
 
 <!-- 스터디 제목, 기간, 설명 -->
@@ -159,7 +159,6 @@
     </div>
 </div>
 
-
 <script>
     var searchimage = document.querySelector('.btn-search');
     var input = document.getElementById('input-search');
@@ -182,6 +181,7 @@
   input.select();
   });
 
-</script>
-{% endblock content %}
 
+</script>
+
+{% endblock content %}
