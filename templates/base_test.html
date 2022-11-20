@@ -131,7 +131,7 @@
       <hr style="color:white; border: solid 2px">
       <div class="offcanvas-body">
         {% if request.user.is_authenticated %}
-        <p><a class="anc" href="{% url 'accounts:test' %}">내 정보</a></p>
+        <p><a class="anc" href="{% url 'accounts:detail' user.pk %}">내 정보</a></p>
         <h1>
           {{ request.user }}
           <a class="text-white" href="{% url 'accounts:logout' %}">로그아웃</a>

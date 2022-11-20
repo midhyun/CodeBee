@@ -418,7 +418,7 @@ def login(request):
 @login_required
 def logout(request):
     user_logout(request)
-    return redirect("accounts:test")
+    return redirect("reviews:index")
 
 
 # test용도
