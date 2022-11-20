@@ -26,6 +26,19 @@ def index(request):
     }
     return render(request, "reviews/index.html", context)
 
+def online_board(request):
+    studies = Study.objects.filter(location_type=False).order_by("-pk")
+    context = {
+        "studies": studies,
+    }
+    return render(request, "reviews/online_board.html", context)
+
+def offline_board(request):
+    studies = Study.objects.filter(location_type=True).order_by("-pk")
+    context = {
+        "studies": studies,
+    }
+    return render(request, "reviews/offline_board.html", context)
 
 @login_required
 def create(request):
@@ -97,8 +110,10 @@ def detail(request, study_pk):
         "cnt": cnt,
         "check": user_accepted,
     }
-
-    return render(request, "reviews/detail.html", context)
+    if study.isactive:
+        return render(request, "reviews/detail.html", context)
+    else:
+        return render(request, "reviews/detail_deactive.html", context)
 
 
 
