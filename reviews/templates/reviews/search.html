@@ -2,94 +2,95 @@
 {% load static %}
 {% load sass_tags %}
 {% block css %}
-    <link href="{% sass_src 'css/menu.scss' %}" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link href="{% sass_src 'css/menu.scss' %}" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="{% static 'css/menu.css' %}">
 {% endblock css %}
 {% block content %}
 
-        <form action="{% url 'reviews:search' %}" class="search-box">
-          <select class="post-color select_boder mx-1" aria-label="Default select example" name='field'>
-            <option value="1">전체</option>
-            <option value="2">스터디명</option>
-            <option value="3">스터디장</option>
-            <option value="4">과목</option>
-            <option value="5">태그</option>
-            <option value="6">장소</option>
-          </select>
-          <input type="text" name="search" placeholder=" "/>
-          <button type="submit"></button>
-        </form>
-    <!-- 헤더 이미지 영역 -->
+<form action="{% url 'reviews:search' %}" class="search-box">
+  <select class="post-color select_boder mx-1" aria-label="Default select example" name='field'>
+    <option value="1">전체</option>
+    <option value="2">스터디명</option>
+    <option value="3">스터디장</option>
+    <option value="4">과목</option>
+    <option value="5">태그</option>
+    <option value="6">장소</option>
+  </select>
+  <input type="text" name="search" placeholder=" " />
+  <button type="submit"></button>
+</form>
+<!-- 헤더 이미지 영역 -->
 
 
-    <!-- 스터디 제목, 기간, 설명 -->
-    <div class="container paper shadow content testboard" style="padding: 50px;">
-        <div class="row-cols-1  row-cols-md-2 row-cols-lg-4 g-4">
-            {% for study in studies %}
-                <div class="col">
-                    <div class="card h-100 w-100 shadow h-100 p-3">
-                        {% if study.image %}
-                            <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-                        {% else %}
-                            <img src="{% static 'logo_with.png' %}" class="card-img-top card-image" alt="...">
-                        {% endif %}
-                        <div class="card-body ">
-                            <h5 class="card-title text-center mb-5">{{ study.title }}</h5>
-                            <div class="d-flex justify-content-between m-auto" style="height: 64px">
-                                <!-- 장단기 -->
-                                <div class="d-flex flex-column justify-content-center">
-                                    <img src="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor"
-                                         class="bi bi-calendar-week" viewBox="0 0 16 16">
-                                        <path d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z"/>
-                                        <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
-                                    </svg>
-                                    <p class="text-center">
-                                        단기
-                                    </p>
-                                </div>
-                                <!-- 언어 -->
-                                <div class="d-flex flex-column justify-content-center">
-                                    <img src="">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                         class="icon icon-tabler icon-tabler-brand-python ms-1" width="44" height="44"
-                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
-                                         stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3"/>
-                                        <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3"/>
-                                        <path d="M8 9v-4a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v5a2 2 0 0 1 -2 2h-4a2 2 0 0 0 -2 2v5a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4"/>
-                                        <line x1="11" y1="6" x2="11" y2="6.01"/>
-                                        <line x1="13" y1="18" x2="13" y2="18.01"/>
-                                    </svg>
-                                    <p class="text-center">
-                                        Python
-                                    </p>
-                                </div>
-                                <!-- 정원 -->
-                                <div class="d-flex flex-column ">
-                                    <img src="">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user"
-                                         width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
-                                         fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                        <circle cx="12" cy="7" r="4"/>
-                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
-                                    </svg>
-                                    <p class="text-center">
-                                        {{ study.accepted.all|length }}/{{ study.limits }}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+<!-- 스터디 제목, 기간, 설명 -->
+<div class="container paper shadow content testboard" style="padding: 50px;">
+  <div class="row-cols-1  row-cols-md-2 row-cols-lg-4 g-4">
+    {% for study in studies %}
+    <div class="col">
+      <div class="card h-100 w-100 shadow h-100 p-3">
+        {% if study.image %}
+        <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+        {% else %}
+        <img src="{% static 'logo_with.png' %}" class="card-img-top card-image" alt="...">
+        {% endif %}
+        <div class="card-body ">
+          <h5 class="card-title text-center mb-5">{{ study.title }}</h5>
+          <div class="d-flex justify-content-between m-auto" style="height: 64px">
+            <!-- 장단기 -->
+            <div class="d-flex flex-column justify-content-center">
+              <img src="">
+              <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" fill="currentColor"
+                class="bi bi-calendar-week" viewBox="0 0 16 16">
+                <path
+                  d="M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm-5 3a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1zm3 0a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1z" />
+                <path
+                  d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z" />
+              </svg>
+              <p class="text-center">
+                단기
+              </p>
+            </div>
+            <!-- 언어 -->
+            <div class="d-flex flex-column justify-content-center">
+              <img src="">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-python ms-1" width="44"
+                height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3" />
+                <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3" />
+                <path
+                  d="M8 9v-4a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v5a2 2 0 0 1 -2 2h-4a2 2 0 0 0 -2 2v5a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4" />
+                <line x1="11" y1="6" x2="11" y2="6.01" />
+                <line x1="13" y1="18" x2="13" y2="18.01" />
+              </svg>
+              <p class="text-center">
+                Python
+              </p>
+            </div>
+            <!-- 정원 -->
+            <div class="d-flex flex-column ">
+              <img src="">
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="44" height="44"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <circle cx="12" cy="7" r="4" />
+                <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+              </svg>
+              <p class="text-center">
+                {{ study.accepted.all|length }}/{{ study.limits }}
+              </p>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
-    </div>
+    {% endfor %}
+  </div>
+</div>
+</div>
 
 
 
 {% endblock content %}
-
