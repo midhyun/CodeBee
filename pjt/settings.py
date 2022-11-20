@@ -30,7 +30,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "http://codebee-env.eba-k8kiymgt.ap-northeast-2.elasticbeanstalk.com",
+    "codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com",
+    "172.31.15.252",
     "127.0.0.1",
     "localhost",
 ]
@@ -100,14 +101,7 @@ WSGI_APPLICATION = "pjt.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
-DEBUG = os.getenv("DEBUG") == "True"
 
 if DEBUG:
     DATABASES = {
@@ -115,7 +109,7 @@ if DEBUG:
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
-    }
+     }
 
 else:
     DATABASES = {
@@ -163,13 +157,15 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 
-STATIC_URL = "/static/"
-SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, "static")
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_URL = '/static/'
+SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
+
+STATICFILES_DIRS = [ BASE_DIR / 'static' ]
+
 STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "sass_processor.finders.CssFinder",
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

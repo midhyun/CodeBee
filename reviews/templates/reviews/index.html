@@ -24,13 +24,16 @@
             </form>
         </div>
         <!-- 검색바 -->
+
         <div style="padding:20px 50px 0px">
             <div class="search-box">
-                <span class="fs-4"></span> <button class="btn-search"><img src="{% static 'new_logo.png' %}" width="30"
-                        alt=""></button>
-                <input type="text" class="input-search" placeholder="찾고 싶은 코드비를 검색해보세요!">
+                <form  class="" action="{% url 'reviews:search' %}">
+                    <img class="btn-search" src="{% static 'new_logo.png' %}" width="30" alt="">
+                    <input name='search' type="text" id="input-search" class="input-search hide" placeholder="찾고 싶은 코드비를 검색해보세요!" style="width: 100%;">
+                </form>
             </div>
         </div>
+        
     </div>
 </header>
 <!-- 헤더 이미지 영역 -->
@@ -170,9 +173,35 @@
         </div>
     </div>
 </div>
+<!-- 멀미 방지 -->
+<div style="min-height: 200px;" ></div>
 <script>
     function study_onchange() {
         document.querySelector('#category_form').submit()
     }
+</script>
+
+<script>
+    var searchimage = document.querySelector('.btn-search');
+    var input = document.getElementById('input-search');
+    searchimage.addEventListener('click', function() {
+    input.classList.toggle('hide');
+  
+    
+   input.animate([
+  // keyframes
+      { width: '0%' }, 
+      { width: '100%' }
+    ], { 
+      // timing options
+      duration: 200,
+      easing: "ease-in",
+      iterations: 1
+    });
+  
+  input.style.width = "380px";
+  input.select();
+  });
+
 </script>
 {% endblock content %}

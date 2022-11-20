@@ -38,65 +38,68 @@ def index(request):
 
 @login_required
 def create(request):
-    if request.method == "POST":
-        tag = ""
-        temp = request.POST["tag"]
-        if temp:
-            tags = json.loads(temp)
-            for t in tags:
-                tag += t["value"] + ","
-                try:
-                    Tag(tag=t["value"]).save()
-                except:
-                    pass
-        study_form = StudyForm(request.POST, request.FILES)
-        study_date = StudyDateForm(request.POST)
-        if study_form.is_valid() and study_date.is_valid():
-            study = study_form.save(commit=False)
-            study.categorie = request.POST["categorie"]
-            study.study_type = request.POST["study_type"]
-            study.location_type = request.POST["location_type"]
-            study.location = request.POST["location"]
-            study.X = request.POST["X"]
-            study.Y = request.POST["Y"]
-            study.tag = tag
-            study.host = request.user
-            study.save()
-            date = study_date.save(commit=False)
-            date.study = study
-            date.save()
-            Aform = Accepted(joined=True, study=study, users=study.host)
-            Aform.save()
-            return redirect("reviews:index")
-    else:
-        tag = {
-            "tags": [
-                "python",
-                "java",
-                "pug",
-                "react",
-                "vue",
-                "c++",
-                "sass",
-                "javascript",
-                "html",
-                "css",
-                "django",
-                "spring",
-                "ruby",
-            ]
-            + list(Tag.objects.all().values_list("tag", flat=True))
+    if (request.user.is_phone_active and request.user.is_email_active) or request.user.is_social_account:
+        if request.method == "POST":
+            tag = ""
+            temp = request.POST["tag"]
+            if temp:
+                tags = json.loads(temp)
+                for t in tags:
+                    tag += t["value"] + ","
+                    try:
+                        Tag(tag=t["value"]).save()
+                    except:
+                        pass
+            study_form = StudyForm(request.POST, request.FILES)
+            study_date = StudyDateForm(request.POST)
+            if study_form.is_valid() and study_date.is_valid():
+                study = study_form.save(commit=False)
+                study.categorie = request.POST["categorie"]
+                study.study_type = request.POST["study_type"]
+                study.location_type = request.POST["location_type"]
+                study.location = request.POST["location"]
+                study.X = request.POST["X"]
+                study.Y = request.POST["Y"]
+                study.tag = tag
+                study.host = request.user
+                study.save()
+                date = study_date.save(commit=False)
+                date.study = study
+                date.save()
+                Aform = Accepted(joined=True, study=study, users=study.host)
+                Aform.save()
+                return redirect("reviews:index")
+        else:
+            tag = {
+                "tags": [
+                    "python",
+                    "java",
+                    "pug",
+                    "react",
+                    "vue",
+                    "c++",
+                    "sass",
+                    "javascript",
+                    "html",
+                    "css",
+                    "django",
+                    "spring",
+                    "ruby",
+                ]
+                + list(Tag.objects.all().values_list("tag", flat=True))
+            }
+            tagify = json.dumps(tag)
+            study_form = StudyForm()
+            study_date = StudyDateForm()
+        context = {
+            "tag": tagify,
+            "study_form": study_form,
+            "study_date": study_date,
         }
-        tagify = json.dumps(tag)
-        study_form = StudyForm()
-        study_date = StudyDateForm()
-    context = {
-        "tag": tagify,
-        "study_form": study_form,
-        "study_date": study_date,
-    }
-    return render(request, "reviews/form.html", context)
-
+        return render(request, "reviews/form.html", context)
+    else:
+        messages.warning(request, '인증된 유저만 스터디 생성이 가능합니다.')
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
@@ -617,24 +620,29 @@ def search(request):
         users = User.objects.filter(username__contains=search)
         studies = []
         for user in users:
-            studies += Study.objects.filter(host=user)
+            studies += Study.objects.filter(host=user).order_by('-pk')
         studies += (
             Study.objects.filter(tag__icontains=search)
             or Study.objects.filter(title__contains=search)
             or Study.objects.filter(categorie__contains=search)
-        )
+        ).order_by('-pk')
+        studies = list(set(studies))
     elif field == "2":
-        studies = Study.objects.filter(title__contains=search)
+        studies = Study.objects.filter(title__icontains=search).order_by('-pk')
     elif field == "3":
-        users = User.objects.filter(username__contains=search)
+        users = User.objects.filter(username__icontains=search)
         studies = []
         for user in users:
-            studies += Study.objects.filter(host=user)
+            studies += Study.objects.filter(host=user).order_by('-pk')
     elif field == "4":
-        studies = Study.objects.filter(categorie__contains=search)
+        studies = Study.objects.filter(categorie__icontains=search).order_by('-pk')
     elif field == "5":
-        studies = Study.objects.filter(tag__contains=search)
+        studies = Study.objects.filter(tag__icontains=search).order_by('-pk')
     elif field == "6":
-        studies = Study.objects.filter(location__contains=search)
-    context = {"studies": studies}
+        studies = Study.objects.filter(location__icontains=search).order_by('-pk')
+    paginator = Paginator(studies, 16)
+    posts = paginator.get_page(studies)
+    context = {
+        "studies": posts,
+    }
     return render(request, "reviews/search.html", context)
