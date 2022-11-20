@@ -7,6 +7,6 @@
   let commentLengthIndicator = document.querySelector("#counter_{{ widget.attrs.id}}");
   commentLengthIndicator.innerText = "0/500";
   commentField.addEventListener("input", function () {
-    document.querySelector("#counter_{{ widget.attrs.id}}").innerText = this.value.length + "/500";
+    commentLengthIndicator.innerText = this.value.length + "/500";
   });
 </script>
