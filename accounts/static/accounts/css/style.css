@@ -230,20 +230,6 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
 }
 
 /* 카드 그라데이션 */
-.card-grad {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(0deg, #FD9E9E 0%, #FDA790 10%, rgba(255, 255, 255, 0) 76.4%);
-    border-radius: 4px;
-}
-.card span {
-    letter-spacing: 3px;
-    background-color: #FDA790;
-    font-size: 11px;
-    color: white;
-    padding: 3px 10px;
-}
 .members {
     margin: 3px;
     padding: 2px 2px;
@@ -555,16 +541,161 @@ input[type=password]{
 
 .detail-content {
   min-height: 200px;
+  padding: 10px;
 }
 
 .icons {
-  padding-top: 50px;
-  background: url('/static/accounts/image/honey.png') 0px 0px / 50px no-repeat;
+  padding-top: 100px;
 }
 
 .icons2 {
-  padding-left: 50px;
-  padding-top: 30.2px;
+  padding-left: 100px;
   overflow: hidden;
-  background: url('/static/accounts/image/honey_fill.png') 0px calc(30.2px - 50px) / 50px no-repeat;
+}
+
+/* 언어별 컬러 주기 */
+.Python {
+  background-color: #3776AB;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 12px;
+  padding-right: 12px;
+  color: hwb(0deg 100% 0% / 95%);
+  margin: 0px 4px;
+}
+
+.Javascript {
+  background-color: #F7E018;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 11px;
+  padding-right: 11px;
+  color: rgb(88, 88, 88);
+  margin: 0px 4px; 
+}
+
+.Django {
+  background-color: #2aa576;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 11px;
+  padding-right: 11px;
+  color: rgb(255 255 255 / 95%);
+  margin: 0px 4px;
+}
+.Vue {
+  background-color: #435466;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 12px;
+  padding-right: 12px;
+  color: hwb(0deg 100% 0% / 95%);
+  margin: 0px 4px;
+}
+.React {
+  background-color: #59d9ff;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 13px;
+  padding-right: 13px;
+  color: hwb(0deg 33% 67% / 95%);
+  margin: 0px 4px;
+}
+.study_count {
+  color: #2aa576;
+  font-weight: 800;
+  margin-left: 8px;
+  margin-right: 2px;
+  font-size: 18px;
+}
+
+.review_card {
+  position: relative;
+  height: 178px;
+  border-radius: 16px;
+  background-color: #efede9;
+  filter: drop-shadow(8px 9px 5px #d0d0d0);
+  width: 33%;
+  padding: 15px 20px;
+  margin: 0px 16px;
+}
+.review_info {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.review_card img {
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+}
+.info_wrapper {
+  margin-bottom: 5px;
+  padding-top: 5px;
+}
+.review_title {
+  font-size: 16px;
+  font-weight: 700;
+}
+.review_date {
+  font-size: 12px;
+  color:rgba(0, 0, 0,.7);
+}
+.review_content {
+  position: absolute;
+  top: 123px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 16px;
+  padding: 0px 42px;
+  width: 100%;
+  height: 50px;
+  overflow: hidden;
+}
+.box-wrapper {
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+.none-review-box:hover:after, .none-review-box:hover > .none-review-text
+{
+  display: block;
+}
+.none-review-box:after, .none-review-text {
+  display: none;
+}
+.none-review-box:after{
+  content:'';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient( rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.6) );
+  z-index: 10;
+  border-radius: 24px;}
+
+.none-review-box {
+  position: relative;
+  width: 185px;
+  height: 185px;
+  background-size: cover;
+  background-position: center center;
+  border-radius : 24px;
+}
+
+.none-review-text{
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display:none;
+  color: white;
+  z-index: 20;
 }

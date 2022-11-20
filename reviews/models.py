@@ -90,3 +90,6 @@ class Honey(models.Model):
     )
     like = models.BooleanField(default=False)
     dislike = models.BooleanField(default=False)
+
+class Tag(models.Model):
+    tag = models.CharField(max_length=20, unique=True)
