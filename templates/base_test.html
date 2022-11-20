@@ -14,7 +14,6 @@
   <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css" />
   <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
-  <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
@@ -24,7 +23,7 @@
       font-family: 'NanumSquareNeo';
       overflow-x: hidden;
     }
-    
+
     .simplebar-scrollbar::before {
       background-color: rgb(37, 37, 37);
     }
@@ -40,7 +39,7 @@
 </head>
 
 <body>
-  <img id="img1" style="position:absolute; left:0; top:0; z-index:999;" src="{% static  'm_logo.png' %} " width=" 50">
+  <img id="img1" style="position:absolute; left:0; top:0; z-index:10;" src="{% static  'm_logo.png' %} " width=" 50">
 
   <script>
 
@@ -50,8 +49,8 @@
 
     function getMousePosition(e) {
       var eObj = window.event ? window.event : e; // IE, FF 에 따라 이벤트 처리 하기
-      mouseX = eObj.clientX;
-      mouseY = eObj.clientY + document.documentElement.scrollTop; // 화면을 스크롤 했을때를 위한 처리 (스크롤 한 만큼 마우스 Y좌표에 + )
+      mouseX = eObj.clientX + 10;
+      mouseY = eObj.clientY + document.documentElement.scrollTop + 10; // 화면을 스크롤 했을때를 위한 처리 (스크롤 한 만큼 마우스 Y좌표에 + )
       // documentElement 가 안된다면 body 바꿔야 한다. 크롬의 경우.. (자동파악 로직 필요)
     }
 
@@ -61,8 +60,8 @@
       var m_y = parseInt(document.getElementById('img1').style.top.replace('px', ''));
 
       // 이미지 움직이기
-      document.getElementById('img1').style.left = Math.round(m_x + ((mouseX - m_x) / 5)) + 'px';
-      document.getElementById('img1').style.top = Math.round(m_y + ((mouseY - m_y) / 5)) + 'px';
+      document.getElementById('img1').style.left = Math.round(m_x + ((mouseX - m_x) / 3)) + 'px';
+      document.getElementById('img1').style.top = Math.round(m_y + ((mouseY - m_y) / 3)) + 'px';
 
       // 부드럽게 따라오는 공식 대략..
       // 현재 이미지위치 = 현재이미지 위치 + (이미지 위치기준 마우스 커서 위치 / 적절한 나누기 값)
@@ -73,11 +72,9 @@
     }
 
     document.onmousemove = getMousePosition; // 마우스가 움직이면 getMousePosition 함수 실행
-    setInterval("moveImg()", 50); // moveImg 함수 반복 실행하여 이미지 움직이기
+    setInterval("moveImg()", 3); // moveImg 함수 반복 실행하여 이미지 움직이기
 
-//-->
   </script>
-  <!-- 네비게이션 -->
   <div id="main-top">
     <!-- 높이를 정해주어야 스크롤이 고장나지 않음 -->
     <div class="msgbox p-0 m-0 animate__animated animate__fadeIn">
@@ -104,13 +101,26 @@
       {% endfor %}
       {% endif %}
     </div>
-  <div class="container-fluid nav_bg" id="bg">
-    <nav>
-      <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="80"></a>
-      <a href="{% url 'reviews:index' %}">코드비 찾기</a>
-      <a href="{% url 'reviews:create' %}">코드비 모으기</a>
-      <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비 정보</a>
-      <div id="indicator"></div>
+    <!-- 네비게이션 -->
+    <nav class="navbar navbar-expand-lg nav_bg" id="bg">
+      <div class="container">
+        <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="60"></a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item ms-5">
+              <a href="{% url 'reviews:index' %}">코드비 찾기</a>
+            </li>
+            <li class="nav-item">
+              <a href="{% url 'reviews:create' %}">코드비 모으기</a>
+            </li>
+            <li class="nav-item">
+              <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비
+                정보</a>
+            </li>
+            <div id="indicator"></div>
+          </ul>
+        </div>
+      </div>
     </nav>
     <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasRight"
       aria-labelledby="offcanvasRightLabel">
@@ -134,8 +144,6 @@
       </div>
     </div>
   </div>
-  </div>
-
   <!-- 본문 영역 시작 -->
   <div id="main">
     {% block content %}
@@ -167,10 +175,6 @@
       main.style.height = StrNowScreenHeight + "px";
     };
     window.addEventListener("load", setScreenSize);
-    const bg = document.getElementById('bg');
-    main.addEventListener("wheel", event => {
-      bg.style.opacity = 1 - simpleBar.getScrollElement().scrollTop / 1000 + '' // 논의 필요
-    });
     window.addEventListener("resize", setScreenSize);
   </script>
   <script>
