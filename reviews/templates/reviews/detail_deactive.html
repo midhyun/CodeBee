@@ -21,7 +21,7 @@
       </div>
       <!-- 스터디 헤더 -->
       <div class="col-8">
-        <p class="my-0"><i class="bi bi-code-square"></i> {% if study.location_type %} <a style="text-decoration:none; color:black" href="{% url 'reviews:offline_board' %}">온라인</a> {% else %}<a style="text-decoration:none; color:black" href="{% url 'reviews:online_board' %}">오프라인</a>{% endif %} CodeBee</p>
+        <p class="my-0"><i class="bi bi-code-square"></i> {% if study.location_type %} <a style="text-decoration:none; color:black" href="{% url 'reviews:offline_board' %}">오프라인</a> {% else %}<a style="text-decoration:none; color:black" href="{% url 'reviews:online_board' %}">온라인</a>{% endif %} CodeBee</p>
         <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
         {% if cnt == study.limits %}
         <span class="badge text-bg-secondary">모집마감</span>
@@ -201,7 +201,6 @@
                 </div>
               </div>
             </div>
-            </form>
           </div>
         </div>
               <!-- 유저 목록 오프캔버스 -->
@@ -258,6 +257,7 @@
       <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
 
     </div>
+
 
       
       

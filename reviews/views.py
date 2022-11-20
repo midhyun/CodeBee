@@ -21,11 +21,16 @@ def home(request):
 
 def index(request):
     studies = Study.objects.order_by("-pk")
+    fill = request.GET.get('fill')
+    print(fill)
+    if fill=='1':
+        studies = Study.objects.filter(location_type=False).order_by("-pk")
+    elif fill=='2':
+        studies = Study.objects.filter(location_type=True).order_by("-pk")
     context = {
         "studies": studies,
     }
     return render(request, "reviews/index.html", context)
-
 
 @login_required
 def create(request):
@@ -97,8 +102,10 @@ def detail(request, study_pk):
         "cnt": cnt,
         "check": user_accepted,
     }
-
-    return render(request, "reviews/detail.html", context)
+    if study.isactive:
+        return render(request, "reviews/detail.html", context)
+    else:
+        return render(request, "reviews/detail_deactive.html", context)
 
 
 
@@ -135,18 +142,23 @@ def update(request, study_pk):
                     date_.save()
                     return redirect('reviews:detail', study_pk)
             else:
+                tag = {'tags':["python","java","pug","react","vue","c++","sass","javascript","html","css","django","spring","ruby"] + list(Tag.objects.all().values_list('tag', flat=True))}
+                tagify = json.dumps(tag)
                 study_form = StudyForm(instance=study)
                 study_date = StudyDateForm(instance=date[0])
-            context = {
-                'study': study,
-                'date': date,
-                'study_form': study_form,
-                'study_date': study_date,
-                }
-            return render(request, 'reviews/form.html', context)
+                context = {
+                    'tag': tagify,
+                    'study': study,
+                    'date': date,
+                    'study_form': study_form,
+                    'study_date': study_date,
+                    }
+                return render(request, 'reviews/form.html', context)
         else:
             return redirect("reviews:detail", study_pk)
-
+    else:
+        messages.warning(request, '잘못된 요청입니다.')
+        return redirect("reviews:index")
 
 @login_required
 def delete(request, study_pk):
