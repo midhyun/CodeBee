@@ -430,6 +430,7 @@ def detail(request, user_pk):
     # 유저 정보
     person = get_object_or_404(get_user_model(), pk=user_pk)
     accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
+    print(accepts)
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
     honey = 15 + plus - minus
@@ -489,6 +490,7 @@ def detail(request, user_pk):
         request,
         "accounts/detail.html",
         context= {
+            "accepts": accepts,
             "person": person,
             "ings" : ings,
             "deactives": deactives,

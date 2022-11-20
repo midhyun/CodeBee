@@ -59,29 +59,34 @@
           <span class="icons2"
             style="padding-top: calc({{ honey }}*2px); background: url('/static/accounts/image/honey_fill.png') 0px calc({{ honey }}*2px - 100px) / 100px no-repeat;"></span>
         </span>
-        {{honey}} 단지 <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus"
+        {{honey}}
+        단지
+        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus"
           data-bs-content="단지는 스터디 종료 후 다른 드비분들이 평가한 점수예요. 최고 점수는 35점이고, 최저는 0점이예요. 스터디에 참여해서 단지를 모아보세요.">
           <button style="width:40px; height:40px;" class="btn btn-secondary rounded-circle" type="button"
-            disabled><span>i</span></button>
+            disabled="disabled">
+            <span>i</span></button>
         </span>
       </div>
     </div>
   </header>
 </div>
 
+{% comment %} 유저 디테일 {% endcomment %}
 <div class="wrapper">
+  {% comment %} 유저 메뉴 {% endcomment %}
   <div class="tabs">
     <div class="tab">
       <input type="radio" name="css-tabs" id="tab-1" checked="checked" class="tab-switch">
       <label for="tab-1" class="tab-label">진행 중 스터디</label>
       <div class="tab-content">
         <!-- 진행중 스터디 -->
-        <!-- 스터디 제목, 기간, 설명 -->
         <div class="row row-cols-1 row-cols-md-4 g-4">
           {% for ing in ings %}
           <div class="col">
             <a class="cardlink link" href="{% url 'reviews:detail' ing.study.pk %}">
               <div class="card h-100 w-100 shadow h-100 p-3">
+                {% comment %} 스터디 이미지 영역 {% endcomment %}
                 <div class="image-wrapper">
                   {% if ing.study.image %}
                   <img src="{{ ing.study.image.url }}" class="card-img-top card-image" alt="...">
@@ -91,9 +96,7 @@
                 </div>
                 <div class="card-body">
                   <h5 class="card-title text-center mb-5">{{ ing.study.title }}</h5>
-
                   <div class="d-flex justify-content-between m-auto" style="color: black; height: 64px">
-
                     <!-- 장단기 -->
                     <div class="icon-box">
                       <div style="height:100%;">
@@ -110,6 +113,7 @@
 
                     <!-- 언어 -->
                     <div class="icon-box">
+                      {% comment %} 파이썬 {% endcomment %}
                       {% if ing.study.categorie == "Python" %}
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-python ms-1"
                         width="44" height="44" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
@@ -122,6 +126,7 @@
                         <line x1="11" y1="6" x2="11" y2="6.01" />
                         <line x1="13" y1="18" x2="13" y2="18.01" />
                       </svg>
+                      {% comment %} 자바스크립트 {% endcomment %}
                       {% elif ing.study.categorie == "Javascript" %}
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-javascript"
                         width="60" height="60" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
@@ -132,6 +137,7 @@
                         <path
                           d="M16.5 8h-2.5a0.5 .5 0 0 0 -.5 .5v3a0.5 .5 0 0 0 .5 .5h1.423a0.5 .5 0 0 1 .495 .57l-.418 2.93l-2 .5" />
                       </svg>
+                      {% comment %} 장고 {% endcomment %}
                       {% elif ing.study.categorie == "Django" %}
                       <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="100%"
                         enable-background="new 0 0 24 24" viewbox="0 0 24 24">
@@ -141,6 +147,7 @@
                           d="M15.049,18.166V0h-3.897v5.984C10.57,5.831,10.089,5.78,9.457,5.78c-4.075,0-6.707,2.599-6.707,6.6c0,4.154,2.48,6.32,7.238,6.32C11.582,18.701,13.05,18.548,15.049,18.166z M6.723,12.304c0-2.141,1.138-3.364,3.113-3.364H9.832C9.86,8.938,9.887,8.938,9.914,8.938c0.443,0,0.868,0.075,1.237,0.205v6.294c-0.556,0.077-0.911,0.102-1.341,0.102C7.812,15.54,6.723,14.394,6.723,12.304z" />
                         <rect width="3.897" height="4.026" x="17.353" y=".021" />
                       </svg>
+                      {% comment %} 리액트 {% endcomment %}
                       {% elif ing.study.categorie == "React" %}
                       <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-react-native"
                         width="44" height="44" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
@@ -162,6 +169,7 @@
                           d="M12.26 12.015h-.01c-.01 .13 -.12 .24 -.26 .24a0.263 .263 0 0 1 -.25 -.26c0 -.14 .11 -.25 .24 -.25h-.01c.13 -.01 .25 .11 .25 .24" />
                       </svg>
                       {% else %}
+                      {% comment %} 그 외 {% endcomment %}
                       <img style="height: 100%; padding: 0px 5px;" src="{% static '/image/coding_study.svg'%}" alt="">
                       {% endif %}
                       <p class="text-center" style="white-space: nowrap">
@@ -189,6 +197,17 @@
           </div>
           {% endfor %}
         </div>
+        {% for ing in ings %}
+        {% empty %}
+        <div class="github-none">
+          <img src="{% static '/none_study_logo.png'%}" height="50px" alt="">
+          <p>현재 참여 중인 스터디가 없습니다.</p>
+          {% if user == person %}
+          <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+        
       </div>
     </div>
 
@@ -257,24 +276,6 @@
               </div>
             </div>
           </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         </div>
         <!-- 제목 영역 -->
         <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
@@ -290,8 +291,8 @@
               스터디를 가장 많이 참여하였습니다.
             </p>
             <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
-              님은 온라인<span class="study_count">{{ online|length }}</span>회, 오프라인<span class="study_count">{{
-                offline|length }}</span>회 스터디에 참여하였습니다.</p>
+              님은 온라인<span class="study_count">{{ online|length }}</span>회, 오프라인<span
+                class="study_count">{{offline|length }}</span>회 스터디에 참여하였습니다.</p>
             {% else %}
             <p class="text-muted h-100">아직 참여한 스터디가 없습니다.</p>
             {% if user == person %}
@@ -305,7 +306,7 @@
           님의 최근 리뷰 활동입니다</h2>
         <!-- 내용 영역 -->
         <div class="detail-content">
-          {% comment %} 유저가 작성한 댓글이 하나라도 있다면, {% endcomment %}
+          <!-- 유저가 작성한 리뷰가 하나라도 있다면, -->
           {% if person.comment_set.all %}
           <div class="p-3 d-flex">
             {% for comment in person.comment_set.all %}
@@ -316,7 +317,8 @@
                 {% endif %}
                 <div class="info_wrapper">
                   <div class="review_title">{{ comment.study.title }}</div>
-                  <div class="review_date">{{ comment.created_at }} 작성</div>
+                  <div class="review_date">{{ comment.created_at }}
+                    작성</div>
                 </div>
 
               </div>
@@ -330,8 +332,8 @@
             <div class="detail-content d-flex flex-column justify-content-center">
               <div style="text-align:center; font-size: larger;">
                 <p>아직 작성된 리뷰가 없어요.</p>
-                <p>아래로 이동해 리뷰를 작성해보세요.</p>
                 {% if user == person %}
+                <p>아래로 이동해 리뷰를 작성해보세요.</p>
                 {% for study in uncomment_study %}
                 <div class="box-wrapper">
                   {% if study.image %}
