@@ -705,6 +705,24 @@ def check_email_auth(request, uidb64, token, uemailb64):
         }
     return render(request, "accounts/email-auth.html", context)
 
-
-def test2(request):
-    return render(request, "accounts/test2.html")
+@login_required
+def follow(request, following_pk):
+    user = get_object_or_404(get_user_model(), pk=following_pk)
+    # 스스로를 팔로우하려는 경우
+    if request.user == user:
+        messages.warning(request, "스스로 팔로우 할 수 없습니다.")
+        return redirect("accounts:detail", following_pk)
+    # 팔로우하고 있는 상태인 경우
+    if request.user in user.followers.all():
+        user.followers.remove(request.user)
+        is_followed = False
+    # 팔로우하고 있지 않았을때
+    else:
+        user.followers.add(request.user)
+        is_followed = True
+    context = {
+        "is_followed": is_followed,
+        "followers_count": user.followers.count(),
+        "followings_count": user.followings.count(),
+    }
+    return JsonResponse(context)

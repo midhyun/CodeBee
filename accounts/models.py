@@ -85,6 +85,9 @@ class User(AbstractUser):
     is_phone_active = models.BooleanField(default=False)
     is_email_active = models.BooleanField(default=False)
     token = models.CharField(max_length=150, null=True, blank=True)
+    followings = models.ManyToManyField(
+        "self", symmetrical=False, related_name="followers"
+    )
 
     @property
     def full_name(self):
