@@ -440,6 +440,8 @@ def detail(request, user_pk):
     # 유저가 참여했지만 리뷰를 작성하지 않은 스터디 목록
     partys = Accepted.objects.filter(joined=True, users=person, study__isactive=False)
     # print(deactive_study)
+    # 유저가 참여한 모든 스터디(현재 진행 중인)
+    ings = Accepted.objects.filter(joined=True, users=person, study__isactive=True)
     
     uncomment_study = []
     for party in partys:
@@ -488,13 +490,13 @@ def detail(request, user_pk):
         "accounts/detail.html",
         context= {
             "person": person,
-            "accepts" : accepts,
+            "ings" : ings,
             "deactives": deactives,
             "honey" : honey,
             "online" : online,
             "offline" : offline,
             "langs" : langs,
-            "party" : party,
+            "partys" : partys,
             'honey':honey,
             'std_cnt':Std_cnt,
             "uncomment_study" : uncomment_study,

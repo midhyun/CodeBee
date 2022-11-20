@@ -40,8 +40,9 @@
 
 .board {
     width: 100vw;
-    background: rgb(2,0,36);
-background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075630253) 35%, rgba(255,0,186,1) 100%);
+    min-height: 100vh;
+    height: calc(100vh + 80px);
+    background: rgb(2,0,36);background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075630253) 35%, rgba(255,0,186,1) 100%);
 }
 @media (min-width: 1440px){
     .board {
@@ -116,7 +117,7 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
   }
   .tab-content {
     width: 100%;
-    min-height: 18rem;
+    min-height: calc(100vh - 80px);
     position: absolute;
     z-index: 1;
     top: 2.75em;
@@ -183,22 +184,6 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
     font-size: 20px;
     font-weight: revert;
     color: #344050;
-}
-
-.content-box {
-    position: absolute;
-    display: block;
-    bottom: 3%;
-    left: 50%;
-    right: 50%;
-    transform: translate(-50%);
-    height: 92px;
-    width: 94%;
-    border-style: solid;
-    border-radius: 8px;
-    border-width: 1.2px;
-    border-color: #ffecc7;
-    background-color:#ffecc7;
 }
 
 .study-content {
@@ -698,4 +683,16 @@ input[type=password]{
   display:none;
   color: white;
   z-index: 20;
+}
+.github-none {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.github-none p {
+  color: #CFCFCF;
+  padding-top: 16px;
 }
