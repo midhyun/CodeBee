@@ -30,9 +30,11 @@ body {
   background: linear-gradient(17deg, #941bb1, #007bf7, #0093ef, #00a4d1, #00b1a6);
 }
 
+/*
 .content {
-  /** min-height: calc(100vh - 80px);*/
+  min-height: calc(100vh - 80px);
 }
+*/
 
 body {
   margin: 0;
@@ -60,7 +62,7 @@ nav {
 
 nav li:before,
 nav li:after {
-  content: ".....";
+  content: "";
   position: absolute;
   border-radius: 50%;
   transform: scale(0);
@@ -81,35 +83,41 @@ nav li:after {
   height: 4px;
 }
 
-nav li:nth-child(2):before {
+nav li:nth-child(1):before {
+  left: 22.6%;
   background-color: yellow;
 }
 
-nav li:nth-child(2):after {
+nav li:nth-child(1):after {
+  left: 23%;
   background-color: red;
 }
 
-nav li:nth-child(3):before {
+nav li:nth-child(2):before {
+  left: 28.6%;
   background-color: #00e2ff;
 }
 
-nav li:nth-child(3):after {
+nav li:nth-child(2):after {
+  left: 29%;
   background-color: #89ff00;
 }
 
-nav li:nth-child(4):before {
+nav li:nth-child(3):before {
+  left: 35.6%;
   background-color: purple;
 }
 
-nav li:nth-child(4):after {
+nav li:nth-child(3):after {
+  left: 36%;
   background-color: palevioletred;
 }
 
 #indicator {
   position: absolute;
-  left: 34%;
+  left: 22.6%;
   bottom: 25%;
-  width: 30px;
+  width: 2rem;
   height: 3px;
   background-color: #fff;
   border-radius: 5px;
@@ -125,17 +133,18 @@ nav li:hover:after {
   transform: scale(1);
 }
 
-nav li:nth-child(2):hover~#indicator {
+nav li:nth-child(1):hover~#indicator {
+  left: 24.1%;
   background: linear-gradient(130deg, yellow, red);
 }
 
-nav li:nth-child(3):hover~#indicator {
-  left: 59%;
+nav li:nth-child(2):hover~#indicator {
+  left: 30.7%;
   background: linear-gradient(130deg, #00e2ff, #89ff00);
 }
 
-nav li:nth-child(4):hover~#indicator {
-  left: 84%;
+nav li:nth-child(3):hover~#indicator {
+  left: 37.1%;
   background: linear-gradient(130deg, purple, palevioletred);
 }
 
