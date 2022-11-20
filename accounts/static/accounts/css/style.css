@@ -38,46 +38,11 @@
     display: none;
 }
 
-.board {
-    width: 100vw;
-    min-height: 100vh;
-    height: calc(100vh + 80px);
-    background: rgb(2,0,36);background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075630253) 35%, rgba(255,0,186,1) 100%);
-}
-@media (min-width: 1440px){
-    .board {
-    padding-top: 3rem;
-    min-height: calc(100vh - 8rem);
-}}
-
-@media (max-width: 860px){
-    .board {
-    padding-top: 2rem;
-    min-height: calc(100vh - 8rem);
-}
-.wrapper {
-    width: 80%;
-}}
-
-@media (max-width: 600px){
-    .board {
-    margin-left: 100px;
-    margin-right: 100px;
-    min-height: calc(100vh - 8rem);
-}}
-
-@media (max-width: 800px){
-    .board {
-    margin-left: 20px;
-    margin-right: 20px;
-    padding-top: 3rem;
-    min-height: calc(100vh - 8rem);
-}}
-
 .wrapper {
     max-width: 82rem;
     width: 100%;
     margin: 0 auto;
+    height: 100vh;
   }
   .tabs {
     position: relative;
@@ -214,13 +179,15 @@
     height: 2rem;
 }
 
-/* 카드 그라데이션 */
-.members {
-    margin: 3px;
-    padding: 2px 2px;
-    width: 15px;
-    height: 15px;
+
+.icons {
+  padding-top: 100px;
 }
+
+.icons2 {
+  padding-left: 100px;
+}
+
 input[type=password]{
     font-family:sans-serif;
     }
