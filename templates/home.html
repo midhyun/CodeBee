@@ -26,9 +26,11 @@
 </head>
 
 <body>
-  <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf; opacity:0">
+  <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top"
+    style="background-color: #ffa9bf; opacity:0">
     <div class="container">
-      <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}" alt=""></a>
+      <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}"
+          alt=""></a>
       <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -37,12 +39,14 @@
           <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">일반 스터디</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">그룹 스터디</a></li>
           <li class="nav-item"><a class="nav-link" href="#" style="color:white">그룹 모집 게시판</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a>
+          </li>
           <li class="nav-item"><a class="nav-link" href="#" style="color:white">고객센터</a></li>
         </ul>
         <ul class="ms-auto navbar-nav">
           {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내 스터디</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내
+              스터디</a></li>
           <li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a></li>
           {% else %}
           <li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a></li>
@@ -82,7 +86,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="mt-3" style="background-image:url({% static 'backspace.png' %}); height:668px;">
     <div class="container text-white" style="padding: 120px 8px 16px ">
       <h1 class="fw-bold">Make Study</h1>
