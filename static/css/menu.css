@@ -8,6 +8,7 @@ html, body { width: 100%; height: 100%; padding: 0; margin: 0; }
 
 .index-header { height: 500px; background: linear-gradient(17deg, #941bb1, #007bf7, #0093ef, #00a4d1, #00b1a6); }
 
+
 /* .content { min-height: calc(100vh - 80px); } */
 body { margin: 0; background: #F2F2F2; /*background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);*/ /*background-image: linear-gradient(to top, #5f72bd 0%, #9b23ea 100%);*/ }
 
@@ -19,9 +20,11 @@ nav { position: relative; width: 100%; display: table; margin: 0 auto; backgroun
 
 nav li:before, nav li:after { content: ""; position: absolute; border-radius: 50%; transform: scale(0); transition: 0.2s ease transform; }
 
+
 nav li:before { top: 15px; left: 34%; width: 6px; height: 6px; }
 
 nav li:after { top: 20px; left: 34%; width: 4px; height: 4px; }
+
 
 nav li:nth-child(1):before { left: 22.6%; background-color: yellow; }
 
@@ -40,6 +43,7 @@ nav li:nth-child(3):after { left: 36%; background-color: palevioletred; }
 nav li:hover { color: #fff; }
 
 nav li:hover:before, nav li:hover:after { transform: scale(1); }
+
 
 nav li:nth-child(1):hover ~ #indicator { left: 24.1%; background: linear-gradient(130deg, yellow, red); }
 
