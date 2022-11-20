@@ -17,9 +17,24 @@
   <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <style>
     body {
       font-family: 'NanumSquareNeo';
+      overflow-x: hidden;
+    }
+    
+    .simplebar-scrollbar::before {
+      background-color: rgb(37, 37, 37);
+    }
+
+    .msgbox {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: 15rem;
+      z-index: 2000;
     }
   </style>
 </head>
@@ -62,6 +77,33 @@
 
 //-->
   </script>
+  <!-- 네비게이션 -->
+  <div id="main-top">
+    <!-- 높이를 정해주어야 스크롤이 고장나지 않음 -->
+    <div class="msgbox p-0 m-0 animate__animated animate__fadeIn">
+      {% if messages %}
+      {% for message in messages %}
+      <div class="toast show text-bg-{{ message.tags }} mb-3" aria-live="assertive" aria-atomic="true"
+        style="position: relative; top: 2rem; left: 2rem;">
+        <div class="toast-header">
+          <strong class="me-auto">알림
+          </strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          {% if "이름" in message.message %}
+          <p>{{ message }}</p>
+          <div class="text-end">
+            <a href="{% url 'accounts:detail' request.user.pk %}" class="btn btn-primary btn-sm">입력하러 가기</a>
+          </div>
+          {% else %}
+          {{ message }}
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
   <div class="container-fluid nav_bg" id="bg">
     <nav>
       <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="80"></a>
@@ -92,19 +134,16 @@
       </div>
     </div>
   </div>
-  {% if messages %}
-  {% for message in messages %}
-  <div class="my-0 alert alert-{{ message.tags }}">
-    {{ message }}
   </div>
-  {% endfor %}
-  {% endif %}
-  {% block content %}
 
-  {% endblock content %}
-  <div style="height:80px"></div>
-  <footer class="align-items-center no-gutters row"
-    style="position: sticky; background:rgb(83, 83, 83); height:80px; bottom:0; z-index:5;">
+  <!-- 본문 영역 시작 -->
+  <div id="main">
+    {% block content %}
+    {% endblock content %}
+  </div>
+  <!-- 본문 영역 끝 -->
+  <footer id="main-footer" class="align-items-center no-gutters row"
+    style="position:sticky; background:rgb(83, 83, 83); height: 80px; bottom: 0; z-index:3;">
     <div class="col-md-3"></div>
     <div class="col-12 col-md-6">
       <div class="justify-content-between no-gutters row">
@@ -115,13 +154,42 @@
     </div>
     <div class="col-4 col-md-3"></div>
   </footer>
+  <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
   <script>
-    const bg = document.getElementById('bg')
-
-    window.addEventListener('scroll', () => {
-      bg.style.opacity = 1 - window.scrollY / 300 + ''
-    })
+    const simpleBar = new SimpleBar(document.getElementById('main'));
+    let main = document.getElementById("main");
+    let topHeight = document.getElementById("main-top").clientHeight;
+    let footerHeight = document.getElementById("main-footer").clientHeight;
+    function setScreenSize() {
+      let IntNowScreenHeight = window.innerHeight - topHeight - footerHeight; // 본문영역에 높이가 있는 div 추가되면 다시 계산하여 적용해야함
+      // footer 가 fixed 처럼 움직임
+      let StrNowScreenHeight = String(IntNowScreenHeight);
+      main.style.height = StrNowScreenHeight + "px";
+    };
+    window.addEventListener("load", setScreenSize);
+    const bg = document.getElementById('bg');
+    main.addEventListener("wheel", event => {
+      bg.style.opacity = 1 - simpleBar.getScrollElement().scrollTop / 1000 + '' // 논의 필요
+    });
+    window.addEventListener("resize", setScreenSize);
   </script>
+  <script>
+    const target = document.querySelector("body");
+    const modal = document.querySelectorAll(".modal");
+    let i = 0;
+    for (i; i < modal.length; i++) {
+      let modalBtn = document.querySelector(`#modal-btn${i}`);
+      const modalDict = {}
+      modalDict[`modal${i}`] = [modal[i], modalBtn];
+      modalDict[`modal${i}`][1].addEventListener("click", function () {
+        if (document.querySelector(".modal-backdrop") !== null) {
+          const modalBack = document.querySelector("#modal-back-div");
+          modalBack.appendChild(Object.values(modalDict)[0][0]);
+        };
+      });
+    };
+  </script>
+  <div id="modal-back-div"></div>
 </body>
 
 </html>
