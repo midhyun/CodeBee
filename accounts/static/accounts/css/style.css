@@ -590,8 +590,9 @@ input[type=password]{
 }
 .review_info {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-left: 10px;
 }
 .review_card img {
   border-radius: 50%;
