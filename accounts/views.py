@@ -434,9 +434,11 @@ def index(request):
 
 
 def detail(request, user_pk):
+    lang_list = ["Python", "Javascript", "Django", "Vue", "React"]
     # 유저 정보
     person = get_object_or_404(get_user_model(), pk=user_pk)
     accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
+    print(accepts)
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
     honey = 15 + plus - minus
@@ -455,7 +457,6 @@ def detail(request, user_pk):
     # print(deactive_study)
     # 유저가 참여한 모든 스터디(현재 진행 중인)
     ings = Accepted.objects.filter(joined=True, users=person, study__isactive=True)
-
     uncomment_study = []
     for party in partys:
         study = party.study
@@ -501,18 +502,20 @@ def detail(request, user_pk):
     return render(
         request,
         "accounts/detail.html",
-        context={
+        context= {
+            "lang_list" : lang_list,
+            "accepts": accepts,
             "person": person,
-            "ings": ings,
+            "ings" : ings,
             "deactives": deactives,
-            "honey": honey,
-            "online": online,
-            "offline": offline,
-            "langs": langs,
-            "partys": partys,
-            "honey": honey,
-            "std_cnt": Std_cnt,
-            "uncomment_study": uncomment_study,
+            "honey" : honey,
+            "online" : online,
+            "offline" : offline,
+            "langs" : langs,
+            "partys" : partys,
+            'honey':honey,
+            'std_cnt':Std_cnt,
+            "uncomment_study" : uncomment_study,
         },
     )
 

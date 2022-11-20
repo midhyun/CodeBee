@@ -10,19 +10,35 @@
 {% endblock css %}
 {% block content %}
 
-<header class="container align-items-center" >
-<div class="d-flex justify-content-end">
-    <div style="padding:20px 50px 0px"><div class="search-box">
-        <span class="fs-4"></span> <button class="btn-search"><img src="{% static 'new_logo.png' %}" width="30" alt=""></button>
-        <input type="text" class="input-search" placeholder="찾고 싶은 코드비를 검색해보세요!">
-    </div></div>
-</div>
+<header class="container align-items-center">
+    <div class="d-flex justify-content-between">
+        <!-- 인덱스 카테고리 -->
+        <div style="padding: 20px 50px 0px; transform: translateY(12px)">
+            <form id="category_form" action="" method="GET">
+            <select name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
+                <option selected>스터디 카테고리</option>
+                <option >모든 스터디</option>
+                <option value="1">오프라인 스터디</option>
+                <option value="2">온라인 스터디</option>
+              </select>
+            </form>
+        </div>
+        <!-- 검색바 -->
+        <div style="padding:20px 50px 0px">
+            <div class="search-box">
+                <span class="fs-4"></span> <button class="btn-search"><img src="{% static 'new_logo.png' %}" width="30"
+                        alt=""></button>
+                <input type="text" class="input-search" placeholder="찾고 싶은 코드비를 검색해보세요!">
+            </div>
+        </div>
+    </div>
 </header>
 <!-- 헤더 이미지 영역 -->
 
 <!-- 스터디 제목, 기간, 설명 -->
 <div class="container content mt-3" style="padding: 50px;">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+
         {% for study in studies %}
         <div class="col">
             <a class="cardlink link" href="{% url 'reviews:detail' study.pk %}">
@@ -138,6 +154,25 @@
         </div>
         {% endfor %}
     </div>
+    <div class="row">
+        <div name="pagination" class="text-center mx-auto my-3">
+            {% if studies.has_previous %}
+            <a href="?page=1">맨 앞으로</a>
+            <a href="?page={{studies.previous_page_number}}">이전으로</a>
+            {% endif %}
+            <span>{{studies.number}}</span>
+            <span>/</span>
+            <span>{{studies.paginator.num_pages}}</span>
+            {% if studies.has_next %}
+                <a href="?page={{studies.next_page_number}}">다음으로</a>
+                <a href="?page={{studies.paginator.num_pages}}">맨 뒤로</a>
+            {% endif %}
+        </div>
+    </div>
 </div>
-
+<script>
+    function study_onchange() {
+        document.querySelector('#category_form').submit()
+    }
+</script>
 {% endblock content %}

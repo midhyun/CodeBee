@@ -21,37 +21,30 @@
           data-bs-target="#userlistcanvas" aria-controls="offcanvasRight"><i
             class="bi bi-list fw-bold fs-4"></i></button>
       </div>
-    </div>
-    <!-- 스터디 헤더 -->
-    <div class="col-8">
-      <p class="my-0"><i class="bi bi-code-square"></i> {% if study.location_type %} <a
-          style="text-decoration:none; color:black" href="{% url 'reviews:offline_board' %}">오프라인</a> {% else %}<a
-          style="text-decoration:none; color:black" href="{% url 'reviews:online_board' %}">온라인</a>{% endif %} CodeBee
-      </p>
-      <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
-        {% if cnt == study.limits %}
-        <span class="badge text-bg-secondary">모집마감</span>
-        {% else %}
-        <span class="badge text-bg-success">모집중</span>
-        {% endif %}
-      </p>
-      <p><span class="text-muted fs-6">마감일시: {{ study.deadline|date:'Y-m-d A h시i분' }}</span></p>
-      <div class="d-flex justify-content-between">
-        <div class="d-flex">
-          <a style="text-decoration:none; color:black" href="{% url 'accounts:detail' study.host.pk %}">
-            {% if study.host.profile_picture %}
-            <img style="width:50px; height:50px;" class="rounded-circle" src="{{ study.host.profile_picture.url }}"
-              alt="">
-            {% else %}
-            <img class="rounded-circle" src="https://dummyimage.com/50x50/000/fff" alt="">
-            {% endif %}</a>
-          <div class="mx-3">
-            <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
-                href="{% url 'accounts:detail' study.host.pk %}">
-                {{ study.host.username }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a>
-            </p>
-            <p class="my-0 text-muted">
-              <a class="text-muted" href="{% url 'accounts:detail' study.host.pk %}">
+      <!-- 스터디 헤더 -->
+      <div class="col-8">
+        <p class="my-0"><i class="bi bi-code-square"></i> 
+          {% if study.location_type %} 
+          <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=2">온라인</a> 
+          {% else %}
+          <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=1">오프라인</a>
+          {% endif %} CodeBee</p>
+        <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
+        <span class="badge text-bg-secondary">모집마감</span></p>
+        <p><span class="text-muted fs-6">마감일시: {{ study.deadline|date:'Y-m-d A h시i분' }}</span></p>
+        <div class="d-flex justify-content-between">
+          <div class="d-flex">
+            <a style="text-decoration:none; color:black" href="{% url 'accounts:detail' study.host.pk %}">
+              {% if study.host.profile_picture %}
+              <img style="width:50px; height:50px;" class="rounded-circle" src="{{ study.host.profile_picture.url }}" alt="">
+              {% else %}
+              <img class="rounded-circle" src="https://dummyimage.com/50x50/000/fff" alt="">
+              {% endif %}</a>
+            <div class="mx-3">
+              <p class="fw-bold my-0"><a style="text-decoration:none; color:black" href="{% url 'accounts:detail' study.host.pk %}">
+                {{ study.host.username }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a></p>
+              <p class="my-0 text-muted">
+                <a class="text-muted" href="{% url 'accounts:detail' study.host.pk %}">
                 <span class="badge bg-warning">CodeBee</span></a>
               {% if study.host.boj_username %}
               <a class="text-muted" href="https://www.acmicpc.net/user/{{ study.host.boj_username }}">
@@ -63,49 +56,11 @@
             </p></a>
             {% endif %}
           </div>
-        </div>
-        <div class="d-flex align-items-end">
-          {% if request.user == study.host %}
-          <p class="my-0">
-            <a class="mx-2 text-muted" style="text-decoration:none;" href="{% url 'reviews:update' study.pk %}">수정</a> |
-            <a class="mx-2 text-muted" style="text-decoration:none;" href="{% url 'reviews:delete' study.pk %}">삭제</a> |
-            <button id="modal-btn0" style="border:none" type="button" data-bs-toggle="modal" data-bs-target="#modal0">
-              <span class="text-muted">활동완료</span>
-            </button>
-            {% else %}
-            {% if check %}
-          <div class="text-end mx-5">
-            <a class="badge bg-danger" style="text-decoration:none;"
-              href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
-          </div>
-          {% else %}
-          <div class="text-end mx-5">
-            <a class="badge bg-success" style="text-decoration:none;"
-              href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
-          </div>
-          {% endif %}
-          {% endif %}
-          </p>
+          <div class="d-flex align-items-end">
+            </p>
 
-          <!-- Modal -->
-          <div class="modal fade" id="modal0" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">활동 완료</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body px-4 text-start lh-lg modal-text">
-                  활동 완료 시 스터디가 비활성화 상태로 전환되고 스터디 정보를 수정하거나 다시 활성화 상태로 전환할 수 없습니다.
-                  <br>
-                  <span class='text-danger'>계속 진행하기를 누르면 스터디가 종료됩니다.</span>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">아니요 돌아갈래요.</button>
-                  <a class="ms-3 btn btn-success" href="{% url 'reviews:done' study.pk %}">계속 진행하기</a>
-                </div>
-              </div>
-            </div>
+            <!-- Modal -->
+
           </div>
         </div>
       </div>
@@ -124,247 +79,167 @@
           </li>
           {% if request.user == study.host %}
           <li class="nav-item" role="presentation">
-            <button id="modal-btn2" class="nav-link" type="button" data-bs-toggle="modal" data-bs-target="#modal2"><i
-                class="bi bi-chat-dots-fill"></i> 그룹원 호출</button>
+
           </li>
           {% endif %}
-        </div>
-      </ul>
-      <!-- NAVTAP-CONTENT -->
-      <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
-          tabindex="0">
-          <div class=" p-3 border border-3">
-            {% if post.image %}
-            <img src="{{ study.image.url }}" alt="">
-            {% endif %}
-            <p>
-              {% if study.location_type == False %}
-            <p class="my-0 fw-bold fs-5">모임장소</p>
-            <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
-            {% elif study.location_type == True %}
-            <p class="my-0 fw-bold fs-5">온라인</p>
-            <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
-            {% endif %}
-            </p>
-            <p class="my-0 fw-bold fs-5">스터디 소개</p>
-            <p class="ms-3 fs-6 text-muted">{{ study.content }}</p>
-            <p>제한 인원:
-              {{ cnt }}
-              /
-              {{ study.limits }}</p>
-            <div class="dropdown">
-              <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                일정 확인하기
-                <span class="badge text-bg-secondary">{{dates|length}}</span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu" style="width:600px">
-                <li>
-                  <a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item bg-dark text-white" href="#">스터디
-                    일정</a>
-                </li>
-                {% for date in dates %}
-                <li id="{{ forloop.counter }}dateitem">
-                  <div class="dropdown-item d-flex justify-content-between">
-                    <div style="width:25px">{{ forloop.counter }}회</div>
-                    <div>시작:
-                      {{date.study_at|date:'y년m월d일 h:i'}}
-                      / 종료:
-                      {{date.study_end|date:'y년m월d일 h:i'}}</div>
-                    {% if request.user == study.host %}
-                    <div style="cursor:pointer" data-loop-id="{{forloop.counter}}" onclick="deletedate(this)"
-                      data-date-id="{{date.pk}}">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                        class="bi bi-dash-circle" style="color:red" viewbox="0 0 16 16">
-                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                        <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z" />
-                      </svg>
-                    </div>
-                    {% endif %}
-                  </div>
-                </li>
-                {% endfor %}
-                {% if request.user == study.host %}
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
-                <li>
-                  <div id="modal-btn1" style="cursor:pointer" class="dropdown-item text-center" data-bs-toggle="modal"
-                    data-bs-target="#modal1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                      class="bi bi-plus-circle" viewbox="0 0 16 16">
-                      <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-                      <path
-                        d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                    </svg>
-                    스터디 추가
-                  </div>
-                </li>
+          </div>
+        </ul>
+        <!-- NAVTAP-CONTENT -->
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+            <div class=" p-3 border border-3">
+              {% if post.image %} 
+                <img src="{{ study.image.url }}" alt="">
+              {% endif %}
+              <p>
+                {% if study.location_type == False %}
+                  <p class="my-0 fw-bold fs-5">모임장소</p>
+                  <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
+                {% elif study.location_type == True %}
+                  <p class="my-0 fw-bold fs-5">온라인</p>
+                  <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
                 {% endif %}
-              </ul>
-              <!-- 스터디 추가 Modal -->
-              <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="exampleModalLabel">스터디 일정 추가하기</h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                      <form action="" method="POST">
-                        {% csrf_token %}
-                        {% bootstrap_form form %}
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Save changes</button>
-                    </div>
-                    </form>
-                  </div>
-                </div>
+              </p>
+              <p class="my-0 fw-bold fs-5">스터디 소개</p>
+              <p class="ms-3 fs-6 text-muted">{{ study.content }}</p>
+              <p>제한 인원:
+                {{ cnt }}
+                /
+                {{ study.limits }}</p>
+              <div class="dropdown">
+                <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  일정 확인하기
+                  <span class="badge text-bg-secondary">{{dates|length}}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu" style="width:600px">
+                  <li>
+                    <a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item bg-dark text-white" href="#">스터디 일정</a>
+                  </li>
+                  {% for date in dates %}
+                    <li id="{{ forloop.counter }}dateitem">
+                      <div class="dropdown-item d-flex justify-content-between">
+                        <div style="width:25px">{{ forloop.counter }}회</div>
+                        <div>시작:
+                          {{date.study_at|date:'y년m월d일 h:i'}}
+                          / 종료:
+                          {{date.study_end|date:'y년m월d일 h:i'}}</div>
+                      </div>
+                    </li>
+                  {% endfor %}
+                  {% if request.user == study.host %}
+                    <li>
+                      <hr class="dropdown-divider">
+                    </li>
+                  {% endif %}
+                </ul>
+                <!-- 스터디 추가 Modal -->
               </div>
             </div>
+            </form>
           </div>
         </div>
+              <!-- 유저 목록 오프캔버스 -->
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="userlistcanvas" aria-labelledby="offcanvasRightLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            {% for member in members %}
+              {% if member.joined == True %}
+                <div>
+                  <div class="pb-3 mt-2 border-bottom">
+                    <p class="fw-bold my-0"><a style="text-decoration:none; color:black" href="{% url 'accounts:detail' member.users.pk %}">
+                      {{ member.users }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a>
+                    {% if study.host == member.users %}
+                    <span class="badge bg-dark">스터디장</span>
+                        <p class="my-4"></p>
+                      {% else %}
+                      <span class="badge bg-success">참여중</span>
+                        {% if study.host == user %}
+                          <p class="text-end m-0">
+                          </p>
+                        {% else %}
+                            <p class="my-4"></p>
+                          {% endif %}
+                        {% endif %}</p>
+                      </div>
+                    </div>
+                  {% else %}
+                    <!-- 신청 대기중인 멤버 뱃지로 표시 -->
+                    <div>
+                      <div class="pb-3 mt-2 border-bottom">
+                        <p class="fw-bold my-0"><a style="text-decoration:none; color:black" href="{% url 'accounts:detail' member.users.pk %}">
+                          {{ member.users }}</a>
+                        <span class="badge bg-secondary">대기중</span>
+                        {% if study.host == user %}
+                          <p class="text-end">
+                          </p>
+                        {% else %}
+                          <p>
+                            <p class="my-4"></p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
+        </div>
+      <div class="mt-3" id="study_map" style="width:100%;height:350px;"></div>
       </div>
-      <!-- 유저 목록 오프캔버스 -->
-      <div class="offcanvas offcanvas-end" tabindex="-1" id="userlistcanvas" aria-labelledby="offcanvasRightLabel">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body">
-          {% for member in members %}
-          {% if member.joined == True %}
-          <div>
-            <div class="pb-3 mt-2 border-bottom">
-              <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
-                  href="{% url 'accounts:detail' member.users.pk %}">
-                  {{ member.users }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a>
-                {% if study.host == member.users %}
-                <span class="badge bg-dark">스터디장</span>
-              <p class="my-4"></p>
-              {% else %}
-              <span class="badge bg-success">참여중</span>
-              {% if study.host == user %}
-              <p class="text-end m-0">
-                <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
-              </p>
-              {% else %}
-              <p class="my-4"></p>
-              {% endif %}
-              {% endif %}</p>
-            </div>
-          </div>
-          {% else %}
-          <!-- 신청 대기중인 멤버 뱃지로 표시 -->
-          <div>
-            <div class="pb-3 mt-2 border-bottom">
-              <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
-                  href="{% url 'accounts:detail' member.users.pk %}">
-                  {{ member.users }}</a>
-                <span class="badge bg-secondary">대기중</span>
-                {% if study.host == user %}
-              <p class="text-end">
-                <a class="text-success fs-4" href="{% url 'reviews:study_accepted' study.pk member.users.id %}"><i
-                    class="bi bi-check-circle"></i></a>
-                <a class="text-danger fs-4" href="{% url 'reviews:study_kick' study.pk member.users.id %}"><i
-                    class="bi bi-x-circle"></i></a>
-              </p>
-              {% else %}
-              <p>
-              <p class="my-4"></p>
-              {% endif %}
-            </div>
-          </div>
-          {% endif %}
-          {% endfor %}
-        </div>
-      </div>
-    </div>
-    <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
-  </div>
-  {% if study.host == user %}
+      <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
 
-  <!-- 그룹원 호출 모달 -->
-  <div class="modal fade" id="modal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">그룹원에게 카카오톡 알림 보내기</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <form action="{% url 'reviews:gathering' study.pk %}" method="POST">
-          {% csrf_token %}
-          <div class="modal-body">
-            <label class="form-label" for="id_content">카카오톡 인증된 그룹원에게 일괄 메시지를 전송합니다.</label>
-            <textarea maxlength="200" name="message" cols="40" rows="10" class="form-control" placeholder="호출 메시지"
-              required="" id="id_content"></textarea>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Send message</button>
-          </div>
-        </form>
-      </div>
     </div>
-  </div>
-  {% endif %}
-</div>
-<!-- 스터디 정보 -->
+    
+      
+      
+{% if study.host == user %}
+<!-- 그룹원 호출 버튼 -->
 
-{% if study.location_type == False %}
-<div class="mb-5" id="map" style="width:100%;height:350px;"></div>
+
+<!-- 그룹원 호출 모달 -->
 {% endif %}
+             <!-- 지도 정보 -->
 </div>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script type="text/javascript"
-  src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597"></script>
 <script>
-  var X = {{ study.X }}
-  var Y = {{ study.Y }}
-  var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-    mapOption = {
-      center: new kakao
-        .maps
-        .LatLng(`${Y}`, `${X}`), // 지도의 중심좌표
-      level: 3 // 지도의 확대 레벨
-    };
+  console.log({{study.Y}}, {{study.X}})
+var mapContainer = document.getElementById('study_map'), // 지도를 표시할 div 
+mapOption = { 
+  center: new kakao.maps.LatLng({{study.Y}}, {{study.X}}), // 지도의 중심좌표
+  level: 3 // 지도의 확대 레벨
+};
 
-  var map = new kakao
-    .maps
-    .Map(mapContainer, mapOption); // 지도를 생성합니다
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-  // 마커가 표시될 위치입니다
-  var markerPosition = new kakao
-    .maps
-    .LatLng(`${Y}`, `${X}`);
+// 마커가 표시될 위치입니다 
+var markerPosition  = new kakao.maps.LatLng({{study.Y}}, {{study.X}}); 
 
-  // 마커를 생성합니다
-  var marker = new kakao
-    .maps
-    .Marker({ position: markerPosition });
+// 마커를 생성합니다
+var marker = new kakao.maps.Marker({
+  position: markerPosition
+});
 
-  // 마커가 지도 위에 표시되도록 설정합니다
-  marker.setMap(map);
+// 마커가 지도 위에 표시되도록 설정합니다
+marker.setMap(map);
 
-  // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
-  // marker.setMap(null);
 </script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
+  console.log({% url 'reviews:index' %})
   var test = document.getElementById('testaxios')
   console.log(test)
-
+  
   function deletedate(event) {
     console.log(event.dataset.dateId)
     const datePk = event.dataset.dateId
     const loopId = event
       .dataset
       .loopId
-    console
+      
+      console
       .log(datePk)
-    axios({ method: 'get', url: `/reviews/del_date/${datePk}` }).then(response => {
+    axios({method: 'get', url: `/reviews/del_date/${datePk}`}).then(response => {
       const el = document.getElementById(`${loopId}dateitem`)
       el.remove()
     })

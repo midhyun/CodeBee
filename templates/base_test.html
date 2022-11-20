@@ -24,7 +24,7 @@
       font-family: 'NanumSquareNeo';
       overflow-x: hidden;
     }
-
+    
     .simplebar-scrollbar::before {
       background-color: rgb(37, 37, 37);
     }
@@ -40,9 +40,10 @@
 </head>
 
 <body>
-  <img id="img1" style="position:absolute; left:0; top:0; z-index:999;" src=" {% static 'm_logo.png' %}" width="50">
-  <!-- 마우스 커서 따라다니는 이미지 만들기 스크립트 -->
+  <img id="img1" style="position:absolute; left:0; top:0; z-index:999;" src="{% static  'm_logo.png' %} " width=" 50">
+
   <script>
+
     // 마우스 커서 위치 담을 변수
     var mouseX = 0;
     var mouseY = 0;
@@ -73,6 +74,8 @@
 
     document.onmousemove = getMousePosition; // 마우스가 움직이면 getMousePosition 함수 실행
     setInterval("moveImg()", 50); // moveImg 함수 반복 실행하여 이미지 움직이기
+
+//-->
   </script>
   <!-- 네비게이션 -->
   <div id="main-top">
@@ -101,37 +104,38 @@
       {% endfor %}
       {% endif %}
     </div>
-    <div class="container-fluid nav_bg" id="bg" style="height: 100px;">
-      <nav>
-        <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="80"></a>
-        <a href="{% url 'reviews:index' %}">코드비 찾기</a>
-        <a href="{% url 'reviews:create' %}">코드비 모으기</a>
-        <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비 정보</a>
-        <div id="indicator"></div>
-      </nav>
-      <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasRight"
-        aria-labelledby="offcanvasRightLabel">
-        <div class="offcanvas-header">
-          <h5 id="offcanvasRightLabel">코드비 정보</h5>
-          <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <hr style="color:white; border: solid 2px">
-        <div class="offcanvas-body">
-          {% if request.user.is_authenticated %}
-          <a class="anc" href="{% url 'accounts:test' %}">내 정보</a>
-          <h1>
-            {{ request.user }}
-            <a class="text-white" href="{% url 'accounts:logout' %}">로그아웃</a>
-          </h1>
-          {% else %}
-          <h1>
-            <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
-          </h1>
-          {% endif %}
-        </div>
+  <div class="container-fluid nav_bg" id="bg">
+    <nav>
+      <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="80"></a>
+      <a href="{% url 'reviews:index' %}">코드비 찾기</a>
+      <a href="{% url 'reviews:create' %}">코드비 모으기</a>
+      <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비 정보</a>
+      <div id="indicator"></div>
+    </nav>
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasRight"
+      aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header">
+        <h5 id="offcanvasRightLabel">코드비 정보</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <hr style="color:white; border: solid 2px">
+      <div class="offcanvas-body">
+        {% if request.user.is_authenticated %}
+        <p><a class="anc" href="{% url 'accounts:test' %}">내 정보</a></p>
+        <h1>
+          {{ request.user }}
+          <a class="text-white" href="{% url 'accounts:logout' %}">로그아웃</a>
+        </h1>
+        {% else %}
+        <h1>
+          <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
+        </h1>
+        {% endif %}
       </div>
     </div>
   </div>
+  </div>
+
   <!-- 본문 영역 시작 -->
   <div id="main">
     {% block content %}

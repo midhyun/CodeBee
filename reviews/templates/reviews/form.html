@@ -19,13 +19,13 @@
   <hr style="border: solid 1px rgb(255, 198, 198); width: 97%; margin:auto;">
   <div class="row">
     <div class="col-lg-4 ">
-      <div class="m-3 card shadow card p-3" style="position: sticky; top:0; z-index:2;">
+      <div class="m-3 card shadow card p-3" style="top:0; z-index:2;">
         하이퍼그로스 2기 절찬리 모집중!<br>
         <img
           src="https://oopy.lazyrockets.com/api/v2/notion/image?src=https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2F4c14a348-0f93-4541-91d6-dfe4f265d252%2Fhypergrowth_%25E1%2584%2585%25E1%2585%25A9%25E1%2584%2580%25E1%2585%25A9%25E1%2584%2589%25E1%2585%25B5%25E1%2586%25B7%25E1%2584%2587%25E1%2585%25A9%25E1%2586%25AF.png&blockId=a86012c3-a307-48f1-9c8f-0190bf2151cd&width=256"
           alt="" style="width:80%">
       </div>
-      <div id="map_wrap" class="map_wrap" style="display:relative;">
+      <div id="" class="map_wrap" style="display:relative;">
         <div id="menu_wrap" class="bg_white card shadow m-3 p-3" style="position:absolute; width:91%">
           <div class="option">
           </div>
@@ -69,17 +69,15 @@
             <option value="1">온라인</option>
           </select>
         </div>
-        <div id="map_wrap" class="map_wrap" style="display:relative">
-          <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
-
-
-        </div>
-        <label for="id_addr" class="form-label">주소</label>
+        <label for="id_addr" class="form-label">주소 (새로운 마커를 찍거나 기존의 마커를 클릭해주세요.)</label>
         <div class="input-group mb-3">
           <input name="location" maxlength="50" required="" type="text" class="form-control"
-            placeholder="직접 입력하거나 지도를 클릭해 마커를 표시하세요." id="id_addr" aria-label="Recipient's username"
-            aria-describedby="button-addon2" value="{{ study.location }}">
+          placeholder="직접 입력하거나 지도를 클릭해 마커를 표시하세요." id="id_addr" aria-label="Recipient's username"
+          aria-describedby="button-addon2" value="{{ study.location }}">
           <input onclick="searchPlaces()" class="btn btn-primary" type="button" id="button-addon2" value="검색하기">
+        </div>
+        <div id="map_wrap" class="map_wrap" style="display:relative">
+          <div id="map" style="width:100%;height:100%;position:relative;overflow:hidden;"></div>
         </div>
         {% bootstrap_form study_form %}
         {% bootstrap_form study_date %}

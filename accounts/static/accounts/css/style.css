@@ -38,45 +38,12 @@
     display: none;
 }
 
-.board {
-    width: 100vw;
-    background: rgb(2,0,36);
-background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075630253) 35%, rgba(255,0,186,1) 100%);
-}
-@media (min-width: 1440px){
-    .board {
-    padding-top: 3rem;
-    min-height: calc(100vh - 8rem);
-}}
-
-@media (max-width: 860px){
-    .board {
-    padding-top: 2rem;
-    min-height: calc(100vh - 8rem);
-}
-.wrapper {
-    width: 80%;
-}}
-
-@media (max-width: 600px){
-    .board {
-    margin-left: 100px;
-    margin-right: 100px;
-    min-height: calc(100vh - 8rem);
-}}
-
-@media (max-width: 800px){
-    .board {
-    margin-left: 20px;
-    margin-right: 20px;
-    padding-top: 3rem;
-    min-height: calc(100vh - 8rem);
-}}
-
 .wrapper {
     max-width: 82rem;
     width: 100%;
     margin: 0 auto;
+    height: calc(100vh + 200px);
+    overflow: hidden;
   }
   .tabs {
     position: relative;
@@ -116,7 +83,7 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
   }
   .tab-content {
     width: 100%;
-    min-height: 18rem;
+    min-height: 100vh;
     position: absolute;
     z-index: 1;
     top: 2.75em;
@@ -185,22 +152,6 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
     color: #344050;
 }
 
-.content-box {
-    position: absolute;
-    display: block;
-    bottom: 3%;
-    left: 50%;
-    right: 50%;
-    transform: translate(-50%);
-    height: 92px;
-    width: 94%;
-    border-style: solid;
-    border-radius: 8px;
-    border-width: 1.2px;
-    border-color: #ffecc7;
-    background-color:#ffecc7;
-}
-
 .study-content {
     min-height: 52px;
     overflow:hidden;
@@ -229,13 +180,14 @@ background: linear-gradient(79deg, rgba(2,0,36,1) 0%, rgba(16,9,121,0.8597689075
     height: 2rem;
 }
 
-/* 카드 그라데이션 */
-.members {
-    margin: 3px;
-    padding: 2px 2px;
-    width: 15px;
-    height: 15px;
+.icons {
+  padding-top: 100px;
 }
+
+.icons2 {
+  padding-left: 100px;
+}
+
 input[type=password]{
     font-family:sans-serif;
     }
@@ -544,13 +496,15 @@ input[type=password]{
   padding: 10px;
 }
 
-.icons {
-  padding-top: 100px;
-}
-
-.icons2 {
-  padding-left: 100px;
+.image-wrapper {
   overflow: hidden;
+}
+.icon-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 76px;
+  width: 20%;
 }
 
 /* 언어별 컬러 주기 */
@@ -606,6 +560,16 @@ input[type=password]{
   color: hwb(0deg 33% 67% / 95%);
   margin: 0px 4px;
 }
+.none_type {
+  background-color: #a275f4;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 13px;
+  padding-right: 13px;
+  color: hwb(0deg 100% 0% / 95%);
+  margin: 0px 4px;
+}
 .study_count {
   color: #2aa576;
   font-weight: 800;
@@ -626,8 +590,9 @@ input[type=password]{
 }
 .review_info {
   display: flex;
-  justify-content: space-around;
-  align-items: center;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-left: 10px;
 }
 .review_card img {
   border-radius: 50%;
@@ -698,4 +663,32 @@ input[type=password]{
   display:none;
   color: white;
   z-index: 20;
+}
+.github-none {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.github-none p {
+  color: #CFCFCF;
+  padding-top: 16px;
+}
+
+.active-wrapper {
+  padding: 2px 6px;
+}
+
+.active-tab {
+  font-weight: bold;
+  margin-bottom: 2px;
+  letter-spacing: 0.5px;
+}
+.active-flex {
+  display: flex;
+  height: 222px;
+  justify-content: center;
+  align-items: center;
 }
