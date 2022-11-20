@@ -104,3 +104,8 @@ nav li:nth-child(3):hover ~ #indicator { left: 37.1%; background: linear-gradien
   100% { background-position: 0 0; } }
 
 /*# sourceMappingURL=menu.css.map */
+
+.hide {
+  transition: .4s;
+  display: none;
+}
