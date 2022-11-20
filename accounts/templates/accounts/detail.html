@@ -286,7 +286,11 @@
             {% if accepts %}
             <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은
               {% for lang in langs %}
+              {% if lang in lang_list %}
               <span class="{{ lang }}">{{ lang }}</span>
+              {% else %}
+              <span class="none_type">{{ lang }}</span>
+              {% endif %}
               {% endfor %}
               스터디를 가장 많이 참여하였습니다.
             </p>
@@ -334,8 +338,8 @@
                 <p>아직 작성된 리뷰가 없어요.</p>
                 {% if user == person %}
                 <p>아래로 이동해 리뷰를 작성해보세요.</p>
-                {% for study in uncomment_study %}
                 <div class="box-wrapper">
+                {% for study in uncomment_study %}
                   {% if study.image %}
                   <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
                     style="background-image: url('{{ study.image.url }}')">

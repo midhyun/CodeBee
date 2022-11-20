@@ -42,7 +42,8 @@
     max-width: 82rem;
     width: 100%;
     margin: 0 auto;
-    height: 120vh;
+    height: calc(100vh + 200px);
+    overflow: hidden;
   }
   .tabs {
     position: relative;
@@ -82,7 +83,7 @@
   }
   .tab-content {
     width: 100%;
-    min-height: calc(100vh - 80px);
+    min-height: 100vh;
     position: absolute;
     z-index: 1;
     top: 2.75em;
@@ -557,6 +558,16 @@ input[type=password]{
   padding-left: 13px;
   padding-right: 13px;
   color: hwb(0deg 33% 67% / 95%);
+  margin: 0px 4px;
+}
+.none_type {
+  background-color: #a275f4;
+  border-radius: 15px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  padding-left: 13px;
+  padding-right: 13px;
+  color: hwb(0deg 100% 0% / 95%);
   margin: 0px 4px;
 }
 .study_count {

@@ -427,6 +427,7 @@ def index(request):
 
 
 def detail(request, user_pk):
+    lang_list = ["Python", "Javascript", "Django", "Vue", "React"]
     # 유저 정보
     person = get_object_or_404(get_user_model(), pk=user_pk)
     accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
@@ -490,6 +491,7 @@ def detail(request, user_pk):
         request,
         "accounts/detail.html",
         context= {
+            "lang_list" : lang_list,
             "accepts": accepts,
             "person": person,
             "ings" : ings,
