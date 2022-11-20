@@ -21,13 +21,14 @@
       </div>
       <!-- 스터디 헤더 -->
       <div class="col-8">
-        <p class="my-0"><i class="bi bi-code-square"></i> {% if study.location_type %} <a style="text-decoration:none; color:black" href="{% url 'reviews:offline_board' %}">오프라인</a> {% else %}<a style="text-decoration:none; color:black" href="{% url 'reviews:online_board' %}">온라인</a>{% endif %} CodeBee</p>
+        <p class="my-0"><i class="bi bi-code-square"></i> 
+          {% if study.location_type %} 
+          <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=2">온라인</a> 
+          {% else %}
+          <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=1">오프라인</a>
+          {% endif %} CodeBee</p>
         <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
-        {% if cnt == study.limits %}
-        <span class="badge text-bg-secondary">모집마감</span>
-        {% else %}
-        <span class="badge text-bg-success">모집중</span>
-        {% endif %}</p>
+        <span class="badge text-bg-secondary">모집마감</span></p>
         <p><span class="text-muted fs-6">마감일시: {{ study.deadline|date:'Y-m-d A h시i분' }}</span></p>
         <div class="d-flex justify-content-between">
           <div class="d-flex">
@@ -54,46 +55,10 @@
             </div>
           </div>
           <div class="d-flex align-items-end">
-            {% if request.user == study.host %}
-            <p class="my-0">
-            <a class="mx-2 text-muted" style="text-decoration:none;" href="{% url 'reviews:update' study.pk %}">수정</a> |
-            <a class="mx-2 text-muted" style="text-decoration:none;" href="{% url 'reviews:delete' study.pk %}">삭제</a> |
-            <button style="border:none" type="button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-              <span class="text-muted">활동완료</span>
-            </button>
-            {% else %}
-              {% if check %}
-              <div class="text-end mx-5">
-                <a class="badge bg-danger" style="text-decoration:none;" href="{% url 'reviews:study_kick' study.pk user.pk %}">탈퇴하기</a>
-              </div>
-              {% else %}
-                <div class="text-end mx-5">
-                  <a class="badge bg-success" style="text-decoration:none;" href="{% url 'reviews:join' study.pk request.user.pk %}">가입신청</a>
-                </div>
-              {% endif %}
-            {% endif %}
             </p>
 
             <!-- Modal -->
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">활동 완료</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-                  <div class="modal-body px-4 text-start lh-lg modal-text">
-                    활동 완료 시 스터디가 비활성화 상태로 전환되고 스터디 정보를 수정하거나 다시 활성화 상태로 전환할 수 없습니다.
-                    <br>
-                    <span class='text-danger'>계속 진행하기를 누르면 스터디가 종료됩니다.</span>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">아니요 돌아갈래요.</button>
-                    <a class="ms-3 btn btn-success" href="{% url 'reviews:done' study.pk %}">계속 진행하기</a>
-                  </div>
-                </div>
-              </div>
-            </div>
+
           </div>
         </div>
                     <!-- 스터디 내용, 유저목록 탭 -->
@@ -109,7 +74,6 @@
           </li>
           {% if request.user == study.host %}
           <li class="nav-item" role="presentation">
-            <button class="nav-link" type="button" data-bs-toggle="modal" data-bs-target="#gathering"><i class="bi bi-chat-dots-fill"></i> 그룹원 호출</button>
           </li>
           {% endif %}
           </div>
@@ -153,14 +117,6 @@
                           {{date.study_at|date:'y년m월d일 h:i'}}
                           / 종료:
                           {{date.study_end|date:'y년m월d일 h:i'}}</div>
-                        {% if request.user == study.host %}
-                          <div style="cursor:pointer" data-loop-id="{{forloop.counter}}" onclick="deletedate(this)" data-date-id="{{date.pk}}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-dash-circle" style="color:red" viewbox="0 0 16 16">
-                              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                              <path d="M4 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 4 8z"/>
-                            </svg>
-                          </div>
-                        {% endif %}
                       </div>
                     </li>
                   {% endfor %}
@@ -168,39 +124,12 @@
                     <li>
                       <hr class="dropdown-divider">
                     </li>
-                    <li>
-                      <div style="cursor:pointer" class="dropdown-item text-center" data-bs-toggle="modal" data-bs-target="#exampleModal2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewbox="0 0 16 16">
-                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                        </svg>
-                        스터디 추가</div>
-                    </li>
                   {% endif %}
                 </ul>
                 <!-- 스터디 추가 Modal -->
-                <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">스터디 일정 추가하기</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                        <form action="" method="POST">
-                          {% csrf_token %}
-                          {% bootstrap_form form %}
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="submit" class="btn btn-primary">Save changes</button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
+            </form>
           </div>
         </div>
               <!-- 유저 목록 오프캔버스 -->
@@ -223,7 +152,6 @@
                       <span class="badge bg-success">참여중</span>
                         {% if study.host == user %}
                           <p class="text-end m-0">
-                            <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
                           </p>
                         {% else %}
                             <p class="my-4"></p>
@@ -240,8 +168,6 @@
                         <span class="badge bg-secondary">대기중</span>
                         {% if study.host == user %}
                           <p class="text-end">
-                            <a class="text-success fs-4" href="{% url 'reviews:study_accepted' study.pk member.users.id %}"><i class="bi bi-check-circle"></i></a>
-                            <a class="text-danger fs-4" href="{% url 'reviews:study_kick' study.pk member.users.id %}"><i class="bi bi-x-circle"></i></a>
                           </p>
                         {% else %}
                           <p>
@@ -253,105 +179,63 @@
                   {% endfor %}
                 </div>
         </div>
+      <div class="mt-3" id="study_map" style="width:100%;height:350px;"></div>
       </div>
       <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
 
     </div>
-
-
+    
       
       
-            {% if study.host == user %}
-              <!-- 그룹원 호출 버튼 -->
+{% if study.host == user %}
+<!-- 그룹원 호출 버튼 -->
 
 
-              <!-- 그룹원 호출 모달 -->
-              <div class="modal fade" id="gathering" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <div class="modal-header">
-                      <h1 class="modal-title fs-5" id="exampleModalLabel">그룹원에게 카카오톡 알림 보내기</h1>
-                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <form action="{% url 'reviews:gathering' study.pk %}" method="POST">
-                      {% csrf_token %}
-                      <div class="modal-body">
-                        <label class="form-label" for="id_content">카카오톡 인증된 그룹원에게 일괄 메시지를 전송합니다.</label>
-                        <textarea maxlength="200" name="message" cols="40" rows="10" class="form-control" placeholder="호출 메시지" required="" id="id_content"></textarea>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Send message</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            {% endif %}
-    </div>
-          <!-- 스터디 정보 -->
+<!-- 그룹원 호출 모달 -->
+{% endif %}
+             <!-- 지도 정보 -->
+</div>
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597"></script>
+<script>
+  console.log({{study.Y}}, {{study.X}})
+var mapContainer = document.getElementById('study_map'), // 지도를 표시할 div 
+mapOption = { 
+  center: new kakao.maps.LatLng({{study.Y}}, {{study.X}}), // 지도의 중심좌표
+  level: 3 // 지도의 확대 레벨
+};
 
-          {% if study.location_type == False %}
-            <div class="mb-5" id="map" style="width:100%;height:350px;"></div>
-          {% endif %}
-  </div>
-        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-        <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597&libraries=services"></script>
-        <script>
-          var X = {
-              {
-                study.X
-              }
-            }
-            var Y = {
-                {
-                  study.Y
-                }
-              }
-              var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-                mapOption = {
-                  center: new kakao
-                    .maps
-                    .LatLng(`${Y}`, `${X}`), // 지도의 중심좌표
-                  level: 3 // 지도의 확대 레벨
-                };
+var map = new kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-              var map = new kakao
-                .maps
-                .Map(mapContainer, mapOption); // 지도를 생성합니다
+// 마커가 표시될 위치입니다 
+var markerPosition  = new kakao.maps.LatLng({{study.Y}}, {{study.X}}); 
 
-              // 마커가 표시될 위치입니다
-              var markerPosition = new kakao
-                .maps
-                .LatLng(`${Y}`, `${X}`);
+// 마커를 생성합니다
+var marker = new kakao.maps.Marker({
+  position: markerPosition
+});
 
-              // 마커를 생성합니다
-              var marker = new kakao
-                .maps
-                .Marker({position: markerPosition});
+// 마커가 지도 위에 표시되도록 설정합니다
+marker.setMap(map);
 
-              // 마커가 지도 위에 표시되도록 설정합니다
-              marker.setMap(map);
-
-              // 아래 코드는 지도 위의 마커를 제거하는 코드입니다
-              // marker.setMap(null);
-        </script>
-        <script>
-          var test = document.getElementById('testaxios')
-          console.log(test)
-
-          function deletedate(event) {
-            console.log(event.dataset.dateId)
-            const datePk = event.dataset.dateId
-            const loopId = event
-              .dataset
-              .loopId
-              console
-              .log(datePk)
-            axios({method: 'get', url: `/reviews/del_date/${datePk}`}).then(response => {
-              const el = document.getElementById(`${loopId}dateitem`)
-              el.remove()
-            })
-          };
-        </script>
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  console.log({% url 'reviews:index' %})
+  var test = document.getElementById('testaxios')
+  console.log(test)
+  
+  function deletedate(event) {
+    console.log(event.dataset.dateId)
+    const datePk = event.dataset.dateId
+    const loopId = event
+      .dataset
+      .loopId
+      console
+      .log(datePk)
+    axios({method: 'get', url: `/reviews/del_date/${datePk}`}).then(response => {
+      const el = document.getElementById(`${loopId}dateitem`)
+      el.remove()
+    })
+  };
+</script>
 {% endblock %}
