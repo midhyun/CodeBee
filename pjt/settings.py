@@ -30,7 +30,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "http://codebee-env.eba-k8kiymgt.ap-northeast-2.elasticbeanstalk.com",
+    "codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com",
     "172.31.15.252",
     "127.0.0.1",
     "localhost",
@@ -100,13 +100,6 @@ WSGI_APPLICATION = "pjt.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 
 
