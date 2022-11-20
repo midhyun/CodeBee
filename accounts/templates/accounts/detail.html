@@ -200,25 +200,81 @@
 
         <!-- 제목 영역 -->
         <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
-          님의 github 활동입니다</h2>
+          님의 github 및 백준 활동입니다</h2>
         <!-- 깃허브 영역 -->
         <div class="detail-content d-flex flex-column justify-content-center">
-          <div style="text-align:center; font-size: larger;">
-            {% if person.git_username %}
-            <a href="https://github.com/{{ person.git_username }}/">
-              <img
-                src="https://github-readme-stats.vercel.app/api/top-langs/?username={{ person.git_username }}&layout=compact">
-            </a>
-            {% else %}
-            <div class="github-none">
-              <img src="{% static '/accounts/image/github.png'%}" height="50px" alt="">
-              <p>아직 연동된 깃허브가 없어요.</p>
+          <div class="row row-cols-2">
+            <!-- github활동 -->
+            <div class="cols">
+              <div class="active-wrapper">
+                <p class="active-tab">
+                  Github
+                </p>
+                <hr class="m-0">
+                <div class="active-content">
+                  <div class="active-flex" style="text-align:center; font-size: larger;">
+                    {% if person.git_username %}
+                    <a href="https://github.com/{{ person.git_username }}/">
+                      <img
+                        src="https://github-readme-stats.vercel.app/api/top-langs/?username={{ person.git_username }}&layout=compact">
+                    </a>
+                    {% else %}
+                    <div class="github-none">
+                      <img src="{% static '/accounts/image/github.png'%}" height="50px" alt="">
+                      <p>아직 연동된 깃허브가 없어요.</p>
+                      {% if user == person %}
+                      <a href="{% url 'accounts:update' user.pk %}">지금 연동하러 가기</a>
+                      {% endif %}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
             </div>
-            {% if user == person %}
-            <a href="{% url 'accounts:update' user.pk %}">지금 연동하러 가기</a>
-            {% endif %}
-            {% endif %}
+            <div class="cols">
+              <div class="active-wrapper">
+                <p class="active-tab">
+                  BOJ
+                </p>
+                <hr class="m-0">
+                <div class="active-content">
+                  <div class="active-flex" style="text-align:center; font-size: larger;">
+                    {% if person.boj_username %}
+                    <a href="https://solved.ac/{{ person.boj_username }}" target="_blank">
+                      <img src="http://mazassumnida.wtf/api/generate_badge?boj={{ person.boj_username }}">
+                    </a>
+                    {% else %}
+                    <div class="github-none">
+                      <img src="{% static '/accounts/image/none_boj.png'%}" height="50px" alt="" style="padding: 2px;">
+                      <p>아직 연동된 solved.ac가 없어요.</p>
+                      {% if user == person %}
+                      <a href="{% url 'accounts:update' user.pk %}">지금 연동하러 가기</a>
+                      {% endif %}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         </div>
         <!-- 제목 영역 -->
         <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
