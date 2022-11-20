@@ -354,10 +354,16 @@ def update(request, user_pk):
     if request.user.pk == user_pk:
         user = get_object_or_404(get_user_model(), pk=user_pk)
         if request.method == "POST":
-            update_form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
+            update_form = CustomUserChangeForm(
+                request.POST, request.FILES, instance=user
+            )
             address_form = AddressForm(request.POST, instance=user)
             auth_form = AuthForm(request.POST, instance=user)
-            if update_form.is_valid() and address_form.is_valid() and auth_form.is_valid():
+            if (
+                update_form.is_valid()
+                and address_form.is_valid()
+                and auth_form.is_valid()
+            ):
                 user = update_form.save(commit=False)
                 user.address = request.POST["address"]
                 user.detail_address = request.POST["detail_address"]
@@ -391,8 +397,9 @@ def update(request, user_pk):
         }
         return render(request, "accounts/update.html", context)
     else:
-        messages.warning(request, '본인만 수정할 수 있습니다.')
-        return redirect('reviews:index')
+        messages.warning(request, "본인만 수정할 수 있습니다.")
+        return redirect("reviews:index")
+
 
 def login(request):
     if request.method == "POST":
@@ -427,6 +434,7 @@ def index(request):
 
 
 def detail(request, user_pk):
+    lang_list = ["Python", "Javascript", "Django", "Vue", "React"]
     # 유저 정보
     person = get_object_or_404(get_user_model(), pk=user_pk)
     accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
@@ -435,25 +443,30 @@ def detail(request, user_pk):
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
     honey = 15 + plus - minus
     if not len(accepts):
-        return render(request, "accounts/detail.html", {"person": person,
-                                                        "honey": honey,})
-    
+        return render(
+            request,
+            "accounts/detail.html",
+            {
+                "person": person,
+                "honey": honey,
+            },
+        )
+
     # 유저가 참여했지만 리뷰를 작성하지 않은 스터디 목록
     partys = Accepted.objects.filter(joined=True, users=person, study__isactive=False)
     # print(deactive_study)
     # 유저가 참여한 모든 스터디(현재 진행 중인)
     ings = Accepted.objects.filter(joined=True, users=person, study__isactive=True)
-    
     uncomment_study = []
     for party in partys:
         study = party.study
         if not study.comment_set.all().filter(user=person).exists():
             uncomment_study.append(study)
     # print(uncomment_study)
-    
+
     deactives = []
     online = []
-    offline= []
+    offline = []
     for accept in accepts:
         if not accept.study.isactive:
             deactives.append(accept.study)
@@ -461,25 +474,25 @@ def detail(request, user_pk):
             offline.append(accept.study)
         else:
             online.append(accept.study)
-            
+
     # 유저가 참여한 스터디
     party = person.accepted_set.all().filter(joined=True)
     # print(party)
-    studys = party.values('study')
+    studys = party.values("study")
     # print(studys)
-    
+
     lan_dict = {}
-    
+
     for study in studys:
-        pk = study.get('study')
+        pk = study.get("study")
         study_ = Study.objects.get(pk=pk)
         lan_dict[study_.categorie] = lan_dict.get(study_.categorie, 0) + 1
-    
+
     # print(lan_dict)
     val_ = list(lan_dict.values())
     most = max(val_)
     # print(most)
-    
+
     langs = []
     for k, v in lan_dict.items():
         if v == most:
@@ -490,6 +503,7 @@ def detail(request, user_pk):
         request,
         "accounts/detail.html",
         context= {
+            "lang_list" : lang_list,
             "accepts": accepts,
             "person": person,
             "ings" : ings,
@@ -691,5 +705,6 @@ def check_email_auth(request, uidb64, token, uemailb64):
         }
     return render(request, "accounts/email-auth.html", context)
 
+
 def test2(request):
-    return render(request, 'accounts/test2.html')
+    return render(request, "accounts/test2.html")
