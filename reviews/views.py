@@ -21,24 +21,16 @@ def home(request):
 
 def index(request):
     studies = Study.objects.order_by("-pk")
+    fill = request.GET.get('fill')
+    print(fill)
+    if fill=='1':
+        studies = Study.objects.filter(location_type=False).order_by("-pk")
+    elif fill=='2':
+        studies = Study.objects.filter(location_type=True).order_by("-pk")
     context = {
         "studies": studies,
     }
     return render(request, "reviews/index.html", context)
-
-def online_board(request):
-    studies = Study.objects.filter(location_type=False).order_by("-pk")
-    context = {
-        "studies": studies,
-    }
-    return render(request, "reviews/online_board.html", context)
-
-def offline_board(request):
-    studies = Study.objects.filter(location_type=True).order_by("-pk")
-    context = {
-        "studies": studies,
-    }
-    return render(request, "reviews/offline_board.html", context)
 
 @login_required
 def create(request):
