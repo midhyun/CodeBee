@@ -240,7 +240,7 @@ def social_signup_callback(request, service_name):
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
         user_login(request, user)
-        return redirect(request.GET.get("next") or "accounts:test")
+        return redirect(request.GET.get("next") or "reviews:index")
     else:
         social_data = {
             # 소셜 서비스 구분
@@ -337,7 +337,7 @@ def signup(request):
                 )
             user.save()
             user_login(request, user)
-            return redirect("accounts:test")
+            return redirect("reviews:index")
     else:
         signup_form = CustomUserCreationForm()
         signup_form.fields["phone"].widget.attrs["maxlength"] = 11
