@@ -24,61 +24,80 @@
       }
     </style>
   </head>
-<body>
-  <div style="height:68px"></div>
-  <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
-    <div class="container">
-      <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}" alt=""></a>
-      <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">일반 스터디</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">그룹 스터디</a></li>
-          <li class="nav-item"><a class="nav-link" href="#" style="color:white">그룹 모집 게시판</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a></li>
-          <li class="nav-item"><a class="nav-link" href="#" style="color:white">고객센터</a></li>
-        </ul>
-        <ul class="ms-auto navbar-nav">
-          {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내 스터디</a></li>
-          <li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a></li>
-          {% else %}
-          <li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a></li>
-          <li class="nav-item"><a href="{% url 'accounts:signup' %}" class="nav-link" style="color:white">회원가입</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </nav>
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert alert-{{ message.tags }}">
-        {{ message }}
-      </div>
-    {% endfor %}
-  {% endif %}
-  {% block content %}{% endblock content %}
-  <footer class="align-items-center no-gutters row" style="background:rgb(83, 83, 83); height:80px">
-    <div class="col-md-3"></div>
-    <div class="col-12 col-md-6">
-      <div class="justify-content-between no-gutters row">
-        <div class="p-2 col-12">
-          <p class="mb-0 text-white">@ Copyrights 2022 CodeBee All Rights Reserved</p>
+
+  <body>
+    <div style="height:68px"></div>
+    <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
+      <div class="container">
+        <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}" alt=""></a>
+        <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">일반 스터디</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">그룹 스터디</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" style="color:white">그룹 모집 게시판</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#" style="color:white">고객센터</a>
+            </li>
+          </ul>
+          <ul class="ms-auto navbar-nav">
+            {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내 스터디</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'accounts:signup' %}" class="nav-link" style="color:white">회원가입</a>
+              </li>
+            {% endif %}
+          </ul>
         </div>
       </div>
-    </div>
-    <div class="col-4 col-md-3"></div>
-  </footer>
+    </nav>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    {% endif %}
+    {% block content %}{% endblock content %}
+    <footer class="align-items-center no-gutters row" style="background:rgb(83, 83, 83); height:80px; z-index: 3;">
+      <div class="col-md-3"></div>
+      <div class="col-12 col-md-6">
+        <div class="justify-content-between no-gutters row">
+          <div class="p-2 col-12">
+            <p class="mb-0 text-white">@ Copyrights 2022 CodeBee All Rights Reserved</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-4 col-md-3"></div>
+    </footer>
 
-  <script>
-    const bg = document.getElementById('bg')
+    <script>
+      const bg = document.getElementById('bg')
 
-    window.addEventListener('scroll', () => {
-      bg.style.opacity = 1 - window.scrollY / 300 + ''
-    })
-  </script>
-</body>
+      window.addEventListener('scroll', () => {
+        bg.style.opacity = 1 - window.scrollY / 300 + ''
+      })
+    </script>
+  </body>
 
 </html>
