@@ -42,7 +42,7 @@
     max-width: 82rem;
     width: 100%;
     margin: 0 auto;
-    height: calc(100vh + 200px);
+    height: calc(100vh + 400px);
     overflow: hidden;
   }
   .tabs {
@@ -587,6 +587,11 @@ input[type=password]{
   width: 33%;
   padding: 15px 20px;
   margin: 0px 16px;
+  text-decoration: none;
+  color: rgb(70 70 70);
+}
+.review_card:hover {
+  color: rgba(0, 0, 0, 0.6)
 }
 .review_info {
   display: flex;
