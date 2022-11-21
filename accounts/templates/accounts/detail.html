@@ -334,8 +334,8 @@
               스터디를 가장 많이 참여하였습니다.
             </p>
             <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
-              님은 온라인<span class="study_count">{{ online|length }}</span>회, 오프라인<span class="study_count">{{
-                offline|length }}</span>회 스터디에 참여하였습니다.</p>
+              님은 온라인<span class="study_count">{{ online|length }}</span>회, 오프라인<span class="study_count">
+                {{offline|length}}</span>회 스터디에 참여하였습니다.</p>
             {% else %}
             <p class="text-muted h-100">아직 참여한 스터디가 없습니다.</p>
             {% if user == person %}
@@ -406,7 +406,6 @@
         </div>
       </div>
     </div>
-    {% endif %}
   </div>
 
 </div>
