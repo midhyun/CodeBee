@@ -114,7 +114,13 @@ def social_signup_request(request):
     return redirect(res)
 
 
-def social_signup_callback(request, service_name):
+def social_signup_callback(request):
+    if "kakao" in request.path:
+        service_name = "kakao"
+    elif "google" in request.path:
+        service_name = "google"
+    elif "github" in request.path:
+        service_name = "github"
     services = {
         "kakao": {
             "data": {
