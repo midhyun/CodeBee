@@ -13,12 +13,16 @@
     <div class="col-4">
       <div class="d-flex justify-content-center align-items-center h-100">
         <div>
-          {% if person.profile_picture %}
-          <img src="{{ person.profile_picture.url }}" alt="" class="rounded-circle border border-5">
+          {% if profile_picture %}
+          <img src="{{ profile_picture.url }}" alt="" class="rounded-circle border border-5"
+            style="width: 320px; height: 320px;">
+          {% elif social_profile_picture %}
+          <img src="{{ social_profile_picture }}" alt="" class="rounded-circle border border-5"
+            style="width: 320px; height: 320px;">
           {% else %}
           <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
-          <p class="fw-bold fs-4 text-center text-white mt-5">
+          <p class="fw-bold fs-4 text-center text-white mt-3">
             {{ person.nickname|default_if_none:" 어딘가의 드비" }}
           </p>
         </div>
@@ -26,7 +30,7 @@
     </div>
 
     <!-- 이름, 이메일, 깃허브 -->
-    <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
+    <div class="text-white h-100 col-3 fs-4 d-flex flex-column justify-content-evenly">
 
       <p>
         {% if person.email %}
@@ -67,6 +71,17 @@
             disabled="disabled">
             <span>i</span></button>
         </span>
+      </div>
+    </div>
+    <div class="col-5 d-flex justify-content-start align-items-center">
+      <div>
+        {% if person.is_social_account %}
+        <a href="{% url 'accounts:sns-logout' person.service_name %}" class="btn btn-lg btn-warning mx-3">소셜 계정 탈퇴</a>
+        {% else %}
+        {% endif %}
+      </div>
+      <div>
+        <a href="{% url 'accounts:delete' person.pk %}" class="btn btn-lg btn-secondary mx-3">회원 탈퇴</a>
       </div>
     </div>
   </header>
@@ -207,14 +222,14 @@
           {% endif %}
         </div>
         {% endfor %}
-        
+
       </div>
     </div>
 
     <!-- 참여한 스터디 -->
     <div class="tab">
       <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
-      <label for="tab-2" class="tab-label">About{{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
+      <label for="tab-2" class="tab-label">About {{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
       <div class="tab-content">
 
         <!-- 제목 영역 -->
@@ -339,7 +354,7 @@
                 {% if user == person %}
                 <p>아래로 이동해 리뷰를 작성해보세요.</p>
                 <div class="box-wrapper">
-                {% for study in uncomment_study %}
+                  {% for study in uncomment_study %}
                   {% if study.image %}
                   <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
                     style="background-image: url('{{ study.image.url }}')">

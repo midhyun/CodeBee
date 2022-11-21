@@ -152,12 +152,14 @@ class SNSUserSignupForm(forms.ModelForm):
             "service_name",
             "is_social_account",
             "token",
+            "social_profile_picture",
         )
         widgets = {
             "social_id": forms.HiddenInput,
             "service_name": forms.HiddenInput,
             "is_social_account": forms.HiddenInput,
             "token": forms.HiddenInput,
+            "social_profile_picture": forms.HiddenInput,
         }
 
 

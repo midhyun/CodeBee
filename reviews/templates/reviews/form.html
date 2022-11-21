@@ -9,7 +9,7 @@
 
 <div class="container my-3 position-relative" style="width:60%">
   <div class="d-flex align-items-end justify-content-center" style="position:relative; height:200px">
-    <img style="position:absolute; top:0px; right:0px" src="{% static 'createb.png' %}" alt="">
+    <img style="position:absolute; top:0px; right:0px;" src="{% static 'createb.png' %}" alt="">
     {% if request.resolver_match.url_name == 'create' %}
     <h2 class="fw-bold text-center my-5">스터디 만들기</h2>
     {% else %}
@@ -72,8 +72,8 @@
         <label for="id_addr" class="form-label">주소 (새로운 마커를 찍거나 기존의 마커를 클릭해주세요.)</label>
         <div class="input-group mb-3">
           <input name="location" maxlength="50" required="" type="text" class="form-control"
-          placeholder="직접 입력하거나 지도를 클릭해 마커를 표시하세요." id="id_addr" aria-label="Recipient's username"
-          aria-describedby="button-addon2" value="{{ study.location }}">
+            placeholder="직접 입력하거나 지도를 클릭해 마커를 표시하세요." id="id_addr" aria-label="Recipient's username"
+            aria-describedby="button-addon2" value="{{ study.location }}">
           <input onclick="searchPlaces()" class="btn btn-primary" type="button" id="button-addon2" value="검색하기">
         </div>
         <div id="map_wrap" class="map_wrap" style="display:relative">
@@ -84,7 +84,8 @@
         <input name="X" type="hidden" value="">
         <input name="Y" type="hidden" value="">
         <div class="mb-3"><label for="id_tag" class="form-label">태그 작성</label>
-        <input id="id_tag" name='tag' placeholder="#해시태그 #최대5개" type="hidden"></div>
+          <input id="id_tag" name='tag' placeholder="#해시태그 #최대5개" type="hidden">
+        </div>
         <div class="d-grid gap-2">
           <button type="submit" class="btn" style="background-color: rgb(245, 132, 12); color: white;">등록
           </button>
@@ -104,11 +105,11 @@
   var tags = JSON.parse("{{ tag|escapejs }}")
   let whitelist = tags['tags'];
   var input = document.studyform.tag
-      new Tagify(input, {
-          enforceWhitelist: false,
-          whitelist: whitelist,
-          maxTags : 5
-      })
- 
+  new Tagify(input, {
+    enforceWhitelist: false,
+    whitelist: whitelist,
+    maxTags: 5
+  })
+
 </script>
 {% endblock content %}

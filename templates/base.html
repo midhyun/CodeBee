@@ -32,6 +32,14 @@
       background-color: #fff023;
     }
 
+    #ul-div>li>a:hover {
+      color: rgb(255, 255, 255);
+    }
+
+    li {
+      list-style: none;
+    }
+
     .msgbox {
       position: absolute;
       top: 1rem;
@@ -109,41 +117,70 @@
     <nav class="navbar navbar-expand-lg nav_bg" id="bg">
       <div class="container">
         <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="60"></a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item ms-5">
-              <a href="{% url 'reviews:index' %}">코드비 찾기</a>
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'reviews:create' %}">코드비 모으기</a>
-            </li>
-            <li class="nav-item">
-              <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비
-                정보</a>
-            </li>
-            <div id="indicator"></div>
-          </ul>
+        <div id="ul-div" class="collapse navbar-collapse" id="navbarSupportedContent">
+          <li id="li1" class="nav-item ms-3">
+            <a href="{% url 'reviews:index' %}">코드비 찾기</a>
+          </li>
+          <li id="li2" class="nav-item">
+            <a href="{% url 'reviews:create' %}">코드비 모으기</a>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li id="li3" class="nav-item ms-auto m-0">
+            <a class="nav-item" href="{% url 'accounts:logout' %}">로그아웃</a>
+          </li>
+          <li id="li4" class="nav-item">
+            <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비
+              정보</a>
+          </li>
+          {% else %}
+          <li id="li3" class="nav-item ms-auto me-3">
+            <a href="{% url 'accounts:login' %}">로그인</a>
+          </li>
+          <li id="li4" class="me-3">
+            <a href="{% url 'accounts:signup' %}">즉시 가입</a>
+          </li>
+          {% endif %}
+          <div id="indicator"></div>
         </div>
       </div>
     </nav>
     <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasRight"
       aria-labelledby="offcanvasRightLabel">
-      <div class="offcanvas-header">
-        <h5 id="offcanvasRightLabel">코드비 정보</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      <div class="offcanvas-header justify-content-around">
+        <h1 id="offcanvasRightLabel" class="m-0">{{ request.user }}</h1>
+        <button type="button" class="btn-close text-reset text-bg-light" data-bs-dismiss="offcanvas"
+          aria-label="Close"></button>
       </div>
-      <hr style="color:white; border: solid 2px">
+      <hr style="color:white; border: solid 2px; margin: 0;">
       <div class="offcanvas-body">
         {% if request.user.is_authenticated %}
-        <p><a class="anc" href="{% url 'accounts:test' %}">내 정보</a></p>
-        <h1>
-          {{ request.user }}
-          <a class="text-white" href="{% url 'accounts:logout' %}">로그아웃</a>
-        </h1>
+        <div class="m-3 p-3">
+          {% if request.user.profile_picture %}
+          <img src="{{ request.user.profile_picture.url }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% elif request.user.social_profile_picture %}
+          <img src="{{ request.user.social_profile_picture }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% else %}
+          <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
+          {% endif %}
+        </div>
+        <p><a class="anc" href="{% url 'accounts:detail' request.user.pk %}">회원 정보 상세보기</a></p>
+        <div>
+          {% if request.user.is_social_account %}
+          <span class="text-warning ps-2">[ 소셜 로그인 유저 ]</span>
+          {% else %}
+          <span class="text-white ps-2">[ 그저 한 마리의 꿀벌 ]</span>
+          {% endif %}
+        </div>
+        <p>{{ request.user.fullname }}</p>
+        <p>{{ request.user.email }}</p>
+        <p>{{ request.user.phone }}</p>
         {% else %}
-        <h1>
+        <h3>권한이 없습니다.</h3>
+        <h3>
           <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
-        </h1>
+        </h3>
         {% endif %}
       </div>
     </div>
@@ -153,11 +190,10 @@
     {% block content %}{% endblock content %}
   </div>
   <!-- 본문 영역 끝 -->
-  <footer id="main-footer" class="align-items-center" style="background:rgb(83, 83, 83); height:80px;">
-    <div class="justify-content-between row">
-      <div class="p-2 col-12">
-        <p class="mb-0 text-white">@ Copyrights 2022 CodeBee All Rights Reserved</p>
-      </div>
+  <footer id="main-footer" class="text-center"
+    style="position:sticky; background:rgb(83, 83, 83); bottom: 0; z-index:3;">
+    <div class="py-4">
+      <p class="text-white align-center m-0">@ Copyrights 2022 CodeBee All Rights Reserved</p>
     </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
