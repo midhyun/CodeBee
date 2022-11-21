@@ -55,7 +55,6 @@
 <img id="img1" style="position:absolute; left:0; top:0; z-index:10;" src="{% static  'm_logo.png' %} " width=" 50">
 
 <script>
-
     // 마우스 커서 위치 담을 변수
     var mouseX = 0;
     var mouseY = 0;
@@ -86,7 +85,6 @@
 
     document.onmousemove = getMousePosition; // 마우스가 움직이면 getMousePosition 함수 실행
     setInterval("moveImg()", 7); // moveImg 함수 반복 실행하여 이미지 움직이기
-
 </script>
 <div id="main-top">
     <!-- 높이를 정해주어야 스크롤이 고장나지 않음 -->
@@ -154,61 +152,73 @@
             <button type="button" class="btn-close text-reset text-bg-light" data-bs-dismiss="offcanvas"
                     aria-label="Close"></button>
         </div>
-        <hr style="color:white; border: solid 2px; margin: 0;">
-        <div class="offcanvas-body">
-            {% if request.user.is_authenticated %}
-                <div class="m-3 p-3">
-                    {% if request.user.profile_picture %}
-                        <img src="{{ request.user.profile_picture.url }}" alt="" class="rounded-circle border border-5"
-                             style="width: 300px; height: 300px;">
-                    {% elif request.user.social_profile_picture %}
-                        <img src="{{ request.user.social_profile_picture }}" alt=""
-                             class="rounded-circle border border-5"
-                             style="width: 300px; height: 300px;">
-                    {% else %}
-                        <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
-                    {% endif %}
-                </div>
-                <p><a class="anc" href="{% url 'accounts:update' request.user.pk %}">회원 정보 수정</a></p>
-                <p><a class="anc" href="{% url 'accounts:detail' request.user.pk %}">회원 정보 상세보기</a></p>
-                <div>
-                    {% if request.user.is_social_account %}
-                        <span class="text-warning ps-2">[ 소셜 로그인 유저 ]</span>
-                    {% else %}
-                        <span id="rtext" class="text-white"></span>
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-start">
-                        <button type="button" id="btn">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-refresh"
-                                 width="22" height="22" viewBox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
-                                 fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4"/>
-                                <path d="M4 13a8.1 8.1 0 0 0 15.5 2m.5 4v-4h-4"/>
-                            </svg>
-                        </button>
-                        </div>
-                    {% endif %}
-                </div>
-                <p>{{ request.user.fullname }}</p>
-                <p>{{ request.user.email }}</p>
-                <p>{{ request.user.phone }}</p>
-            {% else %}
-                <h3>권한이 없습니다.</h3>
-                <h3>
-                    <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
-                </h3>
-            {% endif %}
+      <hr style="color:white; border: solid 2px; margin: 0;">
+      <div class="offcanvas-body">
+        {% if request.user.is_authenticated %}
+        <div class="m-3 p-3">
+          {% if request.user.profile_picture %}
+          <img src="{{ request.user.profile_picture.url }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% elif request.user.social_profile_picture %}
+          <img src="{{ request.user.social_profile_picture }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% else %}
+          <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
+          {% endif %}
         </div>
+        <p class="text-end">
+            <a class="anc btn" style="background-color: rgb(255 192 7);" href="{% url 'accounts:detail' request.user.pk %}">
+              <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
+              margin-right: 10px;">나의 CodeBee</a>
+        <div>
+          </p>
+          <p class="text-white ps-2 fw-bold" style="font-size: larger;">
+            {% if request.user.is_social_account %}
+            {{ request.user.email }}
+            {% else %}
+            {{ request.user.nickname|default_if_none:"그저 한 마리의 꿀벌" }}
+            {% endif %}
+          </p>
+        </div>
+        <p class="can-li">
+          {% comment %} 구글 로그인인 경우 {% endcomment %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google" width="16"
+            height="24" viewbox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M17.788 5.108a9 9 0 1 0 3.212 6.892h-8"></path>
+          </svg>
+          {% comment %} 카카오톡 로그인인 경우 {% endcomment %}
+          <img src="{% static 'kakaoauth.png' %}" alt="logo" style="width:16px">
+          {% comment %} 깃허브로그인인 경우 {% endcomment %}
+          <img src="{% static 'githubauth.png' %}" alt="logo" style="width:16px">
+          miggo2704@gmail.com
+        </p>
+
+        <p class="can-li">{{ request.user.fullname|default_if_none:"이름을 설정해주세요." }}</p>
+        {% if not request.user.is_social_account %}
+        {% if request.user.eamil|length %}
+        <p class="can-li">{{ request.user.email|default_if_none:"이메일을 설정해주세요." }}</p>
+        {% endif %}
+        {% endif %}
+        <p class="can-li">{{ request.user.phone|default_if_none:"전화번호를 설정해주세요." }}</p>
+        {% else %}
+        <h3>권한이 없습니다.</h3>
+        <h3>
+          <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
+        </h3>
+        {% endif %}
+      </div>
     </div>
-</div>
-<!-- 본문 영역 시작 -->
-<div id="main">
-    {% block content %}
-    {% endblock content %}
-</div>
-<!-- 본문 영역 끝 -->
-<footer id="main-footer" class="text-center"
-        style="position:sticky; background:rgb(83, 83, 83); bottom: 0; z-index:3;">
+  </div>
+  <!-- 본문 영역 시작 -->
+  <div id="main">
+    {% block content %}{% endblock content %}
+  </div>
+  <!-- 본문 영역 끝 -->
+  <footer id="main-footer" class="text-center"
+    style="position:sticky; background:rgb(83, 83, 83); bottom: 0; z-index:3;">
+
     <div class="py-4">
         <p class="text-white align-center m-0">@ Copyrights 2022 CodeBee All Rights Reserved</p>
     </div>
