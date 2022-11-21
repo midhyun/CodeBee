@@ -569,11 +569,9 @@ def likes(request, study_pk, user_pk):
     study = get_object_or_404(Study, pk=study_pk)
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
-    check = Honey.objects.filter(
-        study=study, rating_user=rating, rated_user=rated
-    ).exists()
+    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
     join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
-
+    print(rated)
     if rated == request.user:
         messages.warning(request, "본인을 평가할 수 없습니다.")
 
@@ -598,7 +596,7 @@ def likes(request, study_pk, user_pk):
             honey.like = True
             honey.save()
 
-    return redirect("reviews:userlist", study_pk)
+    return redirect("reviews:detail", study_pk)
 
 
 def dislikes(request, study_pk, user_pk):
@@ -606,8 +604,7 @@ def dislikes(request, study_pk, user_pk):
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
     check = Honey.objects.filter(
-        study=study, rating_user=rating, rated_user=rated
-    ).exists()
+        study=study, rating_user=rating, rated_user=rated).exists()
     join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
 
     if rated == request.user:
@@ -634,7 +631,7 @@ def dislikes(request, study_pk, user_pk):
             honey.dislike = True
             honey.save()
 
-    return redirect("reviews:userlist", study_pk)
+    return redirect("reviews:detail", study_pk)
 
 
 def del_date(request, date_pk):
