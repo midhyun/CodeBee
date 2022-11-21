@@ -119,6 +119,7 @@ def detail(request, study_pk):
     form = StudyDateForm()
     cnt = len(Accepted.objects.filter(study=study))
     users = Accepted.objects.filter(study_id=study_pk)
+    accepteduser = Accepted.objects.filter(study_id=study_pk, joined=True)
     for user in users:
         if user.users == request.user:
             user_accepted = True
@@ -126,6 +127,7 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {
+        'accepteduser':accepteduser,
         'reviewers':reviewers,
         'comments':comments,
         'comment_form':comment_form,
