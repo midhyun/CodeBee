@@ -13,7 +13,7 @@
   <header class="container align-items-center">
     <div class="d-flex justify-content-between">
       <!-- 인덱스 카테고리 -->
-      <div style="padding: 20px 50px 0px; transform: translateY(12px)">
+      <div style="padding: 20px 50px 0; transform: translateY(12px)">
         <form id="category_form" action="" method="GET">
           <select name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
             <option selected="selected">스터디 카테고리</option>
@@ -25,7 +25,7 @@
       </div>
       <!-- 검색바 -->
 
-      <div style="padding:20px 50px 0px">
+      <div style="padding:20px 50px 0">
         <div class="search-box">
           <form class="" action="{% url 'reviews:search' %}">
             <img class="btn-search" src="{% static 'new_logo.png' %}" width="30" alt="">

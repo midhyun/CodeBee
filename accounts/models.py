@@ -63,7 +63,7 @@ class User(AbstractUser):
         upload_to="profile_pictures/",
         null=True,
         blank=True,
-        processors=[ResizeToFill(128, 128)],
+        processors=[ResizeToFill(512, 512)],
         format="JPEG",
         options={
             "quality": 80,
