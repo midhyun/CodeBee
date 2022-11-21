@@ -14,7 +14,7 @@ from django.core.paginator import Paginator
 # Create your views here.
 # 카카오톡 나에게 보내기 메시지 url
 url = "https://kapi.kakao.com/v2/api/talk/memo/default/send"
-
+link_url = "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com"
 
 def home(request):
     return render(request, "home.html")
@@ -237,8 +237,8 @@ def join(request, study_pk, user_pk):
                                     "image_height": 550,
 
                                     "link": {
-                                        "web_url": "http://localhost:8000",
-                                        "mobile_web_url": "http://localhost:8000",
+                                        "web_url": link_url,
+                                        "mobile_web_url": link_url,
                                         "android_execution_params": "contentId=100",
                                         "ios_execution_params": "contentId=100",
                                     },
@@ -247,8 +247,8 @@ def join(request, study_pk, user_pk):
                                     {
                                         "title": "웹으로 이동",
                                         "link": {
-                                            "web_url": "http://localhost:8000",
-                                            "mobile_web_url": "http://localhost:8000",
+                                            "web_url": link_url,
+                                            "mobile_web_url": link_url,
                                         },
                                     },
                                     {
@@ -311,12 +311,11 @@ def study_kick(request, study_id, users_id):
                                 "title": f"{user.fullname}님의 스터디 가입신청이 거부되었습니다.",
                                 "description": "다른 스터디에 참여해보세요!",
                                 "image_url": f"{image_url}",
-                                # "image_url": f"http://localhost:8000{image_url}",
                                 "image_width": 800,
                                 "image_height": 550,
                                 "link": {
-                                    "web_url": "http://localhost:8000",
-                                    "mobile_web_url": "http://localhost:8000",
+                                    "web_url": link_url,
+                                    "mobile_web_url": link_url,
                                     "android_execution_params": "contentId=100",
                                     "ios_execution_params": "contentId=100",
                                 },
@@ -325,8 +324,8 @@ def study_kick(request, study_id, users_id):
                                 {
                                     "title": "웹으로 이동",
                                     "link": {
-                                        "web_url": "http://localhost:8000",
-                                        "mobile_web_url": "http://localhost:8000",
+                                        "web_url": link_url,
+                                        "mobile_web_url": link_url,
                                     },
                                 },
                                 {
@@ -370,12 +369,12 @@ def gathering(request, study_pk):
                         "title": f"{request.user}님의 메시지",
                         "description": f"{message}",
                         "image_url": f"https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png",
-                        # "image_url": f"http://localhost:8000{image_url}",
+                        # "image_url": f"{link_url}{image_url}",
                         "image_width": 800,
                         "image_height": 550,
                         "link": {
-                            "web_url": "https://google.com",
-                            "mobile_web_url": "https://google.com",
+                            "web_url": link_url,
+                            "mobile_web_url": link_url,
                             "android_execution_params": "contentId=100",
                             "ios_execution_params": "contentId=100",
                         },
@@ -384,8 +383,8 @@ def gathering(request, study_pk):
                         {
                             "title": "웹으로 이동",
                             "link": {
-                                "web_url": "https://google.com",
-                                "mobile_web_url": "https://google.com",
+                                "web_url": link_url,
+                                "mobile_web_url": link_url,
                             },
                         },
                         {

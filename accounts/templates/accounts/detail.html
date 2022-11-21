@@ -371,9 +371,9 @@
                     <!-- 내용 영역 -->
                     <div class="detail-content">
                         <!-- 유저가 작성한 리뷰가 하나라도 있다면, -->
-                        {% if person.comment_set.all %}
+                        {% if person.comment.all %}
                             <div class="p-3 d-flex">
-                            {% for comment in person.comment_set.all %}
+                            {% for comment in person.comment.all %}
                                 <div class="review_card">
                                     <div class="review_info">
                                         {% if comment.study.image %}
