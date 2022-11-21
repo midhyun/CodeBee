@@ -103,7 +103,10 @@ def create(request):
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    if request.method == "POST":
+
+    comment_form = CommentForm(request.POST)
+    comments = Comment.objects.all().order_by("-pk")
+    if request.method =='POST':
         form = StudyDateForm(request.POST)
         if form.is_valid():
             temp = form.save(commit=False)
@@ -121,7 +124,10 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {
-        "members": users,
+        'comments':comments,
+        'comment_form':comment_form,
+        'reviews': study,
+        'members': users,
         "form": form,
         "dates": dates,
         "study": study,
@@ -389,24 +395,7 @@ def comment_create(request, pk):
 
         comment.save()
 
-        comments = Comment.objects.filter(study_id=pk).order_by("-pk")
-        comments_data = []
-        for co in comments:
-            co.created_at = co.created_at.strftime("%Y-%m-%d %H:%M")
-            comments_data.append(
-                {
-                    "request_user_pk": request.user.pk,
-                    "comment_pk": co.pk,
-                    "user_pk": co.user.pk,
-                    "username": co.user.username,
-                    "content": co.content,
-                    "created_at": co.created_at,
-                    "updated_at": co.updated_at,
-                    "study_id": co.study_id,
-                }
-            )
-        context = {"comments_data": comments_data}
-        return JsonResponse(context)
+        return redirect('reviews:detail', pk)
 
 
 @login_required
@@ -417,24 +406,10 @@ def comment_update(request, pk, comment_pk):
         comment = Comment.objects.get(pk=comment_pk)
         comment.content = jsonObject.get("content")
         comment.save()
-
-        comments = Comment.objects.filter(study_id=pk).order_by("-pk")
-        comments_data = []
-        for co in comments:
-            co.created_at = co.created_at.strftime("%Y-%m-%d %H:%M")
-            comments_data.append(
-                {
-                    "request_user_pk": request.user.pk,
-                    "comment_pk": co.pk,
-                    "user_pk": co.user.pk,
-                    "username": co.user.username,
-                    "content": co.content,
-                    "created_at": co.created_at,
-                    "updated_at": co.updated_at,
-                    "study_id": co.study_id,
-                }
-            )
-        context = {"comments_data": comments_data}
+        upcomment = Comment.objects.get(pk=comment_pk)
+        context = {
+            "comments_date": upcomment.updated_at,
+        }
         return JsonResponse(context)
 
 
