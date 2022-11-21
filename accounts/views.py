@@ -112,7 +112,7 @@ def social_signup_callback(request, service_name):
         "kakao": {
             "data": {
                 "grant_type": "authorization_code",
-                "redirect_uri": "runedemon.shop/accounts/login/kakao/callback",
+                "redirect_uri": "http://runedemon.shop/accounts/login/kakao/callback",
                 "client_id": KAKAO_CLIENT_ID,
                 "code": request.GET.get("code"),
             },
