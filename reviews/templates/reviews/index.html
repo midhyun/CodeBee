@@ -13,7 +13,7 @@
   <header class="container align-items-center">
     <div class="d-flex justify-content-between">
       <!-- 인덱스 카테고리 -->
-      <div style="padding: 20px 50px 0; transform: translateY(12px)">
+      <div class="d-flex align-items-end" style="padding: 20px 50px 0; transform: translateY(12px)">
         <form id="category_form" action="" method="GET">
           <select name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
             <option selected="selected">스터디 카테고리</option>
@@ -22,6 +22,7 @@
             <option value="2">온라인 스터디</option>
           </select>
         </form>
+        <a class="text-muted ms-3" style="text-decoration:none; vertical-align: end;" href="{% url 'reviews:create' %}">스터디 만들기</a>
       </div>
       <!-- 검색바 -->
 
