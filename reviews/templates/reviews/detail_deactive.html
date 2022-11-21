@@ -162,7 +162,12 @@
             <div class="pb-3 mt-2 border-bottom">
               <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
                   href="{% url 'accounts:detail' member.users.pk %}">
-                  {{ member.users }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a>
+                  {{ member.users }}                  
+                  <!-- 현재 접속중인 유저인지 표시 -->
+                  {% if member.users == user %}
+                  <span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span>
+                  {% endif %}
+                </a>
                 {% if study.host == member.users %}
                 <span class="badge bg-dark">스터디장</span>
               <p class="my-4"></p>
