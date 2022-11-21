@@ -29,5 +29,8 @@ urlpatterns = [
         views.check_email_auth,
         name="check-email-auth",
     ),
+
     path("follow/<int:following_pk>/", views.follow, name="follow"),
+    path("<int:user_pk>/delete/", views.delete, name="delete"),
+    path("test2/", views.test2, name="test2"),
 ]
