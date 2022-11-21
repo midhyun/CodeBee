@@ -290,6 +290,44 @@ nav li:nth-child(4):hover~#indicator {
   transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2);
 }
 
+.input-search2 {
+  height: 50px;
+  width: 380px;
+  border-style: none;
+  padding: 10px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  outline: none;
+  border-radius: 25px;
+  transition: all .5s ease-in-out;
+  background-color: #F2F2F2;
+  padding-right: 40px;
+  display: inline-block;
+  color: #535353;
+}
+
+.input-search2::placeholder {
+  color: #535353;
+  font-size: 18px;
+  letter-spacing: 2px;
+  font-weight: 100;
+}
+
+.input-search2:focus {
+  width: 380px;
+  border-radius: 0px;
+  background-color: transparent;
+  border-bottom: 2px solid #535353;
+  transition: all 500ms cubic-bezier(0, 0.11, 0.35, 2);
+}
+
+.select-box {
+  padding: 8px;
+  margin-left: 8px;
+  border: none;
+  background-color: #F2F2F2;
+}
+
 /** ========버튼효과=============*/
 .glow-on-hover {
   width: 220px;

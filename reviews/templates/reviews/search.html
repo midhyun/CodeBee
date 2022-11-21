@@ -8,8 +8,8 @@
 {% block content %}
 
 
-<form action="{% url 'reviews:search' %}" class="search-box ">
-    <select class="post-color select_boder mx-1" aria-label="Default select example" name='field'>
+<form action="{% url 'reviews:search' %}" class="search-box my-4 mx-3">
+    <select class="post-color select_boder select-box" aria-label="Default select example" name='field'>
     <option value="1">전체</option>
     <option value="2">스터디명</option>
     <option value="3">스터디장</option>
@@ -17,8 +17,10 @@
     <option value="5">태그</option>
     <option value="6">장소</option>
     </select>
-    <img class="btn-search" src="{% static 'new_logo.png' %}" width="30" alt="">
-    <input class="input-search" type="text" name="search" placeholder=" "/>
+    <span class="btn-search" style="top: 10px;">
+        <img src="{% static 'new_logo.png' %}" width="30" alt="">
+    </span>
+    <input id="input-search" class="input-search2" type="text" name="search" placeholder="찾고 싶은 코드비를 검색해보세요!"/>
 </form>
 <!-- 헤더 이미지 영역 -->
 
@@ -159,29 +161,5 @@
     </div>
 </div>
 
-<script>
-    var searchimage = document.querySelector('.btn-search');
-    var input = document.getElementById('input-search');
-    searchimage.addEventListener('click', function() {
-    input.classList.toggle('hide');
-  
-    
-   input.animate([
-  // keyframes
-      { width: '0%' }, 
-      { width: '100%' }
-    ], { 
-      // timing options
-      duration: 200,
-      easing: "ease-in",
-      iterations: 1
-    });
-  
-  input.style.width = "380px";
-  input.select();
-  });
-
-
-</script>
 
 {% endblock content %}
