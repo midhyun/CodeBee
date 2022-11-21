@@ -69,80 +69,99 @@
 
           </div>
         </div>
-      </div>
-      <!-- 스터디 내용, 유저목록 탭 -->
 
-      <!-- NAVTAP -->
-      <ul class="nav nav-tabs d-flex justify-content-between mt-3" id="myTab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane"
-            type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Content</button>
-        </li>
-        <div class="d-flex">
+                    <!-- 스터디 내용, 유저목록 탭 -->
+        
+        <!-- NAVTAP -->
+        <ul class="nav nav-tabs d-flex justify-content-between mt-3" id="myTab" role="tablist">
+          <div class="d-flex">
           <li class="nav-item" role="presentation">
-            <button class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#userlistcanvas"
-              aria-controls="offcanvasRight"><i class="bi bi-list"></i>그룹원</button>
+            <button class="nav-link text-dark active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Content</button>
           </li>
-          {% if request.user == study.host %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link text-dark" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews-tab-pane" type="button" role="tab" aria-controls="reviews-tab-pane" aria-selected="false">Reviews</button>
+          </li></div>
+          <div class="d-flex">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#userlistcanvas" aria-controls="offcanvasRight">
+              <i class="bi bi-list"></i>그룹원</button>
+          </li>
           <li class="nav-item" role="presentation">
 
+            <button type="button" class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#reviews_modal">
+              <i class="bi bi-pencil-square"></i>리뷰작성
+            </button>
           </li>
-          {% endif %}
-        </div>
-      </ul>
-      <!-- NAVTAP-CONTENT -->
-      <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab"
-          tabindex="0">
-          <div class=" p-3 border border-3">
-            {% if post.image %}
-            <img src="{{ study.image.url }}" alt="">
-            {% endif %}
-            <p>
-              {% if study.location_type == False %}
-            <p class="my-0 fw-bold fs-5">모임장소</p>
-            <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
-            {% elif study.location_type == True %}
-            <p class="my-0 fw-bold fs-5">온라인</p>
-            <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
-            {% endif %}
-            </p>
-            <p class="my-0 fw-bold fs-5">스터디 소개</p>
-            <p class="ms-3 fs-6 text-muted">{{ study.content }}</p>
-            <p>제한 인원:
-              {{ cnt }}
-              /
-              {{ study.limits }}</p>
-            <div class="dropdown">
-              <button class="btn btn-dark dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                일정 확인하기
-                <span class="badge text-bg-secondary">{{dates|length}}</span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu" style="width:600px">
-                <li>
-                  <a id="testaxios" data-study-id="{{study.pk}}" class="dropdown-item bg-dark text-white" href="#">스터디
-                    일정</a>
-                </li>
-                {% for date in dates %}
-                <li id="{{ forloop.counter }}dateitem">
-                  <div class="dropdown-item d-flex justify-content-between">
-                    <div style="width:25px">{{ forloop.counter }}회</div>
-                    <div>시작:
-                      {{date.study_at|date:'y년m월d일 h:i'}}
-                      / 종료:
-                      {{date.study_end|date:'y년m월d일 h:i'}}</div>
+          <!-- Button trigger modal -->
+
+
+            <!-- Modal -->
+            <div class="modal fade" id="reviews_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+              <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">리뷰 작성하기</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                </li>
-                {% endfor %}
-                {% if request.user == study.host %}
-                <li>
-                  <hr class="dropdown-divider">
-                </li>
+                  <div class="modal-body d-flex justify-content-center">
+                    <br>
+                    <form action="{% url 'reviews:comment_create' study.pk %}" method="POST">
+                      {% csrf_token %}
+                      <p>소중한 리뷰를 남겨주세요. 한 개의 스터디에 한 번만 남길 수 있습니다.</p>
+                      {% bootstrap_form comment_form %}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ul>
+        <!-- NAVTAP-CONTENT -->
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+            <div class=" p-3 border border-3">
+              {% if post.image %} 
+                <img src="{{ study.image.url }}" alt="">
+              {% endif %}
+              <p>
+                {% if study.location_type == False %}
+                  <p class="my-0 fw-bold fs-5">모임장소</p>
+                  <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
+                {% elif study.location_type == True %}
+                  <p class="my-0 fw-bold fs-5">온라인</p>
+                  <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
                 {% endif %}
               </ul>
               <!-- 스터디 추가 Modal -->
             </div>
+
+          </div>
+          <div class="tab-pane fade" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
+            <div class=" p-3 border border-3">
+                {% for comment in comments %}
+                <div id="comment-{{ comment.pk }}">
+                <p>{{ comment.user }} | <span id="created_at-{{ comment.pk }}">{{ comment.created_at }}</span></p>
+                <p>
+                  <div class="" id="comment-{{comment.pk}}-content" >{{ comment.content }}</div>
+                  <div id="comment-{{ comment.pk }}-updateform" class="input-group mb-3 d-none">
+                    <input class="form-control" id="comment-{{ comment.pk }}-update-content" type="text" value="{{ comment.content }}">
+                    <button id="comment-{{ comment.pk }}-update-btn" class="btn btn-primary" data-study-id="{{ study.pk }}"
+                      data-comment-id="{{ comment.pk }}" onclick="updateComment(this)">확인</button>
+                  </div>
+                {% if user.pk == comment.user_id %}
+                <button id="updatebtn" data-study-id="{{ study.pk }}" data-comment-id="{{ comment.pk }}" class="btn btn-outline-success" onclick="getUpdateComment(this)">수정
+                </button>
+                <button id="deletebtn" data-study-id="{{ study.pk }}" data-comment-id="{{ comment.pk }}" class="btn btn-outline-danger" onclick="deleteComment(this)">삭제
+                </button>
+                {% endif %}</p>
+              </div>
+                {% endfor %}
+            </div>
+
           </div>
           </form>
         </div>
@@ -177,41 +196,47 @@
               {% endif %}</p>
             </div>
           </div>
-          {% else %}
-          <!-- 신청 대기중인 멤버 뱃지로 표시 -->
-          <div>
-            <div class="pb-3 mt-2 border-bottom">
-              <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
-                  href="{% url 'accounts:detail' member.users.pk %}">
-                  {{ member.users }}</a>
-                <span class="badge bg-secondary">대기중</span>
-                {% if study.host == user %}
-              <p class="text-end">
-              </p>
-              {% else %}
-              <p>
-              <p class="my-4"></p>
-              {% endif %}
-            </div>
-          </div>
-          {% endif %}
-          {% endfor %}
+
+          <div class="offcanvas-body">
+            {% for member in members %}
+              {% if member.joined == True %}
+                <div>
+                  <div class="pb-3 mt-2 border-bottom">
+                    <p class="fw-bold my-0"><a style="text-decoration:none; color:black" href="{% url 'accounts:detail' member.users.pk %}">
+                      {{ member.users }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a>
+                    {% if study.host == member.users %}
+                    <span class="badge bg-dark">스터디장</span>
+                        <p class="my-4"></p>
+                      {% else %}
+                      <span class="badge bg-success">참여중</span>
+                            <p class="my-4"></p>
+                          {% endif %}</p>
+                      </div>
+                    </div>
+                  {% else %}
+                    <!-- 신청 대기중인 멤버 뱃지로 표시 -->
+                    <div>
+                      <div class="pb-3 mt-2 border-bottom">
+                        <p class="fw-bold my-0"><a style="text-decoration:none; color:black" href="{% url 'accounts:detail' member.users.pk %}">
+                          {{ member.users }}</a>
+                        <span class="badge bg-secondary">대기중</span>
+                        {% if study.host == user %}
+                          <p class="text-end">
+                          </p>
+                        {% else %}
+                          <p>
+                            <p class="my-4"></p>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endfor %}
+                </div>
         </div>
+        <!-- 지도 정보 -->
+      <div class="mt-3" id="study_map" style="width:100%;height:350px;"></div>
       </div>
-
     </div>
-    <!-- 스터디 정보 수정, 삭제 권한은 호스트에게만 부여 -->
-
-  </div>
-
-
-
-  {% if study.host == user %}
-  <!-- 그룹원 호출 버튼 -->
-
-
-  <!-- 그룹원 호출 모달 -->
-  {% endif %}
 </div>
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5f7017bbd438ca7123380bb4aa4d8597"></script>
 <script>
@@ -238,10 +263,6 @@
 </script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-  console.log({% url 'reviews:index' %})
-  var test = document.getElementById('testaxios')
-  console.log(test)
-
   function deletedate(event) {
     console.log(event.dataset.dateId)
     const datePk = event.dataset.dateId
@@ -256,5 +277,111 @@
       el.remove()
     })
   };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+const getComment = function (e) {
+  const comments = document.querySelector(`#${e}`);
+  const commentsList = document.querySelector(`#${e}-list`);
+  commentsList.classList.toggle('d-none');
+
+  if (commentsList.classList.contains('d-none')) {
+    comments.innerText = "댓글보기"
+  } else {
+    comments.innerText = "댓글닫기"
+  };
+};
+
+const getCreateComment = function (e) {
+  const commentForm = document.querySelector(`#${e}-form`);
+  commentForm.classList.toggle('d-none');
+}
+
+const submitComment = function (e) {
+  event.preventDefault();
+  const commentForm = document.querySelector(`#${e}`);
+
+  const pk = event.target.dataset.reviewId;
+
+  axios({
+    method: 'post',
+    url: `/reviews/${pk}/comments/`,
+    headers: { 'X-CSRFToken': csrftoken },
+    data: new FormData(commentForm)
+  })
+    .then(response => {
+      const commentsList = document.querySelector(`#review-${response.data.comments_data[0].study_id}-comments-list`)
+      commentsList.textContent = "";
+      for (let i = 0; i < response.data.comments_data.length; i++) {
+        if (response.data.comments_data[i].request_user_pk === response.data.comments_data[i].user_pk) {
+          commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span>
+          <button id="comment-${response.data.comments_data[i].comment_pk}-update" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-success" onclick="getUpdateComment(this.id)">수정</button>
+          <button id="comment-${response.data.comments_data[i].comment_pk}-delete" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제</button>
+          <div id="comment-${response.data.comments_data[i].comment_pk}-update-form" class="d-none">
+          <input id="comment-${response.data.comments_data[i].comment_pk}-update-content" type="text" value="${response.data.comments_data[i].content}">
+          <button id="comment-${response.data.comments_data[i].comment_pk}-update-btn" class="btn btn-primary" data-review-id="${response.data.comments_data[i].study_id}" data-comment-id="${response.data.comments_data[i].comment_pk}" onclick="updateComment(this.id)">확인</button>
+          </div><br>`);
+        } else {
+          commentsList.insertAdjacentHTML('beforeend', `<span>${response.data.comments_data[i].username} | ${response.data.comments_data[i].content} | ${response.data.comments_data[i].created_at} </span><br>`);
+        }
+
+      }
+      commentForm.reset();
+      let counter = document.getElementById("counter_id_content");
+      counter.innerText = "0/500";
+
+      //코멘트 작성 후 코멘트리스트 보여주기
+      commentsList.classList.remove('d-none');
+
+    })
+
+}
+
+function getUpdateComment(event) {
+  const commentPk = event.dataset.commentId
+  const comment = document.querySelector(`#comment-${commentPk}-content`);
+  comment.classList.toggle('d-none');
+  const updateComment = document.querySelector(`#comment-${commentPk}-updateform`);
+  updateComment.classList.toggle('d-none');
+}
+
+function updateComment(event) {
+  const commentPk = event.dataset.commentId
+  const commentValue = document.querySelector(`#comment-${commentPk}-update-content`).value;
+  const pk1 = event.dataset.studyId;
+  const comment = document.querySelector(`#comment-${commentPk}-content`);
+  comment.classList.toggle('d-none');
+  const updateComment = document.querySelector(`#comment-${commentPk}-updateform`);
+  updateComment.classList.toggle('d-none');
+
+  axios({
+    method: 'post',
+    url: `/reviews/${pk1}/${commentPk}/update/`,
+    headers: { 'X-CSRFToken': csrftoken },
+    data: { 'content': commentValue }
+  })
+    .then(response => {
+      document.querySelector(`#comment-${commentPk}-content`).innerText = `${commentValue}`
+    })
+}
+
+function deleteComment(event) {
+  const studyPk = event.dataset.studyId
+  const commentPk = event.dataset.commentId
+  console.log(document.querySelector(`#comment-${commentPk}`))
+  console.log(studyPk)
+  if (confirm("정말 삭제하시겠습니까??") == true) {
+    axios({
+      method: 'post',
+      url: `/reviews/${studyPk}/${commentPk}/delete/`,
+      headers: { 'X-CSRFToken': csrftoken },
+    })
+      .then(response => {
+        document.querySelector(`#comment-${commentPk}`).remove()
+      })
+  }
+}
 </script>
 {% endblock %}
