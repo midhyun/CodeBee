@@ -250,6 +250,7 @@ def social_signup_callback(request):
             },
         }
     user_info = login_data[service_name]
+    print(user_info,'11111111111111111111111111')
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
         user_login(request, user)
@@ -285,7 +286,13 @@ def social_signup_callback(request):
 
 
 # 소셜로그인 연결 끊기
-def sns_logout(request, service_name):
+def sns_logout(request):
+    if "kakao" in request.path:
+        service_name = "kakao"
+    elif "google" in request.path:
+        service_name = "google"
+    elif "github" in request.path:
+        service_name = "github"
     social_id = request.user.social_id
     user = get_object_or_404(get_user_model(), social_id=social_id)
     access_token = user.token
