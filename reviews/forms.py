@@ -18,6 +18,7 @@ class StudyForm(forms.ModelForm):
         fields = [
             "title",
             "limits",
+            "content",
             "image",
             "deadline",
         ]
