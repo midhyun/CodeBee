@@ -38,7 +38,7 @@ def index(request):
 
 @login_required
 def create(request):
-    if (request.user.is_phone_active and request.user.is_email_active) or request.user.is_social_account:
+    if (request.user.is_phone_active) or request.user.is_social_account:
         if request.method == "POST":
             tag = ""
             temp = request.POST["tag"]
