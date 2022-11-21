@@ -173,41 +173,52 @@
           <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-          <div class="offcanvas-body">
-            {% for member in members %}
-              {% if member.joined == True %}
-                <div>
-                  <div class="pb-3 mt-2 border-bottom">
-                    <p class="fw-bold my-0"><a style="text-decoration:none; color:black" href="{% url 'accounts:detail' member.users.pk %}">
-                      {{ member.users }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a>
-                    {% if study.host == member.users %}
-                    <span class="badge bg-dark">스터디장</span>
-                        <p class="my-4"></p>
-                      {% else %}
-                      <span class="badge bg-success">참여중</span>
-                            <p class="my-4"></p>
-                          {% endif %}</p>
-                      </div>
-                    </div>
-                  {% else %}
-                    <!-- 신청 대기중인 멤버 뱃지로 표시 -->
-                    <div>
-                      <div class="pb-3 mt-2 border-bottom">
-                        <p class="fw-bold my-0"><a style="text-decoration:none; color:black" href="{% url 'accounts:detail' member.users.pk %}">
-                          {{ member.users }}</a>
-                        <span class="badge bg-secondary">대기중</span>
-                        {% if study.host == user %}
-                          <p class="text-end">
-                          </p>
-                        {% else %}
-                          <p>
-                            <p class="my-4"></p>
-                          {% endif %}
-                        </div>
-                      </div>
-                    {% endif %}
-                  {% endfor %}
-                </div>
+        <div class="offcanvas-body">
+          {% for member in members %}
+          {% if member.joined == True %}
+          <div>
+            <div class="pb-3 mt-2 border-bottom">
+              <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
+                  href="{% url 'accounts:detail' member.users.pk %}">
+                  {{ member.users }}                  
+                  <!-- 현재 접속중인 유저인지 표시 -->
+                  {% if member.users == user %}
+                  <span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span>
+                  {% endif %}
+                </a>
+                {% if study.host == member.users %}
+                <span class="badge bg-dark">스터디장</span>
+              <p class="my-4"></p>
+              {% else %}
+              <span class="badge bg-success">참여중</span>
+              {% if study.host == user %}
+              <p class="text-end m-0">
+              </p>
+              {% else %}
+              <p class="my-4"></p>
+              {% endif %}
+              {% endif %}</p>
+            </div>
+          </div>
+          {% else %}
+          <!-- 신청 대기중인 멤버 뱃지로 표시 -->
+          <div>
+            <div class="pb-3 mt-2 border-bottom">
+              <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
+                  href="{% url 'accounts:detail' member.users.pk %}">
+                  {{ member.users }}</a>
+                <span class="badge bg-secondary">대기중</span>
+                {% if study.host == user %}
+              <p class="text-end">
+              </p>
+              {% else %}
+              <p>
+              <p class="my-4"></p>
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+          {% endfor %}
         </div>
         <!-- 지도 정보 -->
       <div class="mt-3" id="study_map" style="width:100%;height:350px;"></div>
