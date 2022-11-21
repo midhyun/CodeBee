@@ -51,8 +51,8 @@
         <tbody>
           <tr class="text-white text-center">
             <th>{{ std_cnt }}</th>
-            <th>{{ person.followings.all.count }}</th>
-            <th>{{ person.followers.all.count }}</th>
+            <th>{{ person.followings.all.count|default_if_none:0 }}</th>
+            <th>{{ person.followers.all.count|default_if_none:0 }}</th>
           </tr>
         </tbody>
       </table>

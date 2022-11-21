@@ -99,15 +99,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body">
-          {% if "이름" in message.message %}
-          <p>{{ message }}</p>
-          <div class="text-end">
-            <a href="{% url 'accounts:detail' request.user.pk %}" class="btn btn-primary btn-sm">입력하러
-              가기</a>
-          </div>
-          {% else %}
           {{ message }}
-          {% endif %}
         </div>
       </div>
       {% endfor %}
@@ -165,14 +157,14 @@
           <img src="https://dummyimage.com/300/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
         </div>
-        <p class="text-end">
+        <p class="text-center">
           <a class="anc btn" style="background-color: rgb(255 192 7);"
             href="{% url 'accounts:detail' request.user.pk %}">
             <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
               margin-right: 10px;">나의 CodeBee</a>
         <div>
           </p>
-          <p class="text-white ps-3 pt-3 fw-bold" style="font-size: larger;">
+          <p class="text-white fw-bold text-center pb-4" style="font-size: larger;">
             {% if request.user.is_social_account %}
             {{ request.user.email }}
             {% else %}
@@ -204,6 +196,7 @@
         {% endif %}
         {% endif %}
         <p class="can-li my-3">{{ request.user.phone|default_if_none:"전화번호를 설정해주세요." }}</p>
+        <p>가입일 : {{ request.user.date_joined|date:"y년 m월 d일 f:s" }}</p>
         {% else %}
         <h3>권한이 없습니다.</h3>
         <h3>
@@ -214,16 +207,14 @@
           <table class="table" style="width:20rem; margin-top: 2rem;">
             <thead>
               <tr class="text-white">
-                <th scope="col">스터디</th>
-                <th scope="col">팔로잉</th>
-                <th scope="col">팔로워</th>
+                <th class="text-center">팔로잉</th>
+                <th class="text-center">팔로워</th>
               </tr>
             </thead>
             <tbody>
               <tr class="text-white text-center">
-                <th>{{ std_cnt }}</th>
-                <th>{{ person.followings.all.count }}</th>
-                <th>{{ person.followers.all.count }}</th>
+                <th>{{ person.followings.count|default:"0" }}</th>
+                <th>{{ person.followers.count|default:"0" }}</th>
               </tr>
             </tbody>
           </table>
