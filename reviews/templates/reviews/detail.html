@@ -33,7 +33,7 @@
         <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=2">온라인</a>
         {% else %}
         <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=1">오프라인</a>
-        {% endif %} CodeBee
+        {% endif %} CodeBee # {{study.categorie}}
       </p>
       <p class="my-0">
         <span class="fs-1 fw-bold">{{study.title}}</span>
@@ -195,7 +195,7 @@
             {% endif %}
             </p>
             <p class="my-0 fw-bold fs-5">스터디 소개</p>
-            <p class="ms-3 fs-6 text-muted">{{ study.content }}</p>
+            <pre class="ms-3 fs-6 text-muted" style="font-family:'NanumSquareNeo'">{{ study.content }}</pre>
             <p>제한 인원:
               {{ cnt }}
               /
