@@ -46,9 +46,8 @@
             {% endif %}
             <!-- 왼료 버튼 -->
             <div class="d-flex mb-5">
-
-                <a href="{% url 'reviews:index' %}" class="btn btn-primary ms-auto" style="width: 7rem;">돌아가기</a>
-                {% bootstrap_button button_type="submit" content="완료" style="width: 7rem;" %}
+                <a href="{% url 'reviews:index' %}"  style="width: 7rem;">돌아가기</a>
+                {% bootstrap_button button_type="submit" class="btn btn-primary ms-auto" content="완료" style="width: 7rem;" %}
             </div>
             </form>
         </div>

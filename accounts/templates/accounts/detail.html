@@ -80,7 +80,10 @@
                         <span>i</span></button>
                     </span>
                 </div>
-                <!-- 팔로우 -->
+
+            </div>
+            <div class="col-5 d-flex justify-content-start align-items-center">
+            <!-- 팔로우 -->
                 {% if user != person %}
                     <form id="follow-form" data-user-id="{{ person.pk }}">
                         {% csrf_token %}
@@ -89,14 +92,12 @@
                                 팔로우 취소
                             </button>
                         {% else %}
-                            <button id="follow-btn" class="btn btn-outline-primary form-control" type="submit"
+                            <button id="follow-btn" class="btn btn-outline-light form-control" type="submit"
                                     style='width:10%'>팔로우
                             </button>
                         {% endif %}
                     </form>
                 {% endif %}
-            </div>
-            <div class="col-5 d-flex justify-content-start align-items-center">
                 <div>
                     {% if person.is_social_account %}
                         <a href="{% url 'accounts:sns-logout' person.service_name %}"
