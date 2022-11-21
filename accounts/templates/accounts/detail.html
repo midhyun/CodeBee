@@ -2,482 +2,463 @@
 {% load static %}
 {% load django_bootstrap5 %}
 {% block css %}
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 {% endblock css %}
 
 {% block content %}
-    <div>
-        <!-- 헤더 이미지 영역 -->
-        <header class="row head p-5 shadow-lg">
-            <div class="col-4">
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div>
-                        {% if profile_picture %}
-                            <img src="{{ profile_picture.url }}" alt="" class="rounded-circle border border-5"
-                                 style="width: 320px; height: 320px;">
-                        {% elif social_profile_picture %}
-                            <img src="{{ social_profile_picture }}" alt="" class="rounded-circle border border-5"
-                                 style="width: 320px; height: 320px;">
-                        {% else %}
-                            <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
-                        {% endif %}
-                        <p class="fw-bold fs-4 text-center text-white mt-3">
-                            {{ person.nickname|default_if_none:" 어딘가의 드비" }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 이름, 이메일, 깃허브 -->
-            <div class="text-white h-100 col-3 fs-4 d-flex flex-column justify-content-evenly">
-
-                <p>
-                    {% if person.email %}
-                        {{ person.email }}
-                    {% else %}
-                        이메일이 존재하지 않습니다.
-                    {% endif %}
-                </p>
-
-                <table class="table" style="width:300px">
-                    <thead>
-                    <tr class="text-white">
-                        <th scope="col">스터디</th>
-                        <th scope="col">팔로잉</th>
-                        <th scope="col">팔로워</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr class="text-white text-center">
-                        <th scope="row">{{ std_cnt }}</th>
-                        <td>0</td>
-                        <td>0</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <!-- 꿀단지 이미지 -->
-                <div style="height:90px"></div>
-                <div>
-                    <span class="icons"
-                          style="background: url('/static/accounts/image/honey.png') 0px 0px / 100px no-repeat;">
-                    <span class="icons2"
-                          style="padding-top: calc({{ honey }}*2px); background: url('/static/accounts/image/honey_fill.png') 0px calc({{ honey }}*2px - 100px) / 100px no-repeat;">
-
-                    </span>
-                    </span>
-
-                </div>
-                <div>
-                    <span>
-                        {{ honey }}단지
-                    </span>
-
-                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus"
-                          data-bs-content="단지는 스터디 종료 후 다른 드비분들이 평가한 점수예요. 최고 점수는 35점이고, 최저는 0점이예요. 스터디에 참여해서 단지를 모아보세요.">
-                      <button style="width:40px; height:40px;" class="btn btn-secondary rounded-circle" type="button"
-                              disabled="disabled">
-                        <span>i</span></button>
-                    </span>
-                </div>
-                <!-- 팔로우 -->
-                {% if user != person %}
-                    <form id="follow-form" data-user-id="{{ person.pk }}">
-                        {% csrf_token %}
-                        {% if request.user in person.followers.all %}
-                            <button id="follow-btn" class="btn btn-danger form-control" type="submit" style='width:10%'>
-                                팔로우 취소
-                            </button>
-                        {% else %}
-                            <button id="follow-btn" class="btn btn-outline-primary form-control" type="submit"
-                                    style='width:10%'>팔로우
-                            </button>
-                        {% endif %}
-                    </form>
-                {% endif %}
-            </div>
-            <div class="col-5 d-flex justify-content-start align-items-center">
-                <div>
-                    {% if person.is_social_account %}
-                        <a href="{% url 'accounts:sns-logout' person.service_name %}"
-                           class="btn btn-lg btn-warning mx-3">소셜 계정 탈퇴</a>
-                    {% else %}
-                    {% endif %}
-                </div>
-                <div>
-                    <a href="{% url 'accounts:delete' person.pk %}" class="btn btn-lg btn-secondary mx-3">회원 탈퇴</a>
-                </div>
-            </div>
-        </header>
-    </div>
-
-    {% comment %} 유저 디테일 {% endcomment %}
-    <div class="wrapper">
-        {% comment %} 유저 메뉴 {% endcomment %}
-        <div class="tabs">
-            <div class="tab">
-                <input type="radio" name="css-tabs" id="tab-1" checked="checked" class="tab-switch">
-                <label for="tab-1" class="tab-label">진행 중 스터디</label>
-                <div class="tab-content">
-                    <!-- 진행중 스터디 -->
-                    <div class="row row-cols-1 row-cols-md-4 g-4">
-                        {% for ing in ings %}
-                            <div class="col">
-                                <a class="cardlink link" href="{% url 'reviews:detail' ing.study.pk %}">
-                                    <div class="card h-100 w-100 shadow h-100 p-3">
-                                        {% comment %} 스터디 이미지 영역 {% endcomment %}
-                                        <div class="image-wrapper">
-                                            {% if ing.study.image %}
-                                                <img src="{{ ing.study.image.url }}" class="card-img-top card-image"
-                                                     alt="...">
-                                            {% else %}
-                                                <img src="{% static 'logo_with.png' %}" class="card-img-top card-image"
-                                                     alt="...">
-                                            {% endif %}
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title text-center mb-5">{{ ing.study.title }}</h5>
-                                            <div class="d-flex justify-content-between m-auto"
-                                                 style="color: black; height: 64px">
-                                                <!-- 장단기 -->
-                                                <div class="icon-box">
-                                                    <div style="height:100%;">
-                                                        {% if ing.study.study_type == "그룹" %}
-                                                            <i class="bi bi-calendar-week" style="font-size: 24px;"></i>
-                                                        {% else %}
-                                                            <i class="bi bi-calendar-check"
-                                                               style="font-size: 24px;"></i>
-                                                        {% endif %}
-                                                        <p class="text-center">
-                                                            {{ ing.study.study_type }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-
-                                                <!-- 언어 -->
-                                                <div class="icon-box">
-                                                    {% comment %} 파이썬 {% endcomment %}
-                                                    {% if ing.study.categorie == "Python" %}
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                             class="icon icon-tabler icon-tabler-brand-python ms-1"
-                                                             width="44" height="44" viewbox="0 0 24 24"
-                                                             stroke-width="1.5" stroke="#2c3e50" fill="none"
-                                                             stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                            <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3"/>
-                                                            <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3"/>
-                                                            <path
-                                                                    d="M8 9v-4a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v5a2 2 0 0 1 -2 2h-4a2 2 0 0 0 -2 2v5a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4"/>
-                                                            <line x1="11" y1="6" x2="11" y2="6.01"/>
-                                                            <line x1="13" y1="18" x2="13" y2="18.01"/>
-                                                        </svg>
-                                                        {% comment %} 자바스크립트 {% endcomment %}
-                                                    {% elif ing.study.categorie == "Javascript" %}
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                             class="icon icon-tabler icon-tabler-brand-javascript"
-                                                             width="60" height="60" viewbox="0 0 24 24"
-                                                             stroke-width="1.5" stroke="#2c3e50" fill="none"
-                                                             stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                            <path d="M20 4l-2 14.5l-6 2l-6 -2l-2 -14.5z"/>
-                                                            <path d="M7.5 8h3v8l-2 -1"/>
-                                                            <path
-                                                                    d="M16.5 8h-2.5a0.5 .5 0 0 0 -.5 .5v3a0.5 .5 0 0 0 .5 .5h1.423a0.5 .5 0 0 1 .495 .57l-.418 2.93l-2 .5"/>
-                                                        </svg>
-                                                        {% comment %} 장고 {% endcomment %}
-                                                    {% elif ing.study.categorie == "Django" %}
-                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24px"
-                                                             height="100%"
-                                                             enable-background="new 0 0 24 24" viewbox="0 0 24 24">
-                                                            <path
-                                                                    d="M21.25,6.06V6.059h-3.897v7.747c0,3.414-0.177,4.714-0.734,5.835c-0.531,1.096-1.367,1.81-3.088,2.625L17.15,24c1.721-0.866,2.556-1.656,3.189-2.905c0.683-1.299,0.911-2.803,0.911-5.937V6.06z"/>
-                                                            <path
-                                                                    d="M15.049,18.166V0h-3.897v5.984C10.57,5.831,10.089,5.78,9.457,5.78c-4.075,0-6.707,2.599-6.707,6.6c0,4.154,2.48,6.32,7.238,6.32C11.582,18.701,13.05,18.548,15.049,18.166z M6.723,12.304c0-2.141,1.138-3.364,3.113-3.364H9.832C9.86,8.938,9.887,8.938,9.914,8.938c0.443,0,0.868,0.075,1.237,0.205v6.294c-0.556,0.077-0.911,0.102-1.341,0.102C7.812,15.54,6.723,14.394,6.723,12.304z"/>
-                                                            <rect width="3.897" height="4.026" x="17.353" y=".021"/>
-                                                        </svg>
-                                                        {% comment %} 리액트 {% endcomment %}
-                                                    {% elif ing.study.categorie == "React" %}
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                             class="icon icon-tabler icon-tabler-brand-react-native"
-                                                             width="44" height="44" viewbox="0 0 24 24"
-                                                             stroke-width="1.5" stroke="#2c3e50" fill="none"
-                                                             stroke-linecap="round" stroke-linejoin="round">
-                                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                            <path
-                                                                    d="M6.357 9c-2.637 .68 -4.357 1.845 -4.357 3.175c0 2.107 4.405 3.825 9.85 3.825c.74 0 1.26 -.039 1.95 -.097"/>
-                                                            <path
-                                                                    d="M9.837 15.9c-.413 -.596 -.806 -1.133 -1.18 -1.8c-2.751 -4.9 -3.488 -9.77 -1.63 -10.873c1.15 -.697 3.047 .253 4.974 2.254"/>
-                                                            <path
-                                                                    d="M6.429 15.387c-.702 2.688 -.56 4.716 .56 5.395c1.783 1.08 5.387 -1.958 8.043 -6.804c.36 -.67 .683 -1.329 .968 -1.978"/>
-                                                            <path
-                                                                    d="M12 18.52c1.928 2 3.817 2.95 4.978 2.253c1.85 -1.102 1.121 -5.972 -1.633 -10.873c-.384 -.677 -.777 -1.204 -1.18 -1.8"/>
-                                                            <path
-                                                                    d="M17.66 15c2.612 -.687 4.34 -1.85 4.34 -3.176c0 -2.11 -4.408 -3.824 -9.845 -3.824c-.747 0 -1.266 .029 -1.955 .087"/>
-                                                            <path
-                                                                    d="M8 12c.285 -.66 .607 -1.308 .968 -1.978c2.647 -4.844 6.253 -7.89 8.046 -6.801c1.11 .679 1.262 2.706 .56 5.393"/>
-                                                            <path
-                                                                    d="M12.26 12.015h-.01c-.01 .13 -.12 .24 -.26 .24a0.263 .263 0 0 1 -.25 -.26c0 -.14 .11 -.25 .24 -.25h-.01c.13 -.01 .25 .11 .25 .24"/>
-                                                        </svg>
-                                                    {% else %}
-                                                        {% comment %} 그 외 {% endcomment %}
-                                                        <img style="height: 100%; padding: 0px 5px;"
-                                                             src="{% static '/image/coding_study.svg' %}" alt="">
-                                                    {% endif %}
-                                                    <p class="text-center" style="white-space: nowrap">
-                                                        {{ ing.study.categorie }}
-                                                    </p>
-                                                </div>
-
-                                                <!-- 정원 -->
-                                                <div class="icon-box">
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                         class="icon icon-tabler icon-tabler-user" width="36"
-                                                         height="36" viewbox="0 0 24 24" stroke-width="1.5"
-                                                         stroke="#2c3e50" fill="none"
-                                                         stroke-linecap="round" stroke-linejoin="round">
-                                                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                                        <circle cx="12" cy="7" r="4"/>
-                                                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
-                                                    </svg>
-                                                    <p class="text-center">
-                                                        {{ ing.study.accepted.all|length }}/{{ ing.study.limits }}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    {% for ing in ings %}
-                    {% empty %}
-                        <div class="github-none">
-                            <img src="{% static '/none_study_logo.png' %}" height="50px" alt="">
-                            <p>현재 참여 중인 스터디가 없습니다.</p>
-                            {% if user == person %}
-                                <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-
-                </div>
-            </div>
-
-            <!-- 참여한 스터디 -->
-            <div class="tab">
-                <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
-                <label for="tab-2" class="tab-label">About {{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
-                <div class="tab-content">
-
-                    <!-- 제목 영역 -->
-                    <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
-                        님의 github 및 백준 활동입니다</h2>
-                    <!-- 깃허브 영역 -->
-                    <div class="detail-content d-flex flex-column justify-content-center">
-                        <div class="row row-cols-2">
-                            <!-- github활동 -->
-                            <div class="cols">
-                                <div class="active-wrapper">
-                                    <p class="active-tab">
-                                        Github
-                                    </p>
-                                    <hr class="m-0">
-                                    <div class="active-content">
-                                        <div class="active-flex" style="text-align:center; font-size: larger;">
-                                            {% if person.git_username %}
-                                                <a href="https://github.com/{{ person.git_username }}/">
-                                                    <img
-                                                            src="https://github-readme-stats.vercel.app/api/top-langs/?username={{ person.git_username }}&layout=compact">
-                                                </a>
-                                            {% else %}
-                                                <div class="github-none">
-                                                    <img src="{% static '/github.png' %}" height="50px"
-                                                         alt="">
-                                                    <p>아직 연동된 깃허브가 없어요.</p>
-                                                    {% if user == person %}
-                                                        <a href="{% url 'accounts:update' user.pk %}">지금 연동하러 가기</a>
-                                                    {% endif %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cols">
-                                <div class="active-wrapper">
-                                    <p class="active-tab">
-                                        BOJ
-                                    </p>
-                                    <hr class="m-0">
-                                    <div class="active-content">
-                                        <div class="active-flex" style="text-align:center; font-size: larger;">
-                                            {% if person.boj_username %}
-                                                <a href="https://solved.ac/{{ person.boj_username }}" target="_blank">
-                                                    <img src="http://mazassumnida.wtf/api/generate_badge?boj={{ person.boj_username }}">
-                                                </a>
-                                            {% else %}
-                                                <div class="github-none">
-                                                    <img src="{% static '/none_boj.png' %}" height="50px"
-                                                         alt="" style="padding: 2px;">
-                                                    <p>아직 연동된 solved.ac가 없어요.</p>
-                                                    {% if user == person %}
-                                                        <a href="{% url 'accounts:update' user.pk %}">지금 연동하러 가기</a>
-                                                    {% endif %}
-                                                </div>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 제목 영역 -->
-                    <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
-                        님의 스터디 참여 내역입니다</h2>
-                    <!-- 내용 영역 -->
-                    <div class="detail-content d-flex flex-column justify-content-center">
-                        <div style="text-align:center; font-size: larger;">
-                            {% if accepts %}
-                                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은
-                                    {% for lang in langs %}
-                                        {% if lang in lang_list %}
-                                            <span class="{{ lang }}">{{ lang }}</span>
-                                        {% else %}
-                                            <span class="none_type">{{ lang }}</span>
-                                        {% endif %}
-                                    {% endfor %}
-                                    스터디를 가장 많이 참여하였습니다.
-                                </p>
-                                <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
-                                    님은 온라인<span class="study_count">{{ online|length }}</span>회, 오프라인<span
-                                            class="study_count">{{ offline|length }}</span>회 스터디에 참여하였습니다.</p>
-                            {% else %}
-                                <p class="text-muted h-100">아직 참여한 스터디가 없습니다.</p>
-                                {% if user == person %}
-                                    <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
-                                {% endif %}
-                            {% endif %}
-                        </div>
-                    </div>
-                    <!-- 제목 영역 -->
-                    <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
-                        님의 최근 리뷰 활동입니다</h2>
-                    <!-- 내용 영역 -->
-                    <div class="detail-content">
-                        <!-- 유저가 작성한 리뷰가 하나라도 있다면, -->
-                        {% if person.comment_set.all %}
-                            <div class="p-3 d-flex">
-                            {% for comment in person.comment_set.all %}
-                                <a class="review_card" href="{% url 'reviews:detail' comment.study.pk %}">
-                                    <div class="review_info">
-                                        {% if comment.study.image %}
-                                            <img src="{{ comment.study.image.url }}" alt="" style="margin-right: 12px;">
-                                        {% endif %}
-                                        <div class="info_wrapper">
-                                            <div class="review_title">{{ comment.study.title }}</div>
-                                            <div class="review_date">{{ comment.created_at }}
-                                                작성
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                    <div class="review_content">
-                                        {{ comment.content|truncatechars:44 }}
-                                    </div>
-                                </a>
-                            {% endfor %}
-
-                        {% else %}
-                            <div class="detail-content d-flex flex-column justify-content-center">
-                                <div style="text-align:center; font-size: larger;">
-                                    <p>아직 작성된 리뷰가 없어요.</p>
-                                    {% if user == person %}
-                                    {% if accepts %}
-                                    <p>아래로 이동해 리뷰를 작성해보세요.</p>
-                                    <div class="box-wrapper">
-                                        {% for study in uncomment_study %}
-                                        {% if study.image %}
-                                        <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
-                                        style="background-image: url('{{ study.image.url }}')">
-                                        {% endif %}
-                                        <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
-                                        style="background-image: url('{% static '/createb.png' %}')">
-                                        <p class="none-review-text">
-                                            {{ study.title }}
-                                        </p>
-                                    </a>
-                                    {% endfor %}
-                                    {% else %}
-                                    <p class="h-100">스터디에 참여하고 리뷰를 작성해보세요.</p>
-                                        <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
-                                    {% endif %}
-                                    {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        {% endif %}
-                        </div>
-
-                    </div>
-                </div>
-            </div>
+<div>
+  <!-- 헤더 이미지 영역 -->
+  <header class="row head p-5 shadow-lg">
+    <div class="col-4">
+      <div class="d-flex justify-content-center align-items-center h-100">
+        <div>
+          {% if profile_picture %}
+          <img src="{{ profile_picture.url }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% elif social_profile_picture %}
+          <img src="{{ social_profile_picture }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% else %}
+          <img src="https://dummyimage.com/300/000/fff" alt="" class="rounded-circle border border-5">
+          {% endif %}
+          <p class="fw-bold fs-4 text-center text-white mt-3">
+            {{ person.nickname|default_if_none:" 어딘가의 드비" }}
+          </p>
         </div>
-    </div>
+      </div>
     </div>
 
-    <script>
-        const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-        const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script>
-        const followUrl = "{% url 'accounts:follow' person.pk %}";
-    </script>
-    <script>
-        const followForm = document.querySelector("#follow-form")
-        const csrftoken = document
-            .querySelector('[name=csrfmiddlewaretoken]')
-            .value
-        followForm
-            .addEventListener("submit", function (event) {
-                event.preventDefault()
-                axios({
-                    method: "POST",
-                    url: followUrl,
-                    headers: {
-                        'X-CSRFToken': csrftoken
-                    }
-                })
-                    .then(response => {
-                        const isFollowed = response.data.is_followed
-                        const followBtn = document.querySelector('#follow-form > #follow-btn')
-                        const followerCountTag = document.querySelector('#follower-count')
-                        const followingCountTag = document.querySelector('#following-count')
+    <!-- 이름, 이메일, 깃허브 -->
+    <div class="text-white h-100 col-3 fs-4 d-flex flex-column justify-content-evenly">
 
-                        if (isFollowed) {
-                            followBtn
-                                .classList
-                                .add("btn-danger")
-                            followBtn
-                                .classList
-                                .remove("btn-outline-primary")
-                            followBtn.innerText = "팔로우 취소"
-                        } else {
-                            followBtn
-                                .classList
-                                .add("btn-outline-primary")
-                            followBtn
-                                .classList
-                                .remove("btn-danger")
-                            followBtn.innerText = "팔로우"
-                        }
-                        followerCountTag.innerText = response.data.followers_count
-                        followingCountTag.innerText = response.data.followings_count
-                    })
-                    .catch(error => {
-                        console.log(error.response)
-                    })
-            })
-    </script>
+      <p>
+        {% if person.email %}
+        {{ person.email }}
+        {% else %}
+        이메일이 존재하지 않습니다.
+        {% endif %}
+      </p>
+
+      <table class="table" style="width:300px">
+        <thead>
+          <tr class="text-white">
+            <th scope="col">스터디</th>
+            <th scope="col">팔로잉</th>
+            <th scope="col">팔로워</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="text-white text-center">
+            <th>{{ std_cnt }}</th>
+            <th>{{ person.followings.all.count }}</th>
+            <th>{{ person.followers.all.count }}</th>
+          </tr>
+        </tbody>
+      </table>
+      <!-- 꿀단지 이미지 -->
+      <div style="height:90px"></div>
+      <div>
+        <span class="icons" style="background: url('/static/accounts/image/honey.png') 0px 0px / 100px no-repeat;">
+          <span class="icons2"
+            style="padding-top: calc({{ honey }}*2px); background: url('/static/accounts/image/honey_fill.png') 0px calc({{ honey }}*2px - 100px) / 100px no-repeat;">
+
+          </span>
+        </span>
+
+      </div>
+      <div>
+        <span>
+          {{ honey }}단지
+        </span>
+
+        <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus"
+          data-bs-content="단지는 스터디 종료 후 다른 드비분들이 평가한 점수예요. 최고 점수는 35점이고, 최저는 0점이예요. 스터디에 참여해서 단지를 모아보세요.">
+          <button style="width:40px; height:40px;" class="btn btn-secondary rounded-circle" type="button"
+            disabled="disabled">
+            <span>i</span></button>
+        </span>
+      </div>
+      <!-- 팔로우 -->
+      {% if user != person %}
+      <form id="follow-form" data-user-id="{{ person.pk }}">
+        {% csrf_token %}
+        {% if request.user in person.followers.all %}
+        <button id="follow-btn" class="btn btn-danger form-control" type="submit" style='width:10%'>
+          팔로우 취소
+        </button>
+        {% else %}
+        <button id="follow-btn" class="btn btn-outline-primary form-control" type="submit" style='width:10%'>팔로우
+        </button>
+        {% endif %}
+      </form>
+      {% endif %}
+    </div>
+    <div class="col-5 d-flex justify-content-start align-items-center">
+      <div>
+        {% if person.is_social_account %}
+        <a href="{% url 'accounts:sns-logout' person.service_name %}" class="btn btn-lg btn-warning mx-3">소셜 계정 탈퇴</a>
+        {% else %}
+        {% endif %}
+      </div>
+      <div>
+        <a href="{% url 'accounts:delete' person.pk %}" class="btn btn-lg btn-secondary mx-3">회원 탈퇴</a>
+      </div>
+    </div>
+  </header>
+</div>
+
+{% comment %} 유저 디테일 {% endcomment %}
+<div class="wrapper">
+  {% comment %} 유저 메뉴 {% endcomment %}
+  <div class="tabs">
+    <div class="tab">
+      <input type="radio" name="css-tabs" id="tab-1" checked="checked" class="tab-switch">
+      <label for="tab-1" class="tab-label">진행 중 스터디</label>
+      <div class="tab-content">
+        <!-- 진행중 스터디 -->
+        <div class="row row-cols-1 row-cols-md-4 g-4">
+          {% for ing in ings %}
+          <div class="col">
+            <a class="cardlink link" href="{% url 'reviews:detail' ing.study.pk %}">
+              <div class="card h-100 w-100 shadow h-100 p-3">
+                {% comment %} 스터디 이미지 영역 {% endcomment %}
+                <div class="image-wrapper">
+                  {% if ing.study.image %}
+                  <img src="{{ ing.study.image.url }}" class="card-img-top card-image" alt="...">
+                  {% else %}
+                  <img src="{% static 'logo_with.png' %}" class="card-img-top card-image" alt="...">
+                  {% endif %}
+                </div>
+                <div class="card-body">
+                  <h5 class="card-title text-center mb-5">{{ ing.study.title }}</h5>
+                  <div class="d-flex justify-content-between m-auto" style="color: black; height: 64px">
+                    <!-- 장단기 -->
+                    <div class="icon-box">
+                      <div style="height:100%;">
+                        {% if ing.study.study_type == "그룹" %}
+                        <i class="bi bi-calendar-week" style="font-size: 24px;"></i>
+                        {% else %}
+                        <i class="bi bi-calendar-check" style="font-size: 24px;"></i>
+                        {% endif %}
+                        <p class="text-center">
+                          {{ ing.study.study_type }}
+                        </p>
+                      </div>
+                    </div>
+
+                    <!-- 언어 -->
+                    <div class="icon-box">
+                      {% comment %} 파이썬 {% endcomment %}
+                      {% if ing.study.categorie == "Python" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-python ms-1"
+                        width="44" height="44" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3" />
+                        <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3" />
+                        <path
+                          d="M8 9v-4a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v5a2 2 0 0 1 -2 2h-4a2 2 0 0 0 -2 2v5a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4" />
+                        <line x1="11" y1="6" x2="11" y2="6.01" />
+                        <line x1="13" y1="18" x2="13" y2="18.01" />
+                      </svg>
+                      {% comment %} 자바스크립트 {% endcomment %}
+                      {% elif ing.study.categorie == "Javascript" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-javascript"
+                        width="60" height="60" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M20 4l-2 14.5l-6 2l-6 -2l-2 -14.5z" />
+                        <path d="M7.5 8h3v8l-2 -1" />
+                        <path
+                          d="M16.5 8h-2.5a0.5 .5 0 0 0 -.5 .5v3a0.5 .5 0 0 0 .5 .5h1.423a0.5 .5 0 0 1 .495 .57l-.418 2.93l-2 .5" />
+                      </svg>
+                      {% comment %} 장고 {% endcomment %}
+                      {% elif ing.study.categorie == "Django" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="100%"
+                        enable-background="new 0 0 24 24" viewbox="0 0 24 24">
+                        <path
+                          d="M21.25,6.06V6.059h-3.897v7.747c0,3.414-0.177,4.714-0.734,5.835c-0.531,1.096-1.367,1.81-3.088,2.625L17.15,24c1.721-0.866,2.556-1.656,3.189-2.905c0.683-1.299,0.911-2.803,0.911-5.937V6.06z" />
+                        <path
+                          d="M15.049,18.166V0h-3.897v5.984C10.57,5.831,10.089,5.78,9.457,5.78c-4.075,0-6.707,2.599-6.707,6.6c0,4.154,2.48,6.32,7.238,6.32C11.582,18.701,13.05,18.548,15.049,18.166z M6.723,12.304c0-2.141,1.138-3.364,3.113-3.364H9.832C9.86,8.938,9.887,8.938,9.914,8.938c0.443,0,0.868,0.075,1.237,0.205v6.294c-0.556,0.077-0.911,0.102-1.341,0.102C7.812,15.54,6.723,14.394,6.723,12.304z" />
+                        <rect width="3.897" height="4.026" x="17.353" y=".021" />
+                      </svg>
+                      {% comment %} 리액트 {% endcomment %}
+                      {% elif ing.study.categorie == "React" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-react-native"
+                        width="44" height="44" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path
+                          d="M6.357 9c-2.637 .68 -4.357 1.845 -4.357 3.175c0 2.107 4.405 3.825 9.85 3.825c.74 0 1.26 -.039 1.95 -.097" />
+                        <path
+                          d="M9.837 15.9c-.413 -.596 -.806 -1.133 -1.18 -1.8c-2.751 -4.9 -3.488 -9.77 -1.63 -10.873c1.15 -.697 3.047 .253 4.974 2.254" />
+                        <path
+                          d="M6.429 15.387c-.702 2.688 -.56 4.716 .56 5.395c1.783 1.08 5.387 -1.958 8.043 -6.804c.36 -.67 .683 -1.329 .968 -1.978" />
+                        <path
+                          d="M12 18.52c1.928 2 3.817 2.95 4.978 2.253c1.85 -1.102 1.121 -5.972 -1.633 -10.873c-.384 -.677 -.777 -1.204 -1.18 -1.8" />
+                        <path
+                          d="M17.66 15c2.612 -.687 4.34 -1.85 4.34 -3.176c0 -2.11 -4.408 -3.824 -9.845 -3.824c-.747 0 -1.266 .029 -1.955 .087" />
+                        <path
+                          d="M8 12c.285 -.66 .607 -1.308 .968 -1.978c2.647 -4.844 6.253 -7.89 8.046 -6.801c1.11 .679 1.262 2.706 .56 5.393" />
+                        <path
+                          d="M12.26 12.015h-.01c-.01 .13 -.12 .24 -.26 .24a0.263 .263 0 0 1 -.25 -.26c0 -.14 .11 -.25 .24 -.25h-.01c.13 -.01 .25 .11 .25 .24" />
+                      </svg>
+                      {% else %}
+                      {% comment %} 그 외 {% endcomment %}
+                      <img style="height: 100%; padding: 0px 5px;" src="{% static '/image/coding_study.svg' %}" alt="">
+                      {% endif %}
+                      <p class="text-center" style="white-space: nowrap">
+                        {{ ing.study.categorie }}
+                      </p>
+                    </div>
+
+                    <!-- 정원 -->
+                    <div class="icon-box">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="36"
+                        height="36" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <circle cx="12" cy="7" r="4" />
+                        <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+                      </svg>
+                      <p class="text-center">
+                        {{ ing.study.accepted.all|length }}/{{ ing.study.limits }}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+        {% for ing in ings %}
+        {% empty %}
+        <div class="github-none">
+          <img src="{% static '/none_study_logo.png' %}" height="50px" alt="">
+          <p>현재 참여 중인 스터디가 없습니다.</p>
+          {% if user == person %}
+          <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+          {% endif %}
+        </div>
+        {% endfor %}
+
+      </div>
+    </div>
+
+    <!-- 참여한 스터디 -->
+    <div class="tab">
+      <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
+      <label for="tab-2" class="tab-label">About {{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
+      <div class="tab-content">
+
+        <!-- 제목 영역 -->
+        <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
+          님의 github 및 백준 활동입니다</h2>
+        <!-- 깃허브 영역 -->
+        <div class="detail-content d-flex flex-column justify-content-center">
+          <div class="row row-cols-2">
+            <!-- github활동 -->
+            <div class="cols">
+              <div class="active-wrapper">
+                <p class="active-tab">
+                  Github
+                </p>
+                <hr class="m-0">
+                <div class="active-content">
+                  <div class="active-flex" style="text-align:center; font-size: larger;">
+                    {% if person.git_username %}
+                    <a href="https://github.com/{{ person.git_username }}/">
+                      <img
+                        src="https://github-readme-stats.vercel.app/api/top-langs/?username={{ person.git_username }}&layout=compact">
+                    </a>
+                    {% else %}
+                    <div class="github-none">
+                      <img src="{% static '/github.png' %}" height="50px" alt="">
+                      <p>아직 연동된 깃허브가 없어요.</p>
+                      {% if user == person %}
+                      <a href="{% url 'accounts:update' user.pk %}">지금 연동하러 가기</a>
+                      {% endif %}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="cols">
+              <div class="active-wrapper">
+                <p class="active-tab">
+                  BOJ
+                </p>
+                <hr class="m-0">
+                <div class="active-content">
+                  <div class="active-flex" style="text-align:center; font-size: larger;">
+                    {% if person.boj_username %}
+                    <a href="https://solved.ac/{{ person.boj_username }}" target="_blank">
+                      <img src="http://mazassumnida.wtf/api/generate_badge?boj={{ person.boj_username }}">
+                    </a>
+                    {% else %}
+                    <div class="github-none">
+                      <img src="{% static '/none_boj.png' %}" height="50px" alt="" style="padding: 2px;">
+                      <p>아직 연동된 solved.ac가 없어요.</p>
+                      {% if user == person %}
+                      <a href="{% url 'accounts:update' user.pk %}">지금 연동하러 가기</a>
+                      {% endif %}
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 제목 영역 -->
+        <h2 class="detail-header">{{ person.nickname|default_if_none:"어딘가의 드비" }}
+          님의 스터디 참여 내역입니다</h2>
+        <!-- 내용 영역 -->
+        <div class="detail-content d-flex flex-column justify-content-center">
+          <div style="text-align:center; font-size: larger;">
+            {% if accepts %}
+            <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은
+              {% for lang in langs %}
+              {% if lang in lang_list %}
+              <span class="{{ lang }}">{{ lang }}</span>
+              {% else %}
+              <span class="none_type">{{ lang }}</span>
+              {% endif %}
+              {% endfor %}
+              스터디를 가장 많이 참여하였습니다.
+            </p>
+            <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+              님은 온라인<span class="study_count">{{ online|length }}</span>회, 오프라인<span class="study_count">{{
+                offline|length }}</span>회 스터디에 참여하였습니다.</p>
+            {% else %}
+            <p class="text-muted h-100">아직 참여한 스터디가 없습니다.</p>
+            {% if user == person %}
+            <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+            {% endif %}
+            {% endif %}
+          </div>
+        </div>
+        <!-- 제목 영역 -->
+        <h2 class="detail-header">{{ person.nickname|default_if_none:" 어딘가의 드비" }}
+          님의 최근 리뷰 활동입니다</h2>
+        <!-- 내용 영역 -->
+        <div class="detail-content">
+          <!-- 유저가 작성한 리뷰가 하나라도 있다면, -->
+          {% if person.comment_set.all %}
+          <div class="p-3 d-flex">
+            {% for comment in person.comment_set.all %}
+            <a class="review_card" href="{% url 'reviews:detail' comment.study.pk %}">
+              <div class="review_info">
+                {% if comment.study.image %}
+                <img src="{{ comment.study.image.url }}" alt="" style="margin-right: 12px;">
+                {% endif %}
+                <div class="info_wrapper">
+                  <div class="review_title">{{ comment.study.title }}</div>
+                  <div class="review_date">{{ comment.created_at }}
+                    작성
+                  </div>
+                </div>
+
+              </div>
+              <div class="review_content">
+                {{ comment.content|truncatechars:44 }}
+              </div>
+            </a>
+            {% endfor %}
+
+            {% else %}
+            <div class="detail-content d-flex flex-column justify-content-center">
+              <div style="text-align:center; font-size: larger;">
+                <p>아직 작성된 리뷰가 없어요.</p>
+                {% if user == person %}
+                {% if accepts %}
+                <p>아래로 이동해 리뷰를 작성해보세요.</p>
+                <div class="box-wrapper">
+                  {% for study in uncomment_study %}
+                  {% if study.image %}
+                  <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
+                    style="background-image: url('{{ study.image.url }}')">
+                    {% endif %}
+                    <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
+                      style="background-image: url('{% static '/createb.png' %}')">
+                      <p class="none-review-text">
+                        {{ study.title }}
+                      </p>
+                    </a>
+                    {% endfor %}
+                    {% else %}
+                    <p class="h-100">스터디에 참여하고 리뷰를 작성해보세요.</p>
+                    <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+  const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+  const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const followUrl = "{% url 'accounts:follow' person.pk %}";
+</script>
+<script>
+  const followForm = document.querySelector("#follow-form")
+  const csrftoken = document
+    .querySelector('[name=csrfmiddlewaretoken]')
+    .value
+  followForm
+    .addEventListener("submit", function (event) {
+      event.preventDefault()
+      axios({
+        method: "POST",
+        url: followUrl,
+        headers: {
+          'X-CSRFToken': csrftoken
+        }
+      })
+        .then(response => {
+          const isFollowed = response.data.is_followed
+          const followBtn = document.querySelector('#follow-form > #follow-btn')
+          const followerCountTag = document.querySelector('#follower-count')
+          const followingCountTag = document.querySelector('#following-count')
+
+          if (isFollowed) {
+            followBtn
+              .classList
+              .add("btn-danger")
+            followBtn
+              .classList
+              .remove("btn-outline-primary")
+            followBtn.innerText = "팔로우 취소"
+          } else {
+            followBtn
+              .classList
+              .add("btn-outline-primary")
+            followBtn
+              .classList
+              .remove("btn-danger")
+            followBtn.innerText = "팔로우"
+          }
+          followerCountTag.innerText = response.data.followers_count
+          followingCountTag.innerText = response.data.followings_count
+        })
+        .catch(error => {
+          console.log(error.response)
+        })
+    })
+</script>
 {% endblock content %}

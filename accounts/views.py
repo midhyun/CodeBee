@@ -10,7 +10,6 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from pjt.settings import DEBUG
 from dotenv import load_dotenv
 from .models import AuthPhone, User
 from django.http import JsonResponse
@@ -336,7 +335,7 @@ def signup(request):
             user.social_profile_picture = (
                 request.POST["social_profile_picture"]
                 if "social_profile_picture" in request.POST
-                else False
+                else None
             )
             # 유저 토큰
             user.token = request.POST["token"] if "token" in request.POST else None
@@ -543,8 +542,6 @@ def detail(request, user_pk):
                 "social_profile_picture": social_profile_picture,
             },
         )
-
-
 
 
 @login_required
