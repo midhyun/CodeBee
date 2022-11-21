@@ -13,10 +13,8 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -25,16 +23,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "http://codebee-env.eba-k8kiymgt.ap-northeast-2.elasticbeanstalk.com",
+    "codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com",
+    "172.31.15.252",
     "127.0.0.1",
     "localhost",
 ]
-
 
 # Application definition
 
@@ -42,14 +39,14 @@ ADDED_APPS = [
     "reviews",
     "accounts",
     "imagekit",
-    'sass_processor',
+    "sass_processor",
     "django_bootstrap5",
     "django_extensions",
     # 페이지에서 이미지를 삭제했을 때 서버에 남는 파일을 자동으로 지워주는 앱
     # https://pypi.org/project/django-cleanup/
     "django_cleanup.apps.CleanupConfig",
-    'django.forms',
-    'gcalendar',
+    "django.forms",
+    "gcalendar",
 ]
 
 DEFAULT_APPS = [
@@ -92,7 +89,7 @@ TEMPLATES = [
 ]
 
 SASS_PROCESSOR_ENABLED = True
-SASS_OUTPUT_STYLE = 'compact'
+SASS_OUTPUT_STYLE = "compact"
 
 WSGI_APPLICATION = "pjt.wsgi.application"
 
@@ -100,14 +97,6 @@ WSGI_APPLICATION = "pjt.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
-DEBUG = os.getenv("DEBUG") == "True"
 
 if DEBUG:
     DATABASES = {
@@ -121,13 +110,14 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DATABASE_NAME"), # .env 파일에 value 작성
+            "NAME": os.getenv("DATABASE_NAME"),  # .env 파일에 value 작성
             "USER": "postgres",
-            "PASSWORD": os.getenv("DATABASE_PASSWORD"), # .env 파일에 value 작성
-            "HOST": os.getenv("DATABASE_HOST"), # .env 파일에 value 작성
+            "PASSWORD": os.getenv("DATABASE_PASSWORD"),  # .env 파일에 value 작성
+            "HOST": os.getenv("DATABASE_HOST"),  # .env 파일에 value 작성
             "PORT": "5432",
         }
     }
+
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -163,10 +153,19 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 
-STATIC_URL = '/static/'
+
+
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
+
+
+STATIC_URL = '/static/'
+# STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'static'
+
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'sass_processor.finders.CssFinder',
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -174,6 +173,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = BASE_DIR / "media"
+
 
 MEDIA_URL = "/media/"
 

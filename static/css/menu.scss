@@ -4,29 +4,42 @@
   box-sizing: border-box;
 }
 
-html, body {
+li a {
+  position: relative;
+  display: table-cell;
+  text-align: center;
+  color: #949494;
+  text-decoration: none;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+  font-size: large;
+  padding: 5px 10px;
+  transition: 0.2s ease color;
+}
+
+html,
+body {
   width: 100%;
   height: 100%;
   padding: 0;
   margin: 0;
 }
 
-
 .index-header {
   height: 500px;
-  background: linear-gradient(17deg, #941bb1, #007bf7, #0093ef, #00a4d1, #00b1a6)
+  background: linear-gradient(17deg, #941bb1, #007bf7, #0093ef, #00a4d1, #00b1a6);
 }
 
+/*
 .content {
-  /** min-height: calc(100vh - 80px);*/
+  min-height: calc(100vh - 80px);
 }
+*/
 
 body {
   margin: 0;
   background: #F2F2F2;
   /*background-image: linear-gradient(to top, #f3e7e9 0%, #e3eeff 99%, #e3eeff 100%);*/
-
-
   /*background-image: linear-gradient(to top, #5f72bd 0%, #9b23ea 100%);*/
 }
 
@@ -44,26 +57,11 @@ nav {
   width: 100%;
   display: table;
   margin: 0 auto;
-  background: #292929
-  /*transform: translateY(10%);*/
+  background: #292929;
 }
 
-nav a {
-  position: relative;
-  width: 25%;
-  display: table-cell;
-  text-align: center;
-  color: #949494;
-  text-decoration: none;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold;
-  font-size: xx-large;
-  padding: 10px 20px;
-  transition: 0.2s ease color;
-}
-
-nav a:before,
-nav a:after {
+nav li:before,
+nav li:after {
   content: "";
   position: absolute;
   border-radius: 50%;
@@ -71,75 +69,82 @@ nav a:after {
   transition: 0.2s ease transform;
 }
 
-nav a:before {
+nav li:before {
   top: 15px;
   left: 34%;
   width: 6px;
   height: 6px;
 }
 
-nav a:after {
+nav li:after {
   top: 20px;
-  left: 37%;
+  left: 34%;
   width: 4px;
   height: 4px;
 }
 
-nav a:nth-child(2):before {
+nav li:nth-child(1):before {
+  left: 22.6%;
   background-color: yellow;
 }
 
-nav a:nth-child(2):after {
+nav li:nth-child(1):after {
+  left: 23%;
   background-color: red;
 }
 
-nav a:nth-child(3):before {
+nav li:nth-child(2):before {
+  left: 28.6%;
   background-color: #00e2ff;
 }
 
-nav a:nth-child(3):after {
+nav li:nth-child(2):after {
+  left: 29%;
   background-color: #89ff00;
 }
 
-nav a:nth-child(4):before {
+nav li:nth-child(3):before {
+  left: 35.6%;
   background-color: purple;
 }
 
-nav a:nth-child(4):after {
+nav li:nth-child(3):after {
+  left: 36%;
   background-color: palevioletred;
 }
 
 #indicator {
   position: absolute;
-  left: 34%;
+  left: 22.6%;
   bottom: 25%;
-  width: 30px;
+  width: 2rem;
   height: 3px;
   background-color: #fff;
   border-radius: 5px;
   transition: 0.2s ease left;
 }
 
-nav a:hover {
+nav li:hover {
   color: #fff;
 }
 
-nav a:hover:before,
-nav a:hover:after {
+nav li:hover:before,
+nav li:hover:after {
   transform: scale(1);
 }
 
-nav a:nth-child(2):hover ~ #indicator {
+nav li:nth-child(1):hover~#indicator {
+  left: 24.1%;
   background: linear-gradient(130deg, yellow, red);
 }
 
-nav a:nth-child(3):hover ~ #indicator {
-  left: 59%;
+nav li:nth-child(2):hover~#indicator {
+  left: 30.7%;
   background: linear-gradient(130deg, #00e2ff, #89ff00);
 }
 
-nav a:nth-child(4):hover ~ #indicator {
-  left: 84%;
+nav li:nth-child(3):hover~#indicator {
+  left: 37.1%;
   background: linear-gradient(130deg, purple, palevioletred);
 }
 
@@ -234,7 +239,7 @@ nav a:nth-child(4):hover ~ #indicator {
   transition: all .5s ease-in-out;
   background-color: #F2F2F2;
   padding-right: 40px;
-  display :inline-block;
+  display: inline-block;
   color: rgb(83, 83, 83);
 }
 
@@ -264,7 +269,7 @@ nav a:nth-child(4):hover ~ #indicator {
   transition: .90s;
 }
 
-.btn-search:focus ~ .input-search {
+.btn-search:focus~.input-search {
   width: 380px;
   border-radius: 0;
   background-color: transparent;
@@ -340,9 +345,11 @@ nav a:nth-child(4):hover ~ #indicator {
   0% {
     background-position: 0 0;
   }
+
   50% {
     background-position: 400% 0;
   }
+
   100% {
     background-position: 0 0;
   }

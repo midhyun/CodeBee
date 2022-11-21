@@ -38,49 +38,72 @@ def index(request):
 
 @login_required
 def create(request):
-    if request.method == 'POST':
-        tag = ''
-        temp = request.POST['tag']
-        if temp:
-            tags = json.loads(temp)
-            for t in tags:
-                tag += t['value'] + ','
-                try: Tag(tag=t['value']).save()
-                except: pass
-        study_form = StudyForm(request.POST, request.FILES)
-        study_date = StudyDateForm(request.POST)
-        if study_form.is_valid() and study_date.is_valid():
-            study = study_form.save(commit=False)
-            study.categorie = request.POST['categorie']
-            study.study_type = request.POST['study_type']
-            study.location_type = request.POST['location_type']
-            study.location = request.POST['location']
-            study.X = request.POST['X']
-            study.Y = request.POST['Y']
-            study.tag = tag
-            study.host = request.user
-            study.save()
-            date = study_date.save(commit=False)
-            date.study = study
-            date.save()
-            Aform = Accepted(joined=True, study=study, users=study.host)
-            Aform.save()
-            return redirect("reviews:index")
+    if (request.user.is_phone_active and request.user.is_email_active) or request.user.is_social_account:
+        if request.method == "POST":
+            tag = ""
+            temp = request.POST["tag"]
+            if temp:
+                tags = json.loads(temp)
+                for t in tags:
+                    tag += t["value"] + ","
+                    try:
+                        Tag(tag=t["value"]).save()
+                    except:
+                        pass
+            study_form = StudyForm(request.POST, request.FILES)
+            study_date = StudyDateForm(request.POST)
+            if study_form.is_valid() and study_date.is_valid():
+                study = study_form.save(commit=False)
+                study.categorie = request.POST["categorie"]
+                study.study_type = request.POST["study_type"]
+                study.location_type = request.POST["location_type"]
+                study.location = request.POST["location"]
+                study.X = request.POST["X"]
+                study.Y = request.POST["Y"]
+                study.tag = tag
+                study.host = request.user
+                study.save()
+                date = study_date.save(commit=False)
+                date.study = study
+                date.save()
+                Aform = Accepted(joined=True, study=study, users=study.host)
+                Aform.save()
+                return redirect("reviews:index")
+        else:
+            tag = {
+                "tags": [
+                    "python",
+                    "java",
+                    "pug",
+                    "react",
+                    "vue",
+                    "c++",
+                    "sass",
+                    "javascript",
+                    "html",
+                    "css",
+                    "django",
+                    "spring",
+                    "ruby",
+                ]
+                + list(Tag.objects.all().values_list("tag", flat=True))
+            }
+            tagify = json.dumps(tag)
+            study_form = StudyForm()
+            study_date = StudyDateForm()
+        context = {
+            "tag": tagify,
+            "study_form": study_form,
+            "study_date": study_date,
+        }
+        return render(request, "reviews/form.html", context)
     else:
-        tag = {'tags':["python","java","pug","react","vue","c++","sass","javascript","html","css","django","spring","ruby"] + list(Tag.objects.all().values_list('tag', flat=True))}
-        tagify = json.dumps(tag)
-        study_form = StudyForm()
-        study_date = StudyDateForm()
-    context = {
-        'tag': tagify,
-        'study_form': study_form,
-        'study_date': study_date,
-    }
-    return render(request, 'reviews/form.html', context)
-
+        messages.warning(request, '인증된 유저만 스터디 생성이 가능합니다.')
+        return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
+
     comment_form = CommentForm(request.POST)
     comments = Comment.objects.all().order_by("-pk")
     if request.method =='POST':
@@ -117,8 +140,6 @@ def detail(request, study_pk):
         return render(request, "reviews/detail_deactive.html", context)
 
 
-
-
 @login_required
 def update(request, study_pk):
     study = Study.objects.get(pk=study_pk)
@@ -126,22 +147,22 @@ def update(request, study_pk):
     if study.isactive:
         if request.user == study.host:
             if request.method == "POST":
-                tag = ''
-                temp = request.POST['tag']
+                tag = ""
+                temp = request.POST["tag"]
                 if temp:
                     tags = json.loads(temp)
                     for t in tags:
-                        tag += t['value'] + ','
+                        tag += t["value"] + ","
                 study_form = StudyForm(request.POST, request.FILES, instance=study)
                 study_date = StudyDateForm(request.POST, instance=date[0])
                 if study_form.is_valid() and study_date.is_valid():
                     study = study_form.save(commit=False)
-                    study.categorie = request.POST['categorie']
-                    study.study_type = request.POST['study_type']
-                    study.location_type = request.POST['location_type']
-                    study.location = request.POST['location']
-                    study.X = request.POST['X']
-                    study.Y = request.POST['Y']
+                    study.categorie = request.POST["categorie"]
+                    study.study_type = request.POST["study_type"]
+                    study.location_type = request.POST["location_type"]
+                    study.location = request.POST["location"]
+                    study.X = request.POST["X"]
+                    study.Y = request.POST["Y"]
                     study.tag = tag
                     study.host = request.user
                     study.save()
@@ -149,7 +170,7 @@ def update(request, study_pk):
                     date_ = study_date.save(commit=False)
                     date_.study = study
                     date_.save()
-                    return redirect('reviews:detail', study_pk)
+                    return redirect("reviews:detail", study_pk)
             else:
                 tag = {'tags':["python","java","pug","react","vue","c++","sass","javascript","html","css","django","spring","ruby"] + list(Tag.objects.all().values_list('tag', flat=True))}
                 tagify = json.dumps(tag)
@@ -183,8 +204,6 @@ def join(request, study_pk, user_pk):
     accepted = Accepted.objects.filter(study_id=study_pk)
     users = Accepted.objects.filter(users_id=user_pk)
 
-
-
     token = study.host.token
     if study.limits > len(accepted):
         for joined in users:
@@ -196,46 +215,52 @@ def join(request, study_pk, user_pk):
             Aform.save()
             accepted_now = Accepted.objects.filter(study_id=study_pk)
             if token:
-                try: image_url = study.image.url
-                except: image_url = 'https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png'
-                data = {"template_object": json.dumps({
-                "object_type": "feed",
-                "content": {
-                    "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
-                    "description": "신청을 승인해주세요!",
-                    "image_url": f"{image_url}",
-                    # "image_url": f"http://localhost:8000{image_url}",
-                    "image_width": 800,
-                    "image_height": 550,
-                    "link": {
-                        "web_url": "http://localhost:8000",
-                        "mobile_web_url": "http://localhost:8000",
-                        "android_execution_params": "contentId=100",
-                        "ios_execution_params": "contentId=100"
-                    }
-                },
-                "buttons": [
-                    {
-                        "title": "웹으로 이동",
-                        "link": {
-                            "web_url": "http://localhost:8000",
-                            "mobile_web_url": "http://localhost:8000"
+                try:
+                    image_url = study.image.url
+                except:
+                    image_url = "https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png"
+                data = {
+                    "template_object": json.dumps(
+                        {
+                            "object_type": "feed",
+                            "content": {
+                                "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
+                                "description": "신청을 승인해주세요!",
+                                "image_url": f"{image_url}",
+                                # "image_url": f"http://localhost:8000{image_url}",
+                                "image_width": 800,
+                                "image_height": 550,
+                                "link": {
+                                    "web_url": "http://localhost:8000",
+                                    "mobile_web_url": "http://localhost:8000",
+                                    "android_execution_params": "contentId=100",
+                                    "ios_execution_params": "contentId=100",
+                                },
+                            },
+                            "buttons": [
+                                {
+                                    "title": "웹으로 이동",
+                                    "link": {
+                                        "web_url": "http://localhost:8000",
+                                        "mobile_web_url": "http://localhost:8000",
+                                    },
+                                },
+                                {
+                                    "title": "앱으로 이동",
+                                    "link": {
+                                        "android_execution_params": "contentId=100",
+                                        "ios_execution_params": "contentId=100",
+                                    },
+                                },
+                            ],
                         }
-                    },
-                    {
-                        "title": "앱으로 이동",
-                        "link": {
-                            "android_execution_params": "contentId=100",
-                            "ios_execution_params": "contentId=100"
-                        }
-                    }
-                ]
-                })}
-                headers={"Authorization" : "Bearer " + token}
+                    )
+                }
+                headers = {"Authorization": "Bearer " + token}
                 response = requests.post(url, headers=headers, data=data)
                 print(str(response.json()))
-            messages.success(request, '가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.')
-            return redirect('reviews:detail', study_pk)
+            messages.success(request, "가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.")
+            return redirect("reviews:detail", study_pk)
     else:
         messages.success(request, "모집인원이 가득 찬 그룹입니다.")
         return redirect("reviews:detail", study_pk)
@@ -417,7 +442,9 @@ def comment_delete(request, pk, comment_pk):
 # Google Calendar Test
 def test_calendar(request):
 
-    return render(request, 'reviews/test.html')
+    return render(request, "reviews/test.html")
+
+
 # 콜
 def google_call(request):
     # if request.user.g_token:
@@ -425,32 +452,34 @@ def google_call(request):
     # else:
     #     url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com&redirect_uri=http://localhost:8000/reviews/google_code&response_type=code&scope=https://www.googleapis.com/auth/calendar'
     #     return redirect(url)
-    url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com&redirect_uri=http://localhost:8000/reviews/google_code&response_type=code&scope=https://www.googleapis.com/auth/calendar'
+    url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com&redirect_uri=http://localhost:8000/reviews/google_code&response_type=code&scope=https://www.googleapis.com/auth/calendar"
     return redirect(url)
+
+
 # 콜백
 def google_code(request):
-    url = 'https://oauth2.googleapis.com/token'
+    url = "https://oauth2.googleapis.com/token"
     data = {
-                "grant_type": "authorization_code",
-                "redirect_uri": "http://localhost:8000/reviews/google_code",
-                "client_id": "503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com",  # 배포시 보안적용 해야함
-                "client_secret": "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",  # 배포시 보안적용 해야함
-                "project_id":"keen-button-368611",
-                "state": request.GET.get("state"),
-                "code": request.GET.get("code"),
-            }
+        "grant_type": "authorization_code",
+        "redirect_uri": "http://localhost:8000/reviews/google_code",
+        "client_id": "503216611677-ah2v4o4cuqsustpbkvtot6ukdah6dhfp.apps.googleusercontent.com",  # 배포시 보안적용 해야함
+        "client_secret": "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",  # 배포시 보안적용 해야함
+        "project_id": "keen-button-368611",
+        "state": request.GET.get("state"),
+        "code": request.GET.get("code"),
+    }
     res = requests.post(url, data=data).json()
-    token = res['access_token']
-    re_token = res['refresh_token']
+    token = res["access_token"]
+    re_token = res["refresh_token"]
     print(token)
     user_ = get_user_model().objects.get(pk=request.user.pk)
     user_.g_token = token
     user_.save()
-    url = 'https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=none&key=AIzaSyB86Erv475UlH5VfgBaSCA53hPcnoR46IA'
+    url = "https://www.googleapis.com/calendar/v3/calendars/primary/events?sendUpdates=none&key=AIzaSyB86Erv475UlH5VfgBaSCA53hPcnoR46IA"
     headers = {
-        "Authorization": 'Bearer' + token,
-        "Accept": 'application/json',
-        "Content-Type": 'application/json',
+        "Authorization": "Bearer" + token,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
     }
     # data = {
     #     "end":{
@@ -466,39 +495,36 @@ def google_code(request):
     #     "description": study.content
     # }
     data = {
-    "end":{
-        "dateTime":'2022-11-18T13:00:00',
-        "timeZone":"Asia/Seoul"
-    },
-    "start":{
-        "dateTime":'2022-11-18T13:00:00',
-        "timeZone":"Asia/Seoul"
-    },
-    "summary": 'test',
-    "location":'test',
-    "description": 'test'
-}
+        "end": {"dateTime": "2022-11-18T13:00:00", "timeZone": "Asia/Seoul"},
+        "start": {"dateTime": "2022-11-18T13:00:00", "timeZone": "Asia/Seoul"},
+        "summary": "test",
+        "location": "test",
+        "description": "test",
+    }
 
     response = requests.post(url, headers=headers, data=data)
-    if response.json().get('code') == 200:
-        print('일정이 성공적으로 등록되었습니다.')
+    if response.json().get("code") == 200:
+        print("일정이 성공적으로 등록되었습니다.")
     else:
-        print('일정이 성공적으로 등록되지 못했습니다. 오류메시지 : ' + str(response.json()))
-    return redirect('reviews:test_calendar')
+        print("일정이 성공적으로 등록되지 못했습니다. 오류메시지 : " + str(response.json()))
+    return redirect("reviews:test_calendar")
+
 
 def likes(request, study_pk, user_pk):
     study = get_object_or_404(Study, pk=study_pk)
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
-    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+    check = Honey.objects.filter(
+        study=study, rating_user=rating, rated_user=rated
+    ).exists()
     join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
 
     if rated == request.user:
-        messages.warning(request, '본인을 평가할 수 없습니다.')
+        messages.warning(request, "본인을 평가할 수 없습니다.")
 
     elif not join_user:
-        messages.warning(request, '스터디 참가자들만 평가 가능합니다.')
-        
+        messages.warning(request, "스터디 참가자들만 평가 가능합니다.")
+
     else:
         if check:
             honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)
@@ -517,21 +543,24 @@ def likes(request, study_pk, user_pk):
             honey.like = True
             honey.save()
 
-    return redirect('reviews:userlist', study_pk)
-    
+    return redirect("reviews:userlist", study_pk)
+
+
 def dislikes(request, study_pk, user_pk):
     study = get_object_or_404(Study, pk=study_pk)
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
-    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
+    check = Honey.objects.filter(
+        study=study, rating_user=rating, rated_user=rated
+    ).exists()
     join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
 
     if rated == request.user:
-        messages.warning(request, '본인을 평가할 수 없습니다.')
+        messages.warning(request, "본인을 평가할 수 없습니다.")
 
     elif not join_user:
-        messages.warning(request, '스터디 참가자들만 평가 가능합니다.')
-    
+        messages.warning(request, "스터디 참가자들만 평가 가능합니다.")
+
     else:
         if check:
             honey = Honey.objects.get(study=study, rating_user=rating, rated_user=rated)
@@ -550,37 +579,45 @@ def dislikes(request, study_pk, user_pk):
             honey.dislike = True
             honey.save()
 
-    return redirect('reviews:userlist', study_pk)
+    return redirect("reviews:userlist", study_pk)
+
 
 def del_date(request, date_pk):
     date = StudyDate.objects.get(pk=date_pk)
     date.delete()
     return JsonResponse({})
 
-def search(request):
-    search = request.GET.get('search')
-    field = request.GET.get('field')
-    if field == '1' or not field:
-        users = User.objects.filter(username__contains=search)
-        studies = []
-        for user in users:
-            studies += Study.objects.filter(host=user)
-        studies += Study.objects.filter(tag__icontains=search) or Study.objects.filter(title__contains=search) or Study.objects.filter(categorie__contains=search)
-    elif field == '2':
-        studies = Study.objects.filter(title__contains=search)
-    elif field == '3':
-        users = User.objects.filter(username__contains=search)
-        studies = []
-        for user in users:
-            studies += Study.objects.filter(host=user)
-    elif field == '4':
-        studies = Study.objects.filter(categorie__contains=search)
-    elif field == '5':
-        studies = Study.objects.filter(tag__contains=search)
-    elif field == '6':
-        studies = Study.objects.filter(location__contains=search)
-    context = {
-        'studies':studies
-    }
-    return render(request, 'reviews/search.html', context)
 
+def search(request):
+    search = request.GET.get("search")
+    field = request.GET.get("field")
+    if field == "1" or not field:
+        users = User.objects.filter(username__contains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user).order_by('-pk')
+        studies += (
+            Study.objects.filter(tag__icontains=search)
+            or Study.objects.filter(title__contains=search)
+            or Study.objects.filter(categorie__contains=search)
+        ).order_by('-pk')
+        studies = list(set(studies))
+    elif field == "2":
+        studies = Study.objects.filter(title__icontains=search).order_by('-pk')
+    elif field == "3":
+        users = User.objects.filter(username__icontains=search)
+        studies = []
+        for user in users:
+            studies += Study.objects.filter(host=user).order_by('-pk')
+    elif field == "4":
+        studies = Study.objects.filter(categorie__icontains=search).order_by('-pk')
+    elif field == "5":
+        studies = Study.objects.filter(tag__icontains=search).order_by('-pk')
+    elif field == "6":
+        studies = Study.objects.filter(location__icontains=search).order_by('-pk')
+    paginator = Paginator(studies, 16)
+    posts = paginator.get_page(studies)
+    context = {
+        "studies": posts,
+    }
+    return render(request, "reviews/search.html", context)

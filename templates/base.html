@@ -10,17 +10,18 @@
   {% block css %}{% endblock css %}
   {% bootstrap_css %}{% bootstrap_javascript %}
   <title>CodeBee</title>
+  <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css" />
   <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
   <link rel="stylesheet" href="/static/css/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <style>
     body {
       font-family: 'NanumSquareNeo';
       overflow-x: hidden;
-      z-index: -10;
     }
 
     a {
@@ -28,63 +29,172 @@
     }
 
     .simplebar-scrollbar::before {
-      background-color: #ffa9bf;
+      background-color: #fff023;
+    }
+
+    #ul-div>li>a:hover {
+      color: rgb(255, 255, 255);
+    }
+
+    li {
+      list-style: none;
+    }
+
+    .msgbox {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: 15rem;
     }
   </style>
 </head>
+
 <body>
+  <img id="img1" style="position:absolute; left:0; top:0; z-index:10;" src="{% static  'm_logo.png' %} " width=" 50">
+
+  <script>
+
+    // 마우스 커서 위치 담을 변수
+    var mouseX = 0;
+    var mouseY = 0;
+
+    function getMousePosition(e) {
+      var eObj = window.event ? window.event : e; // IE, FF 에 따라 이벤트 처리 하기
+      mouseX = eObj.clientX + 15;
+      mouseY = eObj.clientY + document.documentElement.scrollTop + 15; // 화면을 스크롤 했을때를 위한 처리 (스크롤 한 만큼 마우스 Y좌표에 + )
+      // documentElement 가 안된다면 body 바꿔야 한다. 크롬의 경우.. (자동파악 로직 필요)
+    }
+
+    function moveImg() {
+      // 이미지 위치 파악하기
+      var m_x = parseInt(document.getElementById('img1').style.left.replace('px', ''));
+      var m_y = parseInt(document.getElementById('img1').style.top.replace('px', ''));
+
+      // 이미지 움직이기
+      document.getElementById('img1').style.left = Math.round(m_x + ((mouseX - m_x) / 25)) + 'px';
+      document.getElementById('img1').style.top = Math.round(m_y + ((mouseY - m_y) / 25)) + 'px';
+
+      // 부드럽게 따라오는 공식 대략..
+      // 현재 이미지위치 = 현재이미지 위치 + (이미지 위치기준 마우스 커서 위치 / 적절한 나누기 값)
+      // 반복 처리 해주면 됩니다.
+
+      // ※ 이미지 위치 기준 마우스 커서 위치란?
+      // 이미지를 기준으로 그 이미지에서 커서가 얼마나 떨어져 있는지 여부
+    }
+
+    document.onmousemove = getMousePosition; // 마우스가 움직이면 getMousePosition 함수 실행
+    setInterval("moveImg()", 7); // moveImg 함수 반복 실행하여 이미지 움직이기
+
+  </script>
   <!-- 상속받는 각 페이지에 적용해야 위쪽이 하얗게 나오지 않음 -->
-  <div id="main-top" style="height: 68px;"></div>
-  <nav id="bg" class="navbar-standard navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #ffa9bf;">
-    <div class="container">
-      <a class="navbar-brand" style="cursor: pointer;" href="{% url 'home' %}"><img src="{% static 'logo.png' %}"
-          alt=""></a>
-      <button aria-label="Toggle navigation" type="button" class="navbar-toggler">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse">
-        <ul class="navbar-nav">
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">일반 스터디</a>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:index' %}" style="color:white">그룹 스터디</a>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="#" style="color:white">그룹 모집 게시판</a></li>
-          <li class="nav-item"><a class="nav-link" href="{% url 'reviews:create' %}" style="color:white">스터디 만들기</a>
-          </li>
-          <li class="nav-item"><a class="nav-link" href="#" style="color:white">고객센터</a></li>
-        </ul>
-        <ul class="ms-auto navbar-nav">
-          {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'accounts:detail' user.pk %}" style="color:white">내
-              스터디</a></li>
-          <li class="nav-item"><a href="{% url 'accounts:logout' %}" class="nav-link">로그아웃</a></li>
+  <div id="main-top">
+    <!-- 높이를 정해주어야 스크롤이 고장나지 않음 -->
+    <div class="msgbox p-0 m-0 animate__animated animate__fadeIn">
+      {% if messages %}
+      {% for message in messages %}
+      <div class="toast show text-bg-{{ message.tags }} mb-3" aria-live="assertive" aria-atomic="true"
+        style="position: relative; top: 2rem; left: 2rem;">
+        <div class="toast-header">
+          <strong class="me-auto">알림
+          </strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+          {% if "이름" in message.message %}
+          <p>{{ message }}</p>
+          <div class="text-end">
+            <a href="{% url 'accounts:detail' request.user.pk %}" class="btn btn-primary btn-sm">입력하러 가기</a>
+          </div>
           {% else %}
-          <li class="nav-item"><a href="{% url 'accounts:login' %}" class="nav-link" style="color:white">로그인</a></li>
-          <li class="nav-item"><a href="{% url 'accounts:signup' %}" class="nav-link" style="color:white">회원가입</a>
+          {{ message }}
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+    </div>
+    <!-- 네비게이션 -->
+    <nav class="navbar navbar-expand-lg nav_bg" id="bg">
+      <div class="container">
+        <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="60"></a>
+        <div id="ul-div" class="collapse navbar-collapse" id="navbarSupportedContent">
+          <li id="li1" class="nav-item ms-3">
+            <a href="{% url 'reviews:index' %}">코드비 찾기</a>
+          </li>
+          <li id="li2" class="nav-item">
+            <a href="{% url 'reviews:create' %}">코드비 모으기</a>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li id="li3" class="nav-item ms-auto m-0">
+            <a class="nav-item" href="{% url 'accounts:logout' %}">로그아웃</a>
+          </li>
+          <li id="li4" class="nav-item">
+            <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비
+              정보</a>
+          </li>
+          {% else %}
+          <li id="li3" class="nav-item ms-auto me-3">
+            <a href="{% url 'accounts:login' %}">로그인</a>
+          </li>
+          <li id="li4" class="me-3">
+            <a href="{% url 'accounts:signup' %}">즉시 가입</a>
           </li>
           {% endif %}
-        </ul>
+          <div id="indicator"></div>
+        </div>
+      </div>
+    </nav>
+    <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasRight"
+      aria-labelledby="offcanvasRightLabel">
+      <div class="offcanvas-header justify-content-around">
+        <h1 id="offcanvasRightLabel" class="m-0">{{ request.user }}</h1>
+        <button type="button" class="btn-close text-reset text-bg-light" data-bs-dismiss="offcanvas"
+          aria-label="Close"></button>
+      </div>
+      <hr style="color:white; border: solid 2px; margin: 0;">
+      <div class="offcanvas-body">
+        {% if request.user.is_authenticated %}
+        <div class="m-3 p-3">
+          {% if request.user.profile_picture %}
+          <img src="{{ request.user.profile_picture.url }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% elif request.user.social_profile_picture %}
+          <img src="{{ request.user.social_profile_picture }}" alt="" class="rounded-circle border border-5"
+            style="width: 300px; height: 300px;">
+          {% else %}
+          <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
+          {% endif %}
+        </div>
+        <p><a class="anc" href="{% url 'accounts:detail' request.user.pk %}">회원 정보 상세보기</a></p>
+        <div>
+          {% if request.user.is_social_account %}
+          <span class="text-warning ps-2">[ 소셜 로그인 유저 ]</span>
+          {% else %}
+          <span class="text-white ps-2">[ 그저 한 마리의 꿀벌 ]</span>
+          {% endif %}
+        </div>
+        <p>{{ request.user.fullname }}</p>
+        <p>{{ request.user.email }}</p>
+        <p>{{ request.user.phone }}</p>
+        {% else %}
+        <h3>권한이 없습니다.</h3>
+        <h3>
+          <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
+        </h3>
+        {% endif %}
       </div>
     </div>
-  </nav>
-  {% if messages %}
-  {% for message in messages %}
-  <div class="alert alert-{{ message.tags }}">
-    {{ message }}
   </div>
-  {% endfor %}
-  {% endif %}
   <!-- 본문 영역 시작 -->
   <div id="main">
     {% block content %}{% endblock content %}
   </div>
   <!-- 본문 영역 끝 -->
-  <footer id="main-footer" class="align-items-center" style="background:rgb(83, 83, 83); height:80px; z-index:1000;">
-      <div class="justify-content-between row">
-        <div class="p-2 col-12">
-          <p class="mb-0 text-white">@ Copyrights 2022 CodeBee All Rights Reserved</p>
-        </div>
-      </div>
+  <footer id="main-footer" class="text-center"
+    style="position:sticky; background:rgb(83, 83, 83); bottom: 0; z-index:3;">
+    <div class="py-4">
+      <p class="text-white align-center m-0">@ Copyrights 2022 CodeBee All Rights Reserved</p>
+    </div>
   </footer>
   <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
   <script>
@@ -100,10 +210,6 @@
       main.style.height = StrNowScreenHeight + "px";
     };
     window.addEventListener("load", setScreenSize);
-    const bg = document.getElementById('bg');
-    main.addEventListener("wheel", event => {
-      bg.style.opacity = 1 - simpleBar.getScrollElement().scrollTop / 1000 + '' // 논의 필요
-    });
     window.addEventListener("resize", setScreenSize);
   </script>
   <script>
@@ -124,4 +230,5 @@
   </script>
   <div id="modal-back-div"></div>
 </body>
+
 </html>

@@ -13,12 +13,16 @@
     <div class="col-4">
       <div class="d-flex justify-content-center align-items-center h-100">
         <div>
-          {% if person.profile_picture %}
-          <img src="{{ person.profile_picture.url }}" alt="" class="rounded-circle border border-5">
+          {% if profile_picture %}
+          <img src="{{ profile_picture.url }}" alt="" class="rounded-circle border border-5"
+            style="width: 320px; height: 320px;">
+          {% elif social_profile_picture %}
+          <img src="{{ social_profile_picture }}" alt="" class="rounded-circle border border-5"
+            style="width: 320px; height: 320px;">
           {% else %}
           <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
-          <p class="fw-bold fs-4 text-center text-white mt-5">
+          <p class="fw-bold fs-4 text-center text-white mt-3">
             {{ person.nickname|default_if_none:" 어딘가의 드비" }}
           </p>
         </div>
@@ -26,7 +30,7 @@
     </div>
 
     <!-- 이름, 이메일, 깃허브 -->
-    <div class="text-white h-100 col-8 fs-4 d-flex flex-column justify-content-evenly">
+    <div class="text-white h-100 col-3 fs-4 d-flex flex-column justify-content-evenly">
 
       <p>
         {% if person.email %}
@@ -67,6 +71,28 @@
             disabled="disabled">
             <span>i</span></button>
         </span>
+      </div>
+      <!-- 팔로우 -->
+      {% if user != person %}
+      <form id="follow-form" data-user-id="{{ person.pk }}">
+        {% csrf_token %}
+        {% if request.user in person.followers.all %}
+        <button id="follow-btn" class="btn btn-danger form-control" type="submit" style='width:10%'>팔로우 취소</button>
+        {% else %}
+        <button id="follow-btn" class="btn btn-outline-primary form-control" type="submit" style='width:10%'>팔로우</button>
+        {% endif %}
+      </form>
+      {% endif %}
+    </div>
+    <div class="col-5 d-flex justify-content-start align-items-center">
+      <div>
+        {% if person.is_social_account %}
+        <a href="{% url 'accounts:sns-logout' person.service_name %}" class="btn btn-lg btn-warning mx-3">소셜 계정 탈퇴</a>
+        {% else %}
+        {% endif %}
+      </div>
+      <div>
+        <a href="{% url 'accounts:delete' person.pk %}" class="btn btn-lg btn-secondary mx-3">회원 탈퇴</a>
       </div>
     </div>
   </header>
@@ -207,14 +233,14 @@
           {% endif %}
         </div>
         {% endfor %}
-        
+
       </div>
     </div>
 
     <!-- 참여한 스터디 -->
     <div class="tab">
       <input type="radio" name="css-tabs" id="tab-2" class="tab-switch">
-      <label for="tab-2" class="tab-label">About{{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
+      <label for="tab-2" class="tab-label">About {{ person.nickname|default_if_none:"어딘가의 드비" }}</label>
       <div class="tab-content">
 
         <!-- 제목 영역 -->
@@ -286,7 +312,11 @@
             {% if accepts %}
             <p>{{ person.nickname|default_if_none:" 어딘가의 드비" }}님은
               {% for lang in langs %}
+              {% if lang in lang_list %}
               <span class="{{ lang }}">{{ lang }}</span>
+              {% else %}
+              <span class="none_type">{{ lang }}</span>
+              {% endif %}
               {% endfor %}
               스터디를 가장 많이 참여하였습니다.
             </p>
@@ -313,7 +343,7 @@
             <div class="review_card">
               <div class="review_info">
                 {% if comment.study.image %}
-                <img src="{{ comment.study.image.url }}" alt="">
+                <img src="{{ comment.study.image.url }}" alt="" style="margin-right: 12px;">
                 {% endif %}
                 <div class="info_wrapper">
                   <div class="review_title">{{ comment.study.title }}</div>
@@ -334,8 +364,8 @@
                 <p>아직 작성된 리뷰가 없어요.</p>
                 {% if user == person %}
                 <p>아래로 이동해 리뷰를 작성해보세요.</p>
-                {% for study in uncomment_study %}
                 <div class="box-wrapper">
+                  {% for study in uncomment_study %}
                   {% if study.image %}
                   <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
                     style="background-image: url('{{ study.image.url }}')">
@@ -365,5 +395,54 @@
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const followUrl = "{% url 'accounts:follow' person.pk %}";
+</script>
+<script>
+  const followForm = document.querySelector("#follow-form")
+  const csrftoken = document
+    .querySelector('[name=csrfmiddlewaretoken]')
+    .value
+  followForm
+    .addEventListener("submit", function (event) {
+      event.preventDefault()
+      axios({
+        method: "POST",
+        url: followUrl,
+        headers: {
+          'X-CSRFToken': csrftoken
+        }
+      })
+        .then(response => {
+          const isFollowed = response.data.is_followed
+          const followBtn = document.querySelector('#follow-form > #follow-btn')
+          const followerCountTag = document.querySelector('#follower-count')
+          const followingCountTag = document.querySelector('#following-count')
 
+          if (isFollowed) {
+            followBtn
+              .classList
+              .add("btn-danger")
+            followBtn
+              .classList
+              .remove("btn-outline-primary")
+            followBtn.innerText = "팔로우 취소"
+          } else {
+            followBtn
+              .classList
+              .add("btn-outline-primary")
+            followBtn
+              .classList
+              .remove("btn-danger")
+            followBtn.innerText = "팔로우"
+          }
+          followerCountTag.innerText = response.data.followers_count
+          followingCountTag.innerText = response.data.followings_count
+        })
+        .catch(error => {
+          console.log(error.response)
+        })
+    })
+</script>
 {% endblock content %}

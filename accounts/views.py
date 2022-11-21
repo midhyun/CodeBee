@@ -240,10 +240,11 @@ def social_signup_callback(request, service_name):
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
         user_login(request, user)
-        return redirect(request.GET.get("next") or "accounts:test")
+        return redirect(request.GET.get("next") or "reviews:index")
     else:
         social_data = {
             # 소셜 서비스 구분
+            "social_profile_picture": user_info["social_profile_picture"],
             "social_id": str(user_info["social_id"]),
             "service_name": service_name,
             "is_social_account": True,
@@ -252,7 +253,6 @@ def social_signup_callback(request, service_name):
         }
         data = {
             # 일반 정보
-            "social_profile_picture": user_info["social_profile_picture"],
             "nickname": user_info["nickname"],
             "email": user_info["email"],
             "phone": user_info["phone"],
@@ -276,32 +276,43 @@ def sns_logout(request, service_name):
     social_id = request.user.social_id
     user = get_object_or_404(get_user_model(), social_id=social_id)
     access_token = user.token
-    services = {
-        "kakao": {
-            "url": "https://kapi.kakao.com/v1/user/unlink",
-            "headers": {"Authorization": f"Bearer ${access_token}"},
-        },
-        "google": {
-            "url": "https://oauth2.googleapis.com/revoke",
-            "params": {"token": f"{access_token}"},
-        },
-    }
-    data = "headers" if service_name == "kakao" else "params"
-    try:
-        requests.post(
-            services[service_name]["url"], data=services[service_name][f"{data}"]
-        )
-        user.delete()
-        context = {
-            "success": "success",
-            "msg": "정상적으로 해지되었습니다.",
+    if request.method == "POST":
+        services = {
+            "kakao": {
+                "url": "https://kapi.kakao.com/v1/user/unlink",
+                "headers": {"Authorization": f"Bearer ${access_token}"},
+            },
+            "google": {
+                "url": "https://oauth2.googleapis.com/revoke",
+                "params": {"token": f"{access_token}"},
+            },
         }
-    except Exception as error:
+        data = "headers" if service_name == "kakao" else "params"
+        try:
+            requests.post(
+                services[service_name]["url"], data=services[service_name][f"{data}"]
+            )
+            user.delete()
+            context = {
+                "success": "success",
+                "msg": "정상적으로 해지되었습니다.",
+            }
+        except Exception:
+            if service_name == "github":
+                context = {
+                    "error_msg": "깃허브 계정 탈퇴는 관리자에게 문의해주세요.",
+                }
+            else:
+                context = {
+                    "error_msg": "에러가 발생했습니다.",
+                }
+        return render(request, "accounts/sns-disconnect.html", context)
+    else:
         context = {
-            "error_msg": "에러가 발생했습니다.",
-            "error_code": error,
+            "user": user,
+            "service_name": service_name,
         }
-    return render(request, "accounts/sns-disconnect.html", context)
+    return render(request, "accounts/sns-delete.html", context)
 
 
 def signup(request):
@@ -321,6 +332,11 @@ def signup(request):
             user.is_social_account = (
                 True if "is_social_account" in request.POST else False
             )
+            user.social_profile_picture = (
+                request.POST["social_profile_picture"]
+                if "social_profile_picture" in request.POST
+                else False
+            )
             # 유저 토큰
             user.token = request.POST["token"] if "token" in request.POST else None
             # 주소
@@ -337,7 +353,7 @@ def signup(request):
                 )
             user.save()
             user_login(request, user)
-            return redirect("accounts:test")
+            return redirect("reviews:index")
     else:
         signup_form = CustomUserCreationForm()
         signup_form.fields["phone"].widget.attrs["maxlength"] = 11
@@ -354,10 +370,16 @@ def update(request, user_pk):
     if request.user.pk == user_pk:
         user = get_object_or_404(get_user_model(), pk=user_pk)
         if request.method == "POST":
-            update_form = CustomUserChangeForm(request.POST, request.FILES, instance=user)
+            update_form = CustomUserChangeForm(
+                request.POST, request.FILES, instance=user
+            )
             address_form = AddressForm(request.POST, instance=user)
             auth_form = AuthForm(request.POST, instance=user)
-            if update_form.is_valid() and address_form.is_valid() and auth_form.is_valid():
+            if (
+                update_form.is_valid()
+                and address_form.is_valid()
+                and auth_form.is_valid()
+            ):
                 user = update_form.save(commit=False)
                 user.address = request.POST["address"]
                 user.detail_address = request.POST["detail_address"]
@@ -391,8 +413,9 @@ def update(request, user_pk):
         }
         return render(request, "accounts/update.html", context)
     else:
-        messages.warning(request, '본인만 수정할 수 있습니다.')
-        return redirect('reviews:index')
+        messages.warning(request, "본인만 수정할 수 있습니다.")
+        return redirect("reviews:index")
+
 
 def login(request):
     if request.method == "POST":
@@ -411,7 +434,7 @@ def login(request):
 @login_required
 def logout(request):
     user_logout(request)
-    return redirect("accounts:test")
+    return redirect("reviews:index")
 
 
 # test용도
@@ -427,85 +450,101 @@ def index(request):
 
 
 def detail(request, user_pk):
+    lang_list = ["Python", "Javascript", "Django", "Vue", "React"]
     # 유저 정보
     person = get_object_or_404(get_user_model(), pk=user_pk)
     accepts = Accepted.objects.filter(joined=True, users=person).order_by("-pk")
-    print(accepts)
     plus = Honey.objects.filter(rated_user=person, like=True).count()
     minus = Honey.objects.filter(rated_user=person, dislike=True).count()
     honey = 15 + plus - minus
+    profile_picture = person.profile_picture
+    social_profile_picture = person.social_profile_picture
     if not len(accepts):
-        return render(request, "accounts/detail.html", {"person": person,
-                                                        "honey": honey,})
-    
-    # 유저가 참여했지만 리뷰를 작성하지 않은 스터디 목록
-    partys = Accepted.objects.filter(joined=True, users=person, study__isactive=False)
-    # print(deactive_study)
-    # 유저가 참여한 모든 스터디(현재 진행 중인)
-    ings = Accepted.objects.filter(joined=True, users=person, study__isactive=True)
-    
-    uncomment_study = []
-    for party in partys:
-        study = party.study
-        if not study.comment_set.all().filter(user=person).exists():
-            uncomment_study.append(study)
-    # print(uncomment_study)
-    
-    deactives = []
-    online = []
-    offline= []
-    for accept in accepts:
-        if not accept.study.isactive:
-            deactives.append(accept.study)
-        if not accept.study.location_type:
-            offline.append(accept.study)
-        else:
-            online.append(accept.study)
-            
-    # 유저가 참여한 스터디
-    party = person.accepted_set.all().filter(joined=True)
-    # print(party)
-    studys = party.values('study')
-    # print(studys)
-    
-    lan_dict = {}
-    
-    for study in studys:
-        pk = study.get('study')
-        study_ = Study.objects.get(pk=pk)
-        lan_dict[study_.categorie] = lan_dict.get(study_.categorie, 0) + 1
-    
-    # print(lan_dict)
-    val_ = list(lan_dict.values())
-    most = max(val_)
-    # print(most)
-    
-    langs = []
-    for k, v in lan_dict.items():
-        if v == most:
-            langs.append(k)
+        return render(
+            request,
+            "accounts/detail.html",
+            {
+                "profile_picture": profile_picture,
+                "social_profile_picture": social_profile_picture,
+                "std_cnt": 0,
+                "person": person,
+                "honey": honey,
+            },
+        )
+    else:
+        # 유저가 참여했지만 리뷰를 작성하지 않은 스터디 목록
+        partys = Accepted.objects.filter(
+            joined=True, users=person, study__isactive=False
+        )
+        # print(deactive_study)
+        # 유저가 참여한 모든 스터디(현재 진행 중인)
+        ings = Accepted.objects.filter(joined=True, users=person, study__isactive=True)
+        uncomment_study = []
+        for party in partys:
+            study = party.study
+            if not study.comment_set.all().filter(user=person).exists():
+                uncomment_study.append(study)
+        # print(uncomment_study)
 
-    Std_cnt = Accepted.objects.filter(users_id=user_pk, joined=True).count()
-    return render(
-        request,
-        "accounts/detail.html",
-        context= {
-            "accepts": accepts,
-            "person": person,
-            "ings" : ings,
-            "deactives": deactives,
-            "honey" : honey,
-            "online" : online,
-            "offline" : offline,
-            "langs" : langs,
-            "partys" : partys,
-            'honey':honey,
-            'std_cnt':Std_cnt,
-            "uncomment_study" : uncomment_study,
-        },
-    )
+        deactives = []
+        online = []
+        offline = []
+        for accept in accepts:
+            if not accept.study.isactive:
+                deactives.append(accept.study)
+            if not accept.study.location_type:
+                offline.append(accept.study)
+            else:
+                online.append(accept.study)
+
+        # 유저가 참여한 스터디
+        party = person.accepted_set.all().filter(joined=True)
+        # print(party)
+        studys = party.values("study")
+        # print(studys)
+
+        lan_dict = {}
+
+        for study in studys:
+            pk = study.get("study")
+            study_ = Study.objects.get(pk=pk)
+            lan_dict[study_.categorie] = lan_dict.get(study_.categorie, 0) + 1
+
+        # print(lan_dict)
+        val_ = list(lan_dict.values())
+        most = max(val_)
+        # print(most)
+
+        langs = []
+        for k, v in lan_dict.items():
+            if v == most:
+                langs.append(k)
+
+        Std_cnt = Accepted.objects.filter(users_id=user_pk, joined=True).count()
+        return render(
+            request,
+            "accounts/detail.html",
+            context={
+                "lang_list": lang_list,
+                "accepts": accepts,
+                "person": person,
+                "ings": ings,
+                "deactives": deactives,
+                "honey": honey,
+                "online": online,
+                "offline": offline,
+                "langs": langs,
+                "partys": partys,
+                "honey": honey,
+                "std_cnt": Std_cnt,
+                "uncomment_study": uncomment_study,
+                "profile_picture": profile_picture,
+                "social_profile_picture": social_profile_picture,
+            },
+        )
 
 
+@login_required
 def likes(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if user == request.user:
@@ -524,6 +563,7 @@ def likes(request, user_pk):
     return render(request, "accounts/test2.html", context)
 
 
+@login_required
 def dislikes(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if user == request.user:
@@ -691,5 +731,44 @@ def check_email_auth(request, uidb64, token, uemailb64):
         }
     return render(request, "accounts/email-auth.html", context)
 
+
 def test2(request):
-    return render(request, 'accounts/test2.html')
+    return render(request, "accounts/test2.html")
+
+
+@login_required
+def delete(request, user_pk):
+    user = get_object_or_404(get_user_model(), pk=user_pk)
+    if request.method == "POST":
+        messages.success(request, "정상적으로 탈퇴 되었습니다.")
+        user.delete()
+        user_logout(request)
+        return redirect("reviews:index")
+    else:
+        context = {
+            "user": user,
+        }
+    return render(request, "accounts/delete.html", context)
+
+
+@login_required
+def follow(request, following_pk):
+    user = get_object_or_404(get_user_model(), pk=following_pk)
+    # 스스로를 팔로우하려는 경우
+    if request.user == user:
+        messages.warning(request, "스스로 팔로우 할 수 없습니다.")
+        return redirect("accounts:detail", following_pk)
+    # 팔로우하고 있는 상태인 경우
+    if request.user in user.followers.all():
+        user.followers.remove(request.user)
+        is_followed = False
+    # 팔로우하고 있지 않았을때
+    else:
+        user.followers.add(request.user)
+        is_followed = True
+    context = {
+        "is_followed": is_followed,
+        "followers_count": user.followers.count(),
+        "followings_count": user.followings.count(),
+    }
+    return JsonResponse(context)
