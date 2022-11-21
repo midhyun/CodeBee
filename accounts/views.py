@@ -545,41 +545,6 @@ def detail(request, user_pk):
         )
 
 
-@login_required
-def likes(request, user_pk):
-    user = get_object_or_404(get_user_model(), pk=user_pk)
-    if user == request.user:
-        messages.warning(request, "본인을 평가할 수 없습니다.")
-
-    else:
-        if user.ls.filter(pk=request.user.pk):
-            user.ls.remove(request.user)
-            user.save()
-        else:
-            if user.ds.filter(pk=request.user.pk):
-                user.ds.remove(request.user)
-            user.ls.add(request.user)
-            user.save()
-    context = {}
-    return render(request, "accounts/test2.html", context)
-
-
-@login_required
-def dislikes(request, user_pk):
-    user = get_object_or_404(get_user_model(), pk=user_pk)
-    if user == request.user:
-        messages.warning(request, "본인을 평가할 수 없습니다.")
-    else:
-        if user.ds.filter(pk=request.user.pk):
-            user.ds.remove(request.user)
-            user.save()
-        else:
-            if user.ls.filter(pk=request.user.pk):
-                user.ls.remove(request.user)
-            user.ds.add(request.user)
-            user.save()
-    context = {}
-    return render(request, "accounts/test2.html", context)
 
 
 @login_required
@@ -733,8 +698,8 @@ def check_email_auth(request, uidb64, token, uemailb64):
     return render(request, "accounts/email-auth.html", context)
 
 
-def test2(request):
-    return render(request, "accounts/test2.html")
+def cont(request):
+    return render(request, "accounts/cont.html")
 
 
 @login_required

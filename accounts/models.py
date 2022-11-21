@@ -63,17 +63,14 @@ class User(AbstractUser):
         upload_to="profile_pictures/",
         null=True,
         blank=True,
-        processors=[ResizeToFill(128, 128)],
+        processors=[ResizeToFill(512, 512)],
         format="JPEG",
         options={
-            "quality": 30,
+            "quality": 80,
         },
     )
     address = models.CharField(max_length=100)
     detail_address = models.CharField(max_length=30)
-    # 다른 유저와 상호작용 필드
-    likes = models.ManyToManyField("self", symmetrical=False, related_name="ls")
-    dislikes = models.ManyToManyField("self", symmetrical=False, related_name="ds")
     # 소셜 아이디 관련 필드
     is_social_account = models.BooleanField(default=False)
     git_username = models.CharField(null=True, blank=True, max_length=50)

@@ -17,8 +17,6 @@ urlpatterns = [
     ),
     re_path(r"^login/(?P<service_name>[^/]+)/callback/$", views.social_signup_callback),
     path("sns-logout/<str:service_name>/", views.sns_logout, name="sns-logout"),
-    path("<int:user_pk>/likes/", views.likes, name="likes"),
-    path("<int:user_pk>/dislikes/", views.dislikes, name="dislikes"),
     path("<int:user_pk>/password/", views.password_change, name="password-change"),
     path("<int:user_pk>/update/check/", views.check, name="check"),
     path("<int:user_pk>/update/phone-auth/", views.phone_auth, name="phone-auth"),
@@ -32,5 +30,5 @@ urlpatterns = [
 
     path("follow/<int:following_pk>/", views.follow, name="follow"),
     path("<int:user_pk>/delete/", views.delete, name="delete"),
-    path("test2/", views.test2, name="test2"),
+    path("cont/", views.cont, name="cont"),
 ]

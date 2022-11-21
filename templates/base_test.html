@@ -5,152 +5,153 @@
 <html lang="ko">
 
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {% block css %}{% endblock css %}
-  {% bootstrap_css %}{% bootstrap_javascript %}
-  <title>CodeBee</title>
-  <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css" />
-  <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-  <style>
-    body {
-      font-family: 'NanumSquareNeo';
-      overflow-x: hidden;
-    }
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block css %}{% endblock css %}
+    {% bootstrap_css %}{% bootstrap_javascript %}
+    <title>CodeBee</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'm_logo.png' %}">
+    <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        body {
+            font-family: 'NanumSquareNeo';
+            overflow-x: hidden;
+        }
 
-    .simplebar-scrollbar::before {
-      background-color: rgb(255, 208, 0);
-    }
+        .simplebar-scrollbar::before {
+            background-color: rgb(255, 208, 0);
+        }
 
-    .msgbox {
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      width: 15rem;
-      z-index: 2000;
-    }
+        .msgbox {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 15rem;
+            z-index: 2000;
+        }
 
-    a {
-      text-decoration: none;
-    }
+        a {
+            text-decoration: none;
+        }
 
-    #ul-div>li>a:hover {
-      color: rgb(255, 255, 255);
-    }
+        #ul-div > li > a:hover {
+            color: rgb(255, 255, 255);
+        }
 
-    li {
-      list-style: none;
-    }
-  </style>
+        li {
+            list-style: none;
+        }
+    </style>
 </head>
 
 <body>
-  <img id="img1" style="position:absolute; left:0; top:0; z-index:10;" src="{% static  'm_logo.png' %} " width=" 50">
+<img id="img1" style="position:absolute; left:0; top:0; z-index:10;" src="{% static  'm_logo.png' %} " width=" 50">
 
-  <script>
-
+<script>
     // 마우스 커서 위치 담을 변수
     var mouseX = 0;
     var mouseY = 0;
 
     function getMousePosition(e) {
-      var eObj = window.event ? window.event : e; // IE, FF 에 따라 이벤트 처리 하기
-      mouseX = eObj.clientX + 15;
-      mouseY = eObj.clientY + document.documentElement.scrollTop + 15; // 화면을 스크롤 했을때를 위한 처리 (스크롤 한 만큼 마우스 Y좌표에 + )
-      // documentElement 가 안된다면 body 바꿔야 한다. 크롬의 경우.. (자동파악 로직 필요)
+        var eObj = window.event ? window.event : e; // IE, FF 에 따라 이벤트 처리 하기
+        mouseX = eObj.clientX + 15;
+        mouseY = eObj.clientY + document.documentElement.scrollTop + 15; // 화면을 스크롤 했을때를 위한 처리 (스크롤 한 만큼 마우스 Y좌표에 + )
+        // documentElement 가 안된다면 body 바꿔야 한다. 크롬의 경우.. (자동파악 로직 필요)
     }
 
     function moveImg() {
-      // 이미지 위치 파악하기
-      var m_x = parseInt(document.getElementById('img1').style.left.replace('px', ''));
-      var m_y = parseInt(document.getElementById('img1').style.top.replace('px', ''));
+        // 이미지 위치 파악하기
+        var m_x = parseInt(document.getElementById('img1').style.left.replace('px', ''));
+        var m_y = parseInt(document.getElementById('img1').style.top.replace('px', ''));
 
-      // 이미지 움직이기
-      document.getElementById('img1').style.left = Math.round(m_x + ((mouseX - m_x) / 25)) + 'px';
-      document.getElementById('img1').style.top = Math.round(m_y + ((mouseY - m_y) / 25)) + 'px';
+        // 이미지 움직이기
+        document.getElementById('img1').style.left = Math.round(m_x + ((mouseX - m_x) / 25)) + 'px';
+        document.getElementById('img1').style.top = Math.round(m_y + ((mouseY - m_y) / 25)) + 'px';
 
-      // 부드럽게 따라오는 공식 대략..
-      // 현재 이미지위치 = 현재이미지 위치 + (이미지 위치기준 마우스 커서 위치 / 적절한 나누기 값)
-      // 반복 처리 해주면 됩니다.
+        // 부드럽게 따라오는 공식 대략..
+        // 현재 이미지위치 = 현재이미지 위치 + (이미지 위치기준 마우스 커서 위치 / 적절한 나누기 값)
+        // 반복 처리 해주면 됩니다.
 
-      // ※ 이미지 위치 기준 마우스 커서 위치란?
-      // 이미지를 기준으로 그 이미지에서 커서가 얼마나 떨어져 있는지 여부
+        // ※ 이미지 위치 기준 마우스 커서 위치란?
+        // 이미지를 기준으로 그 이미지에서 커서가 얼마나 떨어져 있는지 여부
     }
 
     document.onmousemove = getMousePosition; // 마우스가 움직이면 getMousePosition 함수 실행
     setInterval("moveImg()", 7); // moveImg 함수 반복 실행하여 이미지 움직이기
-
-  </script>
-  <div id="main-top">
+</script>
+<div id="main-top">
     <!-- 높이를 정해주어야 스크롤이 고장나지 않음 -->
     <div class="msgbox p-0 m-0 animate__animated animate__fadeIn">
-      {% if messages %}
-      {% for message in messages %}
-      <div class="toast show text-bg-{{ message.tags }} mb-3" aria-live="assertive" aria-atomic="true"
-        style="position: relative; top: 2rem; left: 2rem;">
-        <div class="toast-header">
-          <strong class="me-auto">알림
-          </strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-          {% if "이름" in message.message %}
-          <p>{{ message }}</p>
-          <div class="text-end">
-            <a href="{% url 'accounts:detail' request.user.pk %}" class="btn btn-primary btn-sm">입력하러 가기</a>
-          </div>
-          {% else %}
-          {{ message }}
-          {% endif %}
-        </div>
-      </div>
-      {% endfor %}
-      {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div class="toast show text-bg-{{ message.tags }} mb-3" aria-live="assertive" aria-atomic="true"
+                     style="position: relative; top: 2rem; left: 2rem;">
+                    <div class="toast-header">
+                        <strong class="me-auto">알림
+                        </strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">
+                        {% if "이름" in message.message %}
+                            <p>{{ message }}</p>
+                            <div class="text-end">
+                                <a href="{% url 'accounts:detail' request.user.pk %}" class="btn btn-primary btn-sm">입력하러
+                                    가기</a>
+                            </div>
+                        {% else %}
+                            {{ message }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
     </div>
     <!-- 네비게이션 -->
     <nav class="navbar navbar-expand-lg nav_bg" id="bg">
-      <div class="container">
-        <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="60"></a>
-        <div id="ul-div" class="collapse navbar-collapse" id="navbarSupportedContent">
-          <li id="li1" class="nav-item ms-3">
-            <a href="{% url 'reviews:index' %}">코드비 찾기</a>
-          </li>
-          <li id="li2" class="nav-item">
-            <a href="{% url 'reviews:create' %}">코드비 모으기</a>
-          </li>
-          {% if request.user.is_authenticated %}
-          <li id="li3" class="nav-item ms-auto m-0">
-            <a class="nav-item" href="{% url 'accounts:logout' %}">로그아웃</a>
-          </li>
-          <li id="li4" class="nav-item">
-            <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비
-              정보</a>
-          </li>
-          {% else %}
-          <li id="li3" class="nav-item ms-auto me-3">
-            <a href="{% url 'accounts:login' %}">로그인</a>
-          </li>
-          <li id="li4" class="me-3">
-            <a href="{% url 'accounts:signup' %}">즉시 가입</a>
-          </li>
-          {% endif %}
-          <div id="indicator"></div>
+        <div class="container">
+            <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="60"></a>
+            <div id="ul-div" class="collapse navbar-collapse" id="navbarSupportedContent">
+                <li id="li1" class="nav-item ms-3">
+                    <a href="{% url 'reviews:index' %}">코드비 찾기</a>
+                </li>
+                <li id="li2" class="nav-item">
+                    <a href="{% url 'reviews:create' %}">코드비 모으기</a>
+                </li>
+                {% if request.user.is_authenticated %}
+                    <li id="li3" class="nav-item ms-auto m-0">
+                        <a class="nav-item" href="{% url 'accounts:logout' %}">로그아웃</a>
+                    </li>
+                    <li id="li4" class="nav-item">
+                        <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button"
+                           aria-controls="offcanvasRight">코드비
+                            정보</a>
+                    </li>
+                {% else %}
+                    <li id="li3" class="nav-item ms-auto me-3">
+                        <a href="{% url 'accounts:login' %}">로그인</a>
+                    </li>
+                    <li id="li4" class="me-3">
+                        <a href="{% url 'accounts:signup' %}">즉시 가입</a>
+                    </li>
+                {% endif %}
+                <div id="indicator"></div>
+            </div>
         </div>
-      </div>
     </nav>
     <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasRight"
-      aria-labelledby="offcanvasRightLabel">
-      <div class="offcanvas-header justify-content-around">
-        <h1 id="offcanvasRightLabel" class="m-0">{{ request.user }}</h1>
-        <button type="button" class="btn-close text-reset text-bg-light" data-bs-dismiss="offcanvas"
-          aria-label="Close"></button>
-      </div>
+         aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header justify-content-around">
+            <h1 id="offcanvasRightLabel" class="m-0">{{ request.user }}</h1>
+            <button type="button" class="btn-close text-reset text-bg-light" data-bs-dismiss="offcanvas"
+                    aria-label="Close"></button>
+        </div>
       <hr style="color:white; border: solid 2px; margin: 0;">
       <div class="offcanvas-body">
         {% if request.user.is_authenticated %}
@@ -165,17 +166,42 @@
           <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
         </div>
-        <p><a class="anc" href="{% url 'accounts:detail' request.user.pk %}">회원 정보 상세보기</a></p>
+        <p class="text-end">
+            <a class="anc btn" style="background-color: rgb(255 192 7);" href="{% url 'accounts:detail' request.user.pk %}">
+              <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
+              margin-right: 10px;">나의 CodeBee</a>
         <div>
-          {% if request.user.is_social_account %}
-          <span class="text-warning ps-2">[ 소셜 로그인 유저 ]</span>
-          {% else %}
-          <span class="text-white ps-2">[ 그저 한 마리의 꿀벌 ]</span>
-          {% endif %}
+          </p>
+          <p class="text-white ps-2 fw-bold" style="font-size: larger;">
+            {% if request.user.is_social_account %}
+            {{ request.user.email }}
+            {% else %}
+            {{ request.user.nickname|default_if_none:"그저 한 마리의 꿀벌" }}
+            {% endif %}
+          </p>
         </div>
-        <p>{{ request.user.fullname }}</p>
-        <p>{{ request.user.email }}</p>
-        <p>{{ request.user.phone }}</p>
+        <p class="can-li">
+          {% comment %} 구글 로그인인 경우 {% endcomment %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google" width="16"
+            height="24" viewbox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M17.788 5.108a9 9 0 1 0 3.212 6.892h-8"></path>
+          </svg>
+          {% comment %} 카카오톡 로그인인 경우 {% endcomment %}
+          <img src="{% static 'kakaoauth.png' %}" alt="logo" style="width:16px">
+          {% comment %} 깃허브로그인인 경우 {% endcomment %}
+          <img src="{% static 'githubauth.png' %}" alt="logo" style="width:16px">
+          miggo2704@gmail.com
+        </p>
+
+        <p class="can-li">{{ request.user.fullname|default_if_none:"이름을 설정해주세요." }}</p>
+        {% if not request.user.is_social_account %}
+        {% if request.user.eamil|length %}
+        <p class="can-li">{{ request.user.email|default_if_none:"이메일을 설정해주세요." }}</p>
+        {% endif %}
+        {% endif %}
+        <p class="can-li">{{ request.user.phone|default_if_none:"전화번호를 설정해주세요." }}</p>
         {% else %}
         <h3>권한이 없습니다.</h3>
         <h3>
@@ -187,50 +213,60 @@
   </div>
   <!-- 본문 영역 시작 -->
   <div id="main">
-    {% block content %}
-    {% endblock content %}
+    {% block content %}{% endblock content %}
   </div>
   <!-- 본문 영역 끝 -->
   <footer id="main-footer" class="text-center"
     style="position:sticky; background:rgb(83, 83, 83); bottom: 0; z-index:3;">
+
     <div class="py-4">
-      <p class="text-white align-center m-0">@ Copyrights 2022 CodeBee All Rights Reserved</p>
+        <p class="text-white align-center m-0">@ Copyrights 2022 CodeBee All Rights Reserved</p>
     </div>
-  </footer>
-  <script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
-  <script>
+</footer>
+<script src="https://cdn.jsdelivr.net/npm/simplebar@latest/dist/simplebar.min.js"></script>
+<script>
     const simpleBar = new SimpleBar(document.getElementById('main'));
     let main = document.getElementById("main");
     let topHeight = document.getElementById("main-top").clientHeight;
     let footerHeight = document.getElementById("main-footer").clientHeight;
+
     function setScreenSize() {
-      let IntNowScreenHeight = window.innerHeight - topHeight - footerHeight; // 본문영역에 높이가 있는 div 추가되면 다시 계산하여 적용해야함
-      // footer 가 fixed 처럼 움직임
-      let StrNowScreenHeight = String(IntNowScreenHeight);
-      main.style.height = StrNowScreenHeight + "px";
-    };
+        let IntNowScreenHeight = window.innerHeight - topHeight - footerHeight; // 본문영역에 높이가 있는 div 추가되면 다시 계산하여 적용해야함
+        // footer 가 fixed 처럼 움직임
+        let StrNowScreenHeight = String(IntNowScreenHeight);
+        main.style.height = StrNowScreenHeight + "px";
+    }
+
     window.addEventListener("load", setScreenSize);
     window.addEventListener("resize", setScreenSize);
-  </script>
-  <script>
+</script>
+<script>
     const target = document.querySelector("body");
     const modal = document.querySelectorAll(".modal");
     console.log(modal)
     let i = 0;
     for (i; i < modal.length; i++) {
-      let modalBtn = document.querySelector(`#modal-btn${i}`);
-      const modalDict = {}
-      modalDict[`modal${i}`] = [modal[i], modalBtn];
-      console.log(modalDict)
-      modalDict[`modal${i}`][1].addEventListener("click", function () {
-        if (document.querySelector(".modal-backdrop") !== null) {
-          const modalBack = document.querySelector("#modal-back-div");
-          modalBack.appendChild(Object.values(modalDict)[0][0]);
-        };
-      });
-    };
-  </script>
-  <div id="modal-back-div"></div>
+        let modalBtn = document.querySelector(`#modal-btn${i}`);
+        const modalDict = {}
+        modalDict[`modal${i}`] = [modal[i], modalBtn];
+        console.log(modalDict)
+        modalDict[`modal${i}`][1].addEventListener("click", function () {
+            if (document.querySelector(".modal-backdrop") !== null) {
+                const modalBack = document.querySelector("#modal-back-div");
+                modalBack.appendChild(Object.values(modalDict)[0][0]);
+            }
+
+        });
+    }
+    var btn = document.getElementById('btn');
+    btn.addEventListener('click', function () {
+        var arr = ["강직한", "고요한", "고운", "기특한", "깜찍한", "근면한", "귀여운", "관대한", "깔끔한", "꾸준한", "긍정적인", "깡이 있는", "겸손한", "검소한", "공손한", "기운찬 ", "놀라운", "나눌 줄 아는", "넉넉한", "남자다운", "느긋한", "넉살 좋은", "남을 잘 돌보는", "낙천적인", "낭만적인", "다정한", "당당한", "든든한", "다재다능한", "또렷한", "다양한", "단호한", "대담한", "리더십 있는", "로맨틱한", "믿음직한", "명랑한", "마음이 넓은", "매력적인", "맑은", "멋진", "말을 잘하는", "반듯한", "발랄한", "부드러운", "빼어난", "분별력 있는", "배려심 있는", "밝은", "배짱 있는", "부지런한", "바른", "붙임성 있는", "산뜻한", "수려한", "순진무구한", "순한", "싱그러운", "선한", "시원시원한", "사교적인", "섬세한", "사랑스러운", "성실한", "순수한", "소신있는", "섹시한", "사려깊은", "시간관념이 뚜렷한", "소탈한", "상냥한", "생기있는", "솔직한", "신중한", "싹싹한", "아리따운", "어여쁜", "예쁜", "용감한", "우아한", "위대한", "용기있는 유능한", "유쾌한", "이해심 많은", "아름다운", "여유로운", "원만한", "육감적인", "여성스러운", "입이 무거운", "에너지 넘치는", "유머러스한", "융통성있는", "적극적인", "직선적인", "정의로운", "조용한", "재미있는", "정직한", "존귀한", "지혜로운", "자애로운", "잘 웃는", "자신감 있는", "자유로운", "지적인", "절약하는", "정숙한", "진취적인", "착한", "청초한", "창의적인", "침착한", "책임감 있는", "차분한", "친숙한", "친절한", "쾌활한", "카리스마 있는", "튼튼한", "털털한", "편안한", "평화로운", "포근한", "포용력 있는", "훌륭한", "활동적인", "화사한", "화끈한", "합리적인", "헌신적인", "활달한", "호감이 가는"]
+        var random = Math.floor(Math.random() * arr.length);
+        var rtext = document.getElementById('rtext');
+        rtext.textContent = arr[random] + " 코드비"
+    });
+</script>
+<div id="modal-back-div"></div>
 </body>
 
 </html>
