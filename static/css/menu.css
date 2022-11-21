@@ -149,3 +149,12 @@ nav li:nth-child(3):hover ~ #indicator { left: 37.1%; background: linear-gradien
   transition: .4s;
   display: none;
 }
+.card-title {
+  display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient:vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 48px;
+  margin: auto;
+}
