@@ -13,7 +13,7 @@
   {% bootstrap_form comment_form %}
   {% bootstrap_button button_type="submit" content="OK" %}
 </form>
-<div id="review-{{ review.pk }}-comments-list" data-review-id="{{ review.pk }}" class="display-none">
+<div id="review-{{ review.pk }}-comments-list" data-review-id="{{ review.pk }}">
   {% for comment in comments %}
   {% if review.pk == comment.study_id %}
   <span>{{ comment.user }} | {{ comment.content }} | {{ comment.created_at }}</span>
@@ -24,7 +24,7 @@
   <button id="comment-{{ comment.pk }}-delete" data-review-id="{{ review.pk }}" data-comment-id="{{ comment.pk }}"
     class="btn btn-outline-danger" onclick="deleteComment(this.id)">삭제
   </button>
-  <div id="comment-{{ comment.pk }}-update-form" class="display-none">
+  <div id="comment-{{ comment.pk }}-update-form" class="d-none">
     <input id="comment-{{ comment.pk }}-update-content" type="text" value="{{ comment.content }}">
     <button id="comment-{{ comment.pk }}-update-btn" class="btn btn-primary" data-review-id="{{ review.pk }}"
       data-comment-id="{{ comment.pk }}" onclick="updateComment(this.id)">확인
@@ -34,9 +34,9 @@
   <br>
   {% endif %}
   {% endfor %}
+</div>
   {% endfor %}
 
-</div>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
 

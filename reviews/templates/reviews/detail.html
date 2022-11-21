@@ -85,11 +85,11 @@
           <p class="my-0">
             <a class="mx-2 text-muted" style="text-decoration:none;" href="{% url 'reviews:update' study.pk %}">수정</a>
             |
-            <button id="modal-btn3" style="border:none" type="button" data-bs-toggle="modal" data-bs-target="#modal3">
+            <button id="modal-btn0" style="border:none" type="button" data-bs-toggle="modal" data-bs-target="#modal0">
               <span class="text-muted">삭제</span>
             </button>
             |
-            <button id="modal-btn0" style="border:none" type="button" data-bs-toggle="modal" data-bs-target="#modal0">
+            <button id="modal-btn1" style="border:none" type="button" data-bs-toggle="modal" data-bs-target="#modal1">
               <span class="text-muted">활동완료</span>
             </button>
             {% else %}
@@ -109,11 +109,11 @@
           {% endif %}
           {% endif %}
           <!-- 삭제 Modal -->
-          <div class="modal fade" id="modal3" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+          <div class="modal fade" id="modal0" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel2">삭제</h1>
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">삭제</h1>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body px-4 text-start lh-lg modal-text">
@@ -130,7 +130,7 @@
           </div>
 
           <!-- 활동 완료 Modal -->
-          <div class="modal fade" id="modal0" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -168,7 +168,7 @@
           </li>
           {% if request.user == study.host %}
           <li class="nav-item" role="presentation">
-            <button id="modal-btn2" class="nav-link" type="button" data-bs-toggle="modal" data-bs-target="#modal2"><i
+            <button id="modal-btn3" class="nav-link" type="button" data-bs-toggle="modal" data-bs-target="#modal3"><i
                 class="bi bi-chat-dots-fill"></i> 그룹원 호출
             </button>
           </li>
@@ -235,8 +235,8 @@
                   <hr class="dropdown-divider">
                 </li>
                 <li>
-                  <div id="modal-btn1" style="cursor:pointer" class="dropdown-item text-center" data-bs-toggle="modal"
-                    data-bs-target="#modal1">
+                  <div id="modal-btn2" style="cursor:pointer" class="dropdown-item text-center" data-bs-toggle="modal"
+                    data-bs-target="#modal2">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                       class="bi bi-plus-circle" viewbox="0 0 16 16">
                       <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -249,7 +249,7 @@
                 {% endif %}
               </ul>
               <!-- 스터디 추가 Modal -->
-              <div class="modal fade" id="modal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal fade" id="modal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                   <div class="modal-content">
                     <div class="modal-header">
@@ -257,14 +257,14 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    <form action="" method="POST">
-                      {% csrf_token %}
-                      {% bootstrap_form form %}
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
-                      </div>
+                      <form action="" method="POST">
+                        {% csrf_token %}
+                        {% bootstrap_form form %}
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
                     </form>
                   </div>
                 </div>
@@ -338,12 +338,12 @@
         </div>
       </div>
     </div>
-    
+
     {% if study.host == user %}
     <!-- 그룹원 호출 버튼 -->
 
     <!-- 그룹원 호출 모달 -->
-    <div class="modal fade" id="modal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">

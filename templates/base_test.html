@@ -11,6 +11,7 @@
   {% block css %}{% endblock css %}
   {% bootstrap_css %}{% bootstrap_javascript %}
   <title>CodeBee</title>
+  <link rel="icon" type="image/x-icon" href="{% static 'm_logo.png' %}">
   <link href="{% static 'css/menu.css' %}" rel="stylesheet" type="text/css" />
   <link href="https://hangeul.pstatic.net/hangeul_static/css/nanum-square-neo.css" rel="stylesheet">
   <script src="https://kit.fontawesome.com/628c8d2499.js" crossorigin="anonymous"></script>
@@ -215,11 +216,13 @@
   <script>
     const target = document.querySelector("body");
     const modal = document.querySelectorAll(".modal");
+    console.log(modal)
     let i = 0;
     for (i; i < modal.length; i++) {
       let modalBtn = document.querySelector(`#modal-btn${i}`);
       const modalDict = {}
       modalDict[`modal${i}`] = [modal[i], modalBtn];
+      console.log(modalDict)
       modalDict[`modal${i}`][1].addEventListener("click", function () {
         if (document.querySelector(".modal-backdrop") !== null) {
           const modalBack = document.querySelector("#modal-back-div");

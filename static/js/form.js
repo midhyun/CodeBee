@@ -24,10 +24,13 @@ function locationtype_change(target) {
   var temp = document.getElementById('map_wrap')
   var btnonline = document.getElementById('button-addon2')
   var input = document.getElementById('id_addr')
+  var addresslabel = document.querySelector('#adresslabel')
+  console.log(addresslabel)
   if (target.value == '0') {
     input.placeholder = '직접 입력하거나 지도를 클릭해 마커를 표시하세요.'
     btnonline.type = 'button'
     temp.classList.remove('hide')
+    addresslabel.innerText = '주소 (새로운 마커를 찍거나 기존의 마커를 클릭해주세요.)'
   } else {
     // var temp2 = document.getElementById('map_wrap')
     // var btnonline2 = document.getElementById('button-addon2')
@@ -35,6 +38,7 @@ function locationtype_change(target) {
     input.placeholder = '온라인에서 활동할 주소를 입력해 주세요.'
     btnonline.type = 'hidden'
     temp.classList.add('hide')
+    addresslabel.innerText = '온라인 주소'
   }
 }
 var enteraddress = document.querySelector('[name="location"]')
