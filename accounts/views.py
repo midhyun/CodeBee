@@ -353,7 +353,7 @@ def signup(request):
                 )
             user.save()
             user_login(request, user)
-            return redirect("reviews:index")
+            return render(request, "accounts/check.html")
     else:
         signup_form = CustomUserCreationForm()
         signup_form.fields["phone"].widget.attrs["maxlength"] = 11
@@ -545,43 +545,6 @@ def detail(request, user_pk):
 
 
 @login_required
-def likes(request, user_pk):
-    user = get_object_or_404(get_user_model(), pk=user_pk)
-    if user == request.user:
-        messages.warning(request, "본인을 평가할 수 없습니다.")
-
-    else:
-        if user.ls.filter(pk=request.user.pk):
-            user.ls.remove(request.user)
-            user.save()
-        else:
-            if user.ds.filter(pk=request.user.pk):
-                user.ds.remove(request.user)
-            user.ls.add(request.user)
-            user.save()
-    context = {}
-    return render(request, "accounts/test2.html", context)
-
-
-@login_required
-def dislikes(request, user_pk):
-    user = get_object_or_404(get_user_model(), pk=user_pk)
-    if user == request.user:
-        messages.warning(request, "본인을 평가할 수 없습니다.")
-    else:
-        if user.ds.filter(pk=request.user.pk):
-            user.ds.remove(request.user)
-            user.save()
-        else:
-            if user.ls.filter(pk=request.user.pk):
-                user.ls.remove(request.user)
-            user.ds.add(request.user)
-            user.save()
-    context = {}
-    return render(request, "accounts/test2.html", context)
-
-
-@login_required
 def password_change(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if request.method == "POST":
@@ -733,7 +696,7 @@ def check_email_auth(request, uidb64, token, uemailb64):
 
 
 def test2(request):
-    return render(request, "accounts/test2.html")
+    return render(request, "accounts/check.html")
 
 
 @login_required
