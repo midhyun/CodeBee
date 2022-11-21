@@ -29,6 +29,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 ALLOWED_HOSTS = [
     "codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com",
     "172.31.13.105",
+    "172.31.10.233",
     "127.0.0.1",
     "localhost",
 ]
