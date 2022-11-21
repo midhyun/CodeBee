@@ -23,29 +23,35 @@ nav li:before { top: 15px; left: 34%; width: 6px; height: 6px; }
 
 nav li:after { top: 20px; left: 34%; width: 4px; height: 4px; }
 
-nav li:nth-child(1):before { left: 22.6%; background-color: yellow; }
+nav #li1:before { left: 21%; background-color: yellow; }
 
-nav li:nth-child(1):after { left: 23%; background-color: red; }
+nav #li1:after { left: 21.4%; background-color: red; }
 
-nav li:nth-child(2):before { left: 28.6%; background-color: #00e2ff; }
+nav #li2:before { left: 27.1%; background-color: lime; }
 
-nav li:nth-child(2):after { left: 29%; background-color: #89ff00; }
+nav #li2:after { left: 27.5%; background-color: yellow; }
 
-nav li:nth-child(3):before { left: 35.6%; background-color: purple; }
+nav #li3:before { left: 73.6%; background-color: blue; }
 
-nav li:nth-child(3):after { left: 36%; background-color: palevioletred; }
+nav #li3:after { left: 74%; background-color: #008300; }
 
-#indicator { position: absolute; left: 22.6%; bottom: 25%; width: 2rem; height: 3px; background-color: #fff; border-radius: 5px; transition: 0.2s ease left; }
+nav #li4:before { left: 78.4%; background-color: purple; }
+
+nav #li4:after { left: 78.7%; background-color: blue; }
+
+#indicator { position: absolute; left: 20.7%; bottom: 25%; width: 2rem; height: 3px; background-color: #fff; border-radius: 5px; transition: 0.2s ease left; }
 
 nav li:hover { color: #fff; }
 
 nav li:hover:before, nav li:hover:after { transform: scale(1); }
 
-nav li:nth-child(1):hover ~ #indicator { left: 24.1%; background: linear-gradient(130deg, yellow, red); }
+nav li:nth-child(1):hover ~ #indicator { left: 22.6%; background: linear-gradient(130deg, yellow, red); }
 
-nav li:nth-child(2):hover ~ #indicator { left: 30.7%; background: linear-gradient(130deg, #00e2ff, #89ff00); }
+nav li:nth-child(2):hover ~ #indicator { left: 28.9%; background: linear-gradient(130deg, #3cff00, #ffe600); }
 
-nav li:nth-child(3):hover ~ #indicator { left: 37.1%; background: linear-gradient(130deg, purple, palevioletred); }
+nav li:nth-child(3):hover ~ #indicator { left: 74.6%; background: linear-gradient(130deg, #00800b, #1100ff); }
+
+nav li:nth-child(4):hover ~ #indicator { left: 79.8%; background: linear-gradient(130deg, #000dc7, #7600a5); }
 
 .card-image { height: 296px; object-fit: scale-down; }
 
