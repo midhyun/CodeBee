@@ -307,14 +307,22 @@
               <p class="my-4"></p>
               {% else %}
               <span class="badge bg-success">참여중</span>
-              {% if study.host == user %}
-              <p class="text-end m-0">
-                <a class="text-danger" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
-              </p>
-              {% else %}
+              {% if user != member.users %}
+              <div class="d-flex justify-content-between">
+                <div>
+                  <a class="text-warning" href="{% url 'reviews:likes' study.pk member.users.pk %}">달달해요</a>
+                  <a class="ms-2 text-secondary" href="{% url 'reviews:dislikes' study.pk member.users.pk %}">씁쓸해요</a>
+                </div>
+                {% endif %}
+                {% if study.host == user %}
+                <a class="text-danger me-5" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
+                {% else %}
+                {% endif %}
+              </div>
               <p class="my-4"></p>
               {% endif %}
-              {% endif %}</p>
+            </p>
+
             </div>
           </div>
           {% else %}
