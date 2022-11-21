@@ -88,10 +88,11 @@
           </li>
           <li class="nav-item" role="presentation">
             {% if request.user in reviewers %}
-            {% else %}
+            {% if request.user in accepteduser %}
             <button type="button" class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#reviews_modal">
               <i class="bi bi-pencil-square"></i>리뷰작성
             </button>
+            {% endif %}
             {% endif %}
           </li>
             <!-- Modal -->
