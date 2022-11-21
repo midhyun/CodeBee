@@ -1,0 +1,23 @@
+{% extends 'base_test.html' %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+{% endblock css %}
+{% block content %}
+
+<div class="container my-5">
+
+  <form action="" method="POST">
+    {% csrf_token %}
+    <h1 class="card-title mb-5 text-center">정말로 탈퇴 하시겠습니까?</h1>
+    <h2 class="card-title mb-5 text-center">탈퇴 시 모든 추억들이 사라집니다...</h2>
+    <div class="mt-5 text-center">
+      <input class="btn btn-secondary btn-small" type="submit" value="네..." style="width: 3rem;">
+      <a href="{% url 'accounts:detail' user.pk %}" class="btn btn-lg btn-success ms-2" style="width: 12rem;">아니오</a>
+    </div>
+  </form>
+
+</div>
+
+{% endblock content %}
