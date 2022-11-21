@@ -93,6 +93,7 @@
               <span class="text-muted">활동완료</span>
             </button>
             {% else %}
+            {% if user.is_authenticated %}
             {% if check %}
           <div class="text-end mx-5">
             <a class="badge bg-danger" style="text-decoration:none;"
@@ -106,6 +107,7 @@
             </a>
           </div>
           </p>
+          {% endif %}
           {% endif %}
           {% endif %}
           <!-- 삭제 Modal -->

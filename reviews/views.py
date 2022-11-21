@@ -203,68 +203,71 @@ def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
     accepted = Accepted.objects.filter(study_id=study_pk, joined=True)
     users = Accepted.objects.filter(users_id=user_pk)
-
+    
     token = study.host.token
-    if study.limits > len(accepted):
-        for joined in users:
-            if joined in accepted:
-                messages.warning(request, "이미 가입신청 한 그룹입니다.")
-                return redirect("reviews:detail", study_pk)
-        else:
-            Aform = Accepted(joined=False, study=study, users=request.user)
-            Aform.save()
-            accepted_now = Accepted.objects.filter(study_id=study_pk)
-            if token:
-                try:
-                    image_url = study.image.url
-                except:
-                    image_url = "https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png"
-                data = {
-                    "template_object": json.dumps(
-                        {
-                            "object_type": "feed",
-                            "content": {
-                                "title": f"{request.user}님의 스터디 가입신청! ",
-                                "description": "현재 정원({len(accepted_now)} / {study.limits}) \n 신청을 승인해주세요!",
-                                "image_url": f"{image_url}",
-                                # "image_url": f"http://localhost:8000{image_url}",
-                                "image_width": 800,
-                                "image_height": 550,
-                                "link": {
-                                    "web_url": "http://localhost:8000",
-                                    "mobile_web_url": "http://localhost:8000",
-                                    "android_execution_params": "contentId=100",
-                                    "ios_execution_params": "contentId=100",
-                                },
-                            },
-                            "buttons": [
-                                {
-                                    "title": "웹으로 이동",
+    if request.user.is_authenticated:
+        if study.limits > len(accepted):
+            for joined in users:
+                if joined in accepted:
+                    messages.warning(request, "이미 가입신청 한 그룹입니다.")
+                    return redirect("reviews:detail", study_pk)
+            else:
+                Aform = Accepted(joined=False, study=study, users=request.user)
+                Aform.save()
+                accepted_now = Accepted.objects.filter(study_id=study_pk)
+                if token:
+                    try:
+                        image_url = study.image.url
+                    except:
+                        image_url = "https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png"
+                    data = {
+                        "template_object": json.dumps(
+                            {
+                                "object_type": "feed",
+                                "content": {
+                                    "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
+                                    "description": "신청을 승인해주세요!",
+                                    "image_url": f"{image_url}",
+                                    # "image_url": f"http://localhost:8000{image_url}",
+                                    "image_width": 800,
+                                    "image_height": 550,
+
                                     "link": {
                                         "web_url": "http://localhost:8000",
                                         "mobile_web_url": "http://localhost:8000",
-                                    },
-                                },
-                                {
-                                    "title": "앱으로 이동",
-                                    "link": {
                                         "android_execution_params": "contentId=100",
                                         "ios_execution_params": "contentId=100",
                                     },
                                 },
-                            ],
-                        }
-                    )
-                }
-                headers = {"Authorization": "Bearer " + token}
-                response = requests.post(url, headers=headers, data=data)
-                print(str(response.json()))
-            messages.success(request, "가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.")
+                                "buttons": [
+                                    {
+                                        "title": "웹으로 이동",
+                                        "link": {
+                                            "web_url": "http://localhost:8000",
+                                            "mobile_web_url": "http://localhost:8000",
+                                        },
+                                    },
+                                    {
+                                        "title": "앱으로 이동",
+                                        "link": {
+                                            "android_execution_params": "contentId=100",
+                                            "ios_execution_params": "contentId=100",
+                                        },
+                                    },
+                                ],
+                            }
+                        )
+                    }
+                    headers = {"Authorization": "Bearer " + token}
+                    response = requests.post(url, headers=headers, data=data)
+                    print(str(response.json()))
+                messages.success(request, "가입 신청이 완료되었습니다. 호스트의 승인을 기다려 주세요.")
+                return redirect("reviews:detail", study_pk)
+        else:
+            messages.success(request, "모집인원이 가득 찬 그룹입니다.")
             return redirect("reviews:detail", study_pk)
     else:
-        messages.success(request, "모집인원이 가득 찬 그룹입니다.")
-        return redirect("reviews:detail", study_pk)
-
+        pass
 
 @login_required
 def study_accepted(request, study_id, users_id):
