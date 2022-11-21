@@ -198,7 +198,7 @@
             <p class="my-0 fw-bold fs-5">스터디 소개</p>
             <pre class="ms-3 fs-6 text-muted" style="font-family:'NanumSquareNeo'">{{ study.content }}</pre>
             <p>제한 인원:
-              {{ cnt }}
+              {{ accepteduser|length }}
               /
               {{ study.limits }}</p>
             <p class="mt-3 fw-bold fs-5">태그</p>
