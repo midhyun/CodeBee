@@ -169,6 +169,7 @@
                         <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
                     {% endif %}
                 </div>
+                <p><a class="anc" href="{% url 'accounts:update' request.user.pk %}">회원 정보 수정</a></p>
                 <p><a class="anc" href="{% url 'accounts:detail' request.user.pk %}">회원 정보 상세보기</a></p>
                 <div>
                     {% if request.user.is_social_account %}
