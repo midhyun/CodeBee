@@ -66,7 +66,7 @@ class User(AbstractUser):
         processors=[ResizeToFill(128, 128)],
         format="JPEG",
         options={
-            "quality": 30,
+            "quality": 80,
         },
     )
     address = models.CharField(max_length=100)

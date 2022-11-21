@@ -98,6 +98,7 @@ WSGI_APPLICATION = "pjt.wsgi.application"
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DEBUG = True
+
 if DEBUG:
     DATABASES = {
         'default': {

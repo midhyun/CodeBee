@@ -75,7 +75,7 @@ def social_signup_request(request, service_name):
         "kakao": {
             "base_url": "https://kauth.kakao.com/oauth/authorize",
             "client_id": KAKAO_CLIENT_ID,
-            "redirect_uri": "http://localhost:8000/accounts/login/kakao/callback",
+            "redirect_uri": "http://Codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
             "response_type": "code",
         },
         # "naver": {
@@ -88,14 +88,14 @@ def social_signup_request(request, service_name):
         "google": {
             "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
             "client_id": GOOGLE_CLIENT_ID,
-            "redirect_uri": "http://localhost:8000/accounts/login/google/callback",
+            "redirect_uri": "http://Codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/google/callback",
             "response_type": "code",
             "scope": f"{google_base_url}{google_email}+{google_base_url}{google_myinfo}",
         },
         "github": {
             "base_url": "https://github.com/login/oauth/authorize",
             "client_id": GITHUB_CLIENT_ID,
-            "redirect_uri": "http://localhost:8000/accounts/login/github/callback",
+            "redirect_uri": "http://Codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/github/callback",
             "scope": "read:user",
         },
     }
@@ -112,7 +112,7 @@ def social_signup_callback(request, service_name):
         "kakao": {
             "data": {
                 "grant_type": "authorization_code",
-                "redirect_uri": "http://localhost:8000/accounts/login/kakao/callback",
+                "redirect_uri": "http://Codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
                 "client_id": KAKAO_CLIENT_ID,
                 "code": request.GET.get("code"),
             },
@@ -122,7 +122,7 @@ def social_signup_callback(request, service_name):
         "naver": {
             "data": {
                 "grant_type": "authorization_code",
-                "redirect_uri": "http://localhost:8000/accounts/login/naver/callback",
+                "redirect_uri": "http://Codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/naver/callback",
                 "client_id": NAVER_CLIENT_ID,
                 "client_secret": NAVER_CLIENT_SECRET,
                 "state": request.GET.get("state"),
@@ -134,7 +134,7 @@ def social_signup_callback(request, service_name):
         "google": {
             "data": {
                 "grant_type": "authorization_code",
-                "redirect_uri": "http://localhost:8000/accounts/login/google/callback",
+                "redirect_uri": "http://Codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/google/callback",
                 "client_id": GOOGLE_CLIENT_ID,
                 "client_secret": GOOGLE_CLIENT_SECRET,
                 "state": request.GET.get("state"),
@@ -145,7 +145,7 @@ def social_signup_callback(request, service_name):
         },
         "github": {
             "data": {
-                "redirect_uri": "http://localhost:8000/accounts/login/github/callback",
+                "redirect_uri": "http://Codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/github/callback",
                 "client_id": GITHUB_CLIENT_ID,
                 "client_secret": GITHUB_CLIENT_SECRET,
                 "code": request.GET.get("code"),
