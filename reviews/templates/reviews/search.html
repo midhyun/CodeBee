@@ -4,6 +4,8 @@
 {% block css %}
 <link href="{% sass_src 'css/menu.scss' %}" rel="stylesheet" type="text/css">
 <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 {% endblock css %}
 {% block content %}
 
@@ -29,7 +31,7 @@
 <div class="container content mt-3" style="padding: 50px;">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
 
-        {% for study in studies %}
+        {% for study in posts %}
         <div class="col">
             <a class="cardlink link" href="{% url 'reviews:detail' study.pk %}">
                 <div class="card h-100 w-100 shadow h-100 p-3">
@@ -144,18 +146,28 @@
         </div>
         {% endfor %}
     </div>
-    <div class="row">
-        <div name="pagination" class="text-center mx-auto my-3">
-            {% if studies.has_previous %}
-            <a href="?page=1">맨 앞으로</a>
-            <a href="?page={{studies.previous_page_number}}">이전으로</a>
+    <!-- 페이지네이션 -->
+
+
+
+    <div class="row mt-3" style="width: 100%;">
+        <div name="pagination" class="text-center mx-auto my-3 d-flex justify-content-center">
+            {% if posts.has_previous %}
+            <div class="d-flex">
+                <a href="?page=1&amp;field={{ field }}&amp;search={{ searched }}" class="page-link mx-4">맨 앞으로</a>
+                <a href="?page={{posts.previous_page_number}}&amp;field={{ field }}&amp;search={{ searched }}" class="page-link mx-4">이전</a>
+            </div>
             {% endif %}
-            <span>{{studies.number}}</span>
-            <span>/</span>
-            <span>{{studies.paginator.num_pages}}</span>
-            {% if studies.has_next %}
-                <a href="?page={{studies.next_page_number}}">다음으로</a>
-                <a href="?page={{studies.paginator.num_pages}}">맨 뒤로</a>
+            <div>
+                <span>{{posts.number}}</span>
+                <span>/</span>
+                <span>{{posts.paginator.num_pages}}</span>
+            </div>
+            {% if posts.has_next %}
+            <div class="d-flex">
+                <a href="?page={{posts.next_page_number}}&amp;field={{ field }}&amp;search={{ searched }}" class="page-link mx-4">다음</a>
+                <a href="?page={{posts.paginator.num_pages}}&amp;field={{ field }}&amp;search={{ searched }}" class="page-link mx-4">맨 뒤로</a>
+            </div>
             {% endif %}
         </div>
     </div>
