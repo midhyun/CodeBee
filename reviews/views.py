@@ -119,7 +119,7 @@ def detail(request, study_pk):
     form = StudyDateForm()
     cnt = len(Accepted.objects.filter(study=study))
     users = Accepted.objects.filter(study_id=study_pk)
-    accepteduser = Accepted.objects.filter(study_id=study_pk, joined=True)
+    accepteduser = User.objects.filter(accepted__study_id=study_pk, accepted__joined=True)
     for user in users:
         if user.users == request.user:
             user_accepted = True
@@ -444,7 +444,6 @@ def comment_create(request, pk):
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
-            print(review.id)
             comment.study_id = review.id
             comment.user = request.user
             comment.save()

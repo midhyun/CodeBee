@@ -108,8 +108,53 @@
   new Tagify(input, {
     enforceWhitelist: false,
     whitelist: whitelist,
-    maxTags: 5
+    maxTags: 5,
+    transformTag: transformTag,
+    dropdown : {
+            enabled: 1,
+            fuzzySearch: false,
+            position: 'text',
+            caseSensitive: false,
+        },
   })
+  function getRandomColor(){
+    function rand(min, max) {
+        return min + Math.random() * (max - min);
+    }
+
+    var h = rand(1, 360)|0,
+        s = rand(40, 70)|0,
+        l = rand(65, 72)|0;
+
+    return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+}
+
+function getRandomColor(){
+    function rand(min, max) {
+        return min + Math.random() * (max - min);
+    }
+
+    var h = rand(1, 360)|0,
+        s = rand(40, 70)|0,
+        l = rand(65, 72)|0;
+
+    return 'hsl(' + h + ',' + s + '%,' + l + '%)';
+}
+
+function transformTag( tagData ){
+    tagData.style = "--tag-bg:" + getRandomColor();
+
+    if( tagData.value.toLowerCase() == 'shit' )
+       tagData.value = 's✲✲t'
+}
+
+tagify.on('add', function(e){
+    console.log(e.detail)
+})
+
+tagify.on('invalid', function(e){
+    console.log(e, e.detail);
+})
 
 </script>
 {% endblock content %}
