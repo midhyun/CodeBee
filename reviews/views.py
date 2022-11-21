@@ -38,7 +38,7 @@ def index(request):
 
 @login_required
 def create(request):
-    if (request.user.is_phone_active and request.user.is_email_active) or request.user.is_social_account:
+    if (request.user.is_phone_active) or request.user.is_social_account:
         if request.method == "POST":
             tag = ""
             temp = request.POST["tag"]
@@ -119,7 +119,7 @@ def detail(request, study_pk):
     form = StudyDateForm()
     cnt = len(Accepted.objects.filter(study=study))
     users = Accepted.objects.filter(study_id=study_pk)
-    accepteduser = Accepted.objects.filter(study_id=study_pk, joined=True)
+    accepteduser = User.objects.filter(accepted__study_id=study_pk, accepted__joined=True)
     for user in users:
         if user.users == request.user:
             user_accepted = True
@@ -444,7 +444,6 @@ def comment_create(request, pk):
         comment_form = CommentForm(request.POST)
         if comment_form.is_valid():
             comment = comment_form.save(commit=False)
-            print(review.id)
             comment.study_id = review.id
             comment.user = request.user
             comment.save()
@@ -569,11 +568,9 @@ def likes(request, study_pk, user_pk):
     study = get_object_or_404(Study, pk=study_pk)
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
-    check = Honey.objects.filter(
-        study=study, rating_user=rating, rated_user=rated
-    ).exists()
+    check = Honey.objects.filter(study=study, rating_user=rating, rated_user=rated).exists()
     join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
-
+    print(rated)
     if rated == request.user:
         messages.warning(request, "본인을 평가할 수 없습니다.")
 
@@ -598,7 +595,7 @@ def likes(request, study_pk, user_pk):
             honey.like = True
             honey.save()
 
-    return redirect("reviews:userlist", study_pk)
+    return redirect("reviews:detail", study_pk)
 
 
 def dislikes(request, study_pk, user_pk):
@@ -606,8 +603,7 @@ def dislikes(request, study_pk, user_pk):
     rated = get_object_or_404(get_user_model(), pk=user_pk)
     rating = get_object_or_404(get_user_model(), pk=request.user.pk)
     check = Honey.objects.filter(
-        study=study, rating_user=rating, rated_user=rated
-    ).exists()
+        study=study, rating_user=rating, rated_user=rated).exists()
     join_user = Accepted.objects.filter(study=study, users=rating, joined=True).exists()
 
     if rated == request.user:
@@ -634,7 +630,7 @@ def dislikes(request, study_pk, user_pk):
             honey.dislike = True
             honey.save()
 
-    return redirect("reviews:userlist", study_pk)
+    return redirect("reviews:detail", study_pk)
 
 
 def del_date(request, date_pk):
@@ -647,12 +643,8 @@ def search(request):
     search = request.GET.get("search")
     field = request.GET.get("field")
     if field == "1" or not field:
-        users = User.objects.filter(username__contains=search)
-        studies = []
-        for user in users:
-            studies += Study.objects.filter(host=user).order_by('-pk')
-        studies += (
-            Study.objects.filter(tag__icontains=search)
+        studies = (Study.objects.filter(host__username__contains=search)
+            or Study.objects.filter(tag__icontains=search)
             or Study.objects.filter(title__contains=search)
             or Study.objects.filter(categorie__contains=search)
         ).order_by('-pk')
@@ -660,19 +652,20 @@ def search(request):
     elif field == "2":
         studies = Study.objects.filter(title__icontains=search).order_by('-pk')
     elif field == "3":
-        users = User.objects.filter(username__icontains=search)
-        studies = []
-        for user in users:
-            studies += Study.objects.filter(host=user).order_by('-pk')
+        studies = Study.objects.filter(host__username__contains=search).order_by('-pk')
+
     elif field == "4":
         studies = Study.objects.filter(categorie__icontains=search).order_by('-pk')
     elif field == "5":
         studies = Study.objects.filter(tag__icontains=search).order_by('-pk')
     elif field == "6":
         studies = Study.objects.filter(location__icontains=search).order_by('-pk')
+    page = request.GET.get('page', '1') 
     paginator = Paginator(studies, 16)
-    posts = paginator.get_page(studies)
+    posts = paginator.get_page(page)
     context = {
-        "studies": posts,
+        'posts':posts,
+        'field': field,
+        'searched':search,
     }
     return render(request, "reviews/search.html", context)

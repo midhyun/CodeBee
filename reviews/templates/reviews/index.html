@@ -10,22 +10,25 @@
 {% endblock css %}
 {% block content %}
 
-  <header class="container align-items-center">
-    <div class="d-flex justify-content-between">
+  <header class="align-items-center header_bgimg" style="background-image:url({% static 'honeybook.jpg' %})">
+    <div class="container d-flex justify-content-between position-relative">
       <!-- 인덱스 카테고리 -->
-      <div style="padding: 20px 50px 0; transform: translateY(12px)">
-        <form id="category_form" action="" method="GET">
-          <select name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
-            <option selected="selected">스터디 카테고리</option>
+      <div class="d-flex align-items-end" style="padding: 20px 50px 0; transform: translateY(12px); position:fixed; z-index:10">
+        <form class="" id="category_form" action="" method="GET">
+          <select id="fillselect" name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
+            <option selected>스터디 카테고리</option>
             <option value="0">모든 스터디</option>
             <option value="1">오프라인 스터디</option>
             <option value="2">온라인 스터디</option>
           </select>
         </form>
+        <a class="text-white ms-3" style="text-decoration:none; vertical-align: end; text-shadow: 1px 2px 2px black" href="{% url 'reviews:create' %}">스터디 만들기</a>
       </div>
+    </div>
+  </header>
+  <!-- 헤더 이미지 영역 -->
       <!-- 검색바 -->
-
-      <div style="padding:20px 50px 0">
+      <div class="d-flex container justify-content-end" style="padding:20px 50px 0">
         <div class="search-box">
           <form class="" action="{% url 'reviews:search' %}">
             <span class="btn-search" style="top: 10px;">
@@ -35,11 +38,6 @@
           </form>
         </div>
       </div>
-
-    </div>
-  </header>
-  <!-- 헤더 이미지 영역 -->
-
   <!-- 스터디 제목, 기간, 설명 -->
   <div class="container content mt-3" style="padding: 50px;">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
@@ -195,5 +193,18 @@
       input.style.width = "380px";
       input.select();
     });
+  </script>
+  <script>
+const urlParams = new URL(location.href).searchParams;
+
+const name = urlParams.get('fill');
+
+if (name == '0') {
+  console.log(document.querySelector('#fillselect').options[1].selected = true)
+} else if (name == '1') {
+  console.log(document.querySelector('#fillselect').options[2].selected = true)
+} else if (name == '2') {
+  console.log(document.querySelector('#fillselect').options[3].selected = true)
+}
   </script>
 {% endblock content %}

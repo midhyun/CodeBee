@@ -28,7 +28,9 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = [
     "codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com",
+    'runedemon.shop',
     "172.31.13.105",
+    "172.31.10.233",
     "127.0.0.1",
     "localhost",
 ]
@@ -97,27 +99,27 @@ WSGI_APPLICATION = "pjt.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
-DEBUG = True
 
-if DEBUG:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+#
+# if DEBUG:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+#
+# else:
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DATABASE_NAME"),  # .env 파일에 value 작성
+        "USER": "postgres",
+        "PASSWORD": os.getenv("DATABASE_PASSWORD"),  # .env 파일에 value 작성
+        "HOST": os.getenv("DATABASE_HOST"),  # .env 파일에 value 작성
+        "PORT": "5432",
     }
-
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": os.getenv("DATABASE_NAME"),  # .env 파일에 value 작성
-            "USER": "postgres",
-            "PASSWORD": os.getenv("DATABASE_PASSWORD"),  # .env 파일에 value 작성
-            "HOST": os.getenv("DATABASE_HOST"),  # .env 파일에 value 작성
-            "PORT": "5432",
-        }
-    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
