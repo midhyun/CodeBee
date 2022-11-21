@@ -24,7 +24,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 ALLOWED_HOSTS = [
     "codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com",
@@ -171,7 +171,7 @@ STATICFILES_FINDERS = [
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-DEBUG = os.getenv("DEBUG") == "True"
+
 
 # if DEBUG:
 #     MEDIA_URL = "/media/"
