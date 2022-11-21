@@ -35,6 +35,7 @@
         <span class="badge text-bg-secondary">모집마감</span>
       </p>
       <p><span class="text-muted fs-6">마감일시: {{ study.deadline|date:'Y-m-d A h시i분' }}</span></p>
+
       <div class="d-flex justify-content-between">
         <div class="d-flex">
           <a style="text-decoration:none; color:black" href="{% url 'accounts:detail' study.host.pk %}">
@@ -64,16 +65,15 @@
           </div>
           <div class="d-flex align-items-end">
             </p>
-
-            <!-- Modal -->
-
           </div>
+        </div>
         </div>
 
                     <!-- 스터디 내용, 유저목록 탭 -->
         
         <!-- NAVTAP -->
         <ul class="nav nav-tabs d-flex justify-content-between mt-3" id="myTab" role="tablist">
+          <!-- 탭 -->
           <div class="d-flex">
           <li class="nav-item" role="presentation">
             <button class="nav-link text-dark active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Content</button>
@@ -92,9 +92,6 @@
               <i class="bi bi-pencil-square"></i>리뷰작성
             </button>
           </li>
-          <!-- Button trigger modal -->
-
-
             <!-- Modal -->
             <div class="modal fade" id="reviews_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
               <div class="modal-dialog modal-lg">
@@ -118,6 +115,7 @@
                 </div>
               </div>
             </div>
+
           </div>
         </ul>
         <!-- NAVTAP-CONTENT -->
@@ -135,11 +133,13 @@
                   <p class="my-0 fw-bold fs-5">온라인</p>
                   <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
                 {% endif %}
+                <p class="my-0 fw-bold fs-5">스터디 소개</p>
+                <p class="ms-3 fs-6 text-muted">{{ study.content }}</p>
+                <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
               </ul>
-              <!-- 스터디 추가 Modal -->
             </div>
-
           </div>
+          <!-- 후기 댓글 탭 -->
           <div class="tab-pane fade" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
             <div class=" p-3 border border-3">
                 {% for comment in comments %}
@@ -165,7 +165,6 @@
           </div>
           </form>
         </div>
-      </div>
       <!-- 지도 정보 -->
       <div class="mt-3" id="study_map" style="width:100%;height:350px;"></div>
       <!-- 유저 목록 오프캔버스 -->
@@ -174,29 +173,6 @@
           <h5 class="offcanvas-title" id="offcanvasRightLabel">함께하는 드비들</h5>
           <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
-          {% for member in members %}
-          {% if member.joined == True %}
-          <div>
-            <div class="pb-3 mt-2 border-bottom">
-              <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
-                  href="{% url 'accounts:detail' member.users.pk %}">
-                  {{ member.users }}<span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span></a>
-                {% if study.host == member.users %}
-                <span class="badge bg-dark">스터디장</span>
-              <p class="my-4"></p>
-              {% else %}
-              <span class="badge bg-success">참여중</span>
-              {% if study.host == user %}
-              <p class="text-end m-0">
-              </p>
-              {% else %}
-              <p class="my-4"></p>
-              {% endif %}
-              {% endif %}</p>
-            </div>
-          </div>
-
           <div class="offcanvas-body">
             {% for member in members %}
               {% if member.joined == True %}
