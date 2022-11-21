@@ -66,7 +66,14 @@ def test(request):
     return render(request, "accounts/test.html", context)
 
 
-def social_signup_request(request, service_name):
+def social_signup_request(request):
+    if "kakao" in request.path:
+        service_name = "kakao"
+    elif "google" in request.path:
+        service_name = "google"
+    elif "github" in request.path:
+        service_name = "github"
+
     google_base_url = "https://www.googleapis.com/auth"
     google_email = "/userinfo.email"
     google_myinfo = "/userinfo.profile"
