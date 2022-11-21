@@ -1,7 +1,7 @@
 {% extends 'base_test.html' %}
 {% load static %}
 {% block css %}
-<link rel="stylesheet" href="{% static 'reviews/css/detail.css' %}">
+<link rel="stylesheet" href="{% static 'css/detail.css' %}">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 {% endblock css %}
 
@@ -93,6 +93,7 @@
               <span class="text-muted">활동완료</span>
             </button>
             {% else %}
+            {% if user.is_authenticated %}
             {% if check %}
           <div class="text-end mx-5">
             <a class="badge bg-danger" style="text-decoration:none;"
@@ -106,6 +107,7 @@
             </a>
           </div>
           </p>
+          {% endif %}
           {% endif %}
           {% endif %}
           <!-- 삭제 Modal -->

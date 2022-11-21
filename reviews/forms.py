@@ -8,12 +8,16 @@ STUDY_TYPE_CHOICE = (("그룹 스터디", "그룹 스터디"), ("당일 스터�
 
 
 class StudyForm(forms.ModelForm):
+    content = forms.CharField(label='스터디 소개', widget=forms.Textarea(), initial='''스터디 주제 :
+스터디 목표 :
+커리큘럼 :
+스터디 소개 :
+스터디 규칙 :''')
     class Meta:
         model = Study
         fields = [
             "title",
             "limits",
-            "content",
             "image",
             "deadline",
         ]
@@ -70,7 +74,7 @@ class CommentForm(forms.ModelForm):
         widgets = {
             "content": CounterTextArea(
                 attrs={
-                    "placeholder": "댓글작성",
+                    "placeholder": "리뷰작성",
                     "style": "height: 24rem; width: 34rem; resize: none;",
                 }
             ),
