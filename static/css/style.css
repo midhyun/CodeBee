@@ -232,3 +232,10 @@
 .icon-wrapper {
   height: 100%;
 }
+
+.header_bgimg {
+  height: 700px;
+  background-position-y: 25%;
+  background-size: cover;
+  background-repeat: no-repeat;
+}
