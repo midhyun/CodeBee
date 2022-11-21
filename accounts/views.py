@@ -10,7 +10,6 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from pjt.settings import DEBUG
 from dotenv import load_dotenv
 from .models import AuthPhone, User
 from django.http import JsonResponse
