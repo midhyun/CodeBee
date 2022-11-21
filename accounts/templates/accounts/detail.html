@@ -80,12 +80,23 @@
                         <span>i</span></button>
                     </span>
                 </div>
-
+                <!-- 팔로우 -->
+                {% if user != person %}
+                    <form id="follow-form" data-user-id="{{ person.pk }}">
+                        {% csrf_token %}
+                        {% if request.user in person.followers.all %}
+                            <button id="follow-btn" class="btn btn-danger form-control" type="submit" style='width:10%'>
+                                팔로우 취소
+                            </button>
+                        {% else %}
+                            <button id="follow-btn" class="btn btn-outline-primary form-control" type="submit"
+                                    style='width:10%'>팔로우
+                            </button>
+                        {% endif %}
+                    </form>
+                {% endif %}
             </div>
             <div class="col-5 d-flex justify-content-start align-items-center">
-                <div>
-
-                </div>
                 <div>
                     {% if person.is_social_account %}
                         <a href="{% url 'accounts:sns-logout' person.service_name %}"
@@ -94,23 +105,7 @@
                     {% endif %}
                 </div>
                 <div>
-                    <!-- 팔로우 -->
-                    {% if user != person %}
-                        <form id="follow-form" data-user-id="{{ person.pk }}">
-                            {% csrf_token %}
-                            {% if request.user in person.followers.all %}
-                                <button id="follow-btn" class="btn btn-danger form-control my-3" type="submit">
-                                    팔로우 취소
-                                </button>
-                            {% else %}
-                                <button id="follow-btn" class="btn btn-outline-light form-control my-3" type="submit">
-                                    팔로우
-                                </button>
-                            {% endif %}
-                        </form>
-                    {% endif %}
                     <a href="{% url 'accounts:delete' person.pk %}" class="btn btn-lg btn-secondary mx-3">회원 탈퇴</a>
-                    <a href="{% url 'accounts:update' person.pk %}" class="btn btn-lg btn-primary mx-3">회원 정보 수정</a>
                 </div>
             </div>
         </header>
@@ -297,7 +292,7 @@
                                                 </a>
                                             {% else %}
                                                 <div class="github-none">
-                                                    <img src="{% static '/accounts/image/github.png' %}" height="50px"
+                                                    <img src="{% static '/github.png' %}" height="50px"
                                                          alt="">
                                                     <p>아직 연동된 깃허브가 없어요.</p>
                                                     {% if user == person %}
@@ -323,7 +318,7 @@
                                                 </a>
                                             {% else %}
                                                 <div class="github-none">
-                                                    <img src="{% static '/accounts/image/none_boj.png' %}" height="50px"
+                                                    <img src="{% static '/none_boj.png' %}" height="50px"
                                                          alt="" style="padding: 2px;">
                                                     <p>아직 연동된 solved.ac가 없어요.</p>
                                                     {% if user == person %}
@@ -371,10 +366,10 @@
                     <!-- 내용 영역 -->
                     <div class="detail-content">
                         <!-- 유저가 작성한 리뷰가 하나라도 있다면, -->
-                        {% if person.comment.all %}
+                        {% if person.comment_set.all %}
                             <div class="p-3 d-flex">
-                            {% for comment in person.comment.all %}
-                                <div class="review_card">
+                            {% for comment in person.comment_set.all %}
+                                <a class="review_card" href="{% url 'reviews:detail' comment.study.pk %}">
                                     <div class="review_info">
                                         {% if comment.study.image %}
                                             <img src="{{ comment.study.image.url }}" alt="" style="margin-right: 12px;">
@@ -390,7 +385,7 @@
                                     <div class="review_content">
                                         {{ comment.content|truncatechars:44 }}
                                     </div>
-                                </div>
+                                </a>
                             {% endfor %}
 
                         {% else %}
@@ -398,26 +393,25 @@
                                 <div style="text-align:center; font-size: larger;">
                                     <p>아직 작성된 리뷰가 없어요.</p>
                                     {% if user == person %}
-                                        {% if party %}
-                                            <p>아래로 이동해 리뷰를 작성해보세요.</p>
-                                            <div class="box-wrapper">
-                                            {% for study in uncomment_study %}
-                                                {% if study.image %}
-                                                    <a class="none-review-box"
-                                                       href="{% url 'reviews:detail' study.pk %}"
-                                                       style="background-image: url('{{ study.image.url }}')">
-                                                {% endif %}
-                                                <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
-                                                   style="background-image: url('{% static '/createb.png' %}')">
-                                                    <p class="none-review-text">
-                                                        {{ study.title }}
-                                                    </p>
-                                                </a>
-                                            {% endfor %}
-                                        {% else %}
-                                            <p class="h-100">스터디에 참여하고 리뷰를 작성해보세요.</p>
-                                            <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+                                    {% if accepts %}
+                                    <p>아래로 이동해 리뷰를 작성해보세요.</p>
+                                    <div class="box-wrapper">
+                                        {% for study in uncomment_study %}
+                                        {% if study.image %}
+                                        <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
+                                        style="background-image: url('{{ study.image.url }}')">
                                         {% endif %}
+                                        <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
+                                        style="background-image: url('{% static '/createb.png' %}')">
+                                        <p class="none-review-text">
+                                            {{ study.title }}
+                                        </p>
+                                    </a>
+                                    {% endfor %}
+                                    {% else %}
+                                    <p class="h-100">스터디에 참여하고 리뷰를 작성해보세요.</p>
+                                        <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+                                    {% endif %}
                                     {% endif %}
                                     </div>
                                 </div>
