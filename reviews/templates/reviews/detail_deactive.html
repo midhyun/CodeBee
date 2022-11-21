@@ -33,7 +33,7 @@
         {% endif %} CodeBee # {{study.categorie}}
       </p>
       <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
-        <span class="badge text-bg-secondary">모집마감</span>
+        <span class="badge text-bg-danger">활동종료</span>
       </p>
       <p><span class="text-muted fs-6">마감일시: {{ study.deadline|date:'Y-m-d A h시i분' }}</span></p>
 
@@ -87,7 +87,7 @@
             <button class="nav-link text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#userlistcanvas" aria-controls="offcanvasRight">
               <i class="bi bi-list"></i>그룹원</button>
           </li>
-          <li class="nav-item" role="presentation">
+          <li id="reviewcreate" class="nav-item" role="presentation">
             {% if request.user in reviewers %}
             {% else %}
             {% if request.user in accepteduser %}
@@ -462,6 +462,7 @@ function deleteComment(event) {
     })
       .then(response => {
         document.querySelector(`#comment-${commentPk}`).remove()
+        document.querySelector('#reviewcreate').innerHTML= '<button id="reviews_modalbtn" type="button" class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#reviews_modal" data-backdrop="false"><i class="bi bi-pencil-square"></i>리뷰작성</button>'
       })
   }
 }
