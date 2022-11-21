@@ -15,12 +15,12 @@
                 <div>
                     {% if profile_picture %}
                     <img src="{{ profile_picture.url }}" alt="" class="rounded-circle border border-5"
-                        style="width: 320px; height: 320px;">
+                        style="width: 300px; height: 300px;">
                     {% elif social_profile_picture %}
                     <img src="{{ social_profile_picture }}" alt="" class="rounded-circle border border-5"
-                        style="width: 320px; height: 320px;">
+                        style="width: 300px; height: 300px;">
                     {% else %}
-                    <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
+                    <img src="https://dummyimage.com/300/000/fff" alt="" class="rounded-circle border border-5">
                     {% endif %}
                     <p class="fw-bold fs-4 text-center text-white mt-3">
                         {{ person.nickname|default_if_none:" 어딘가의 드비" }}
@@ -50,9 +50,9 @@
                 </thead>
                 <tbody>
                     <tr class="text-white text-center">
-                        <th scope="row">{{ std_cnt }}</th>
-                        <td>0</td>
-                        <td>0</td>
+                        <th>{{ std_cnt }}</th>
+                        <th>{{ person.followings.all.count|default_if_none:0 }}</th>
+                        <th>{{ person.followers.all.count|default_if_none:0 }}</th>
                     </tr>
                 </tbody>
             </table>
@@ -417,10 +417,15 @@
                         </div>
                         {% endif %}
                     </div>
-
+                    
                 </div>
+              </div>
             </div>
+            {% endif %}
+          </div>
+
         </div>
+      </div>
     </div>
 </div>
 </div>

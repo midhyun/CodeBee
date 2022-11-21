@@ -30,12 +30,7 @@ body {
   background: linear-gradient(17deg, #941bb1, #007bf7, #0093ef, #00a4d1, #00b1a6);
 }
 
-/*
-.content {
-  min-height: calc(100vh - 80px);
-}
-*/
-
+/* .content { min-height: calc(100vh - 80px); } */
 body {
   margin: 0;
   background: #F2F2F2;
@@ -83,39 +78,49 @@ nav li:after {
   height: 4px;
 }
 
-nav li:nth-child(1):before {
-  left: 22.6%;
+nav #li1:before {
+  left: 21%;
   background-color: yellow;
 }
 
-nav li:nth-child(1):after {
-  left: 23%;
+nav #li1:after {
+  left: 21.4%;
   background-color: red;
 }
 
-nav li:nth-child(2):before {
-  left: 28.6%;
-  background-color: #00e2ff;
+nav #li2:before {
+  left: 27.1%;
+  background-color: rgb(0, 255, 0);
 }
 
-nav li:nth-child(2):after {
-  left: 29%;
-  background-color: #89ff00;
+nav #li2:after {
+  left: 27.5%;
+  background-color: yellow;
 }
 
-nav li:nth-child(3):before {
-  left: 35.6%;
+nav #li3:before {
+  left: 73.6%;
+  background-color: blue;
+}
+
+nav #li3:after {
+  left: 74%;
+  background-color: rgb(0, 131, 0);
+}
+
+nav #li4:before {
+  left: 78.4%;
   background-color: purple;
 }
 
-nav li:nth-child(3):after {
-  left: 36%;
-  background-color: palevioletred;
+nav #li4:after {
+  left: 78.7%;
+  background-color: blue;
 }
 
 #indicator {
   position: absolute;
-  left: 22.6%;
+  left: 20.7%;
   bottom: 25%;
   width: 2rem;
   height: 3px;
@@ -134,18 +139,23 @@ nav li:hover:after {
 }
 
 nav li:nth-child(1):hover~#indicator {
-  left: 24.1%;
+  left: 22.6%;
   background: linear-gradient(130deg, yellow, red);
 }
 
 nav li:nth-child(2):hover~#indicator {
-  left: 30.7%;
-  background: linear-gradient(130deg, #00e2ff, #89ff00);
+  left: 28.9%;
+  background: linear-gradient(130deg, #3cff00, #ffe600);
 }
 
 nav li:nth-child(3):hover~#indicator {
-  left: 37.1%;
-  background: linear-gradient(130deg, purple, palevioletred);
+  left: 74.6%;
+  background: linear-gradient(130deg, rgb(0, 128, 11), rgb(17, 0, 255));
+}
+
+nav li:nth-child(4):hover~#indicator {
+  left: 79.8%;
+  background: linear-gradient(130deg, rgb(0, 13, 199), rgb(118, 0, 165));
 }
 
 .card-image {

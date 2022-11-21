@@ -7,14 +7,9 @@
 {% block content %}
 
 <div class="container my-5">
-  {% if success %}
-  <h1 class="text-center">{{ msg }}</h1>
-  <a href="{% url 'home' %}" class="text-center my-3">메인 페이지로 가기</a>
-  {% else %}
-  <h1 class="text-center">인증 실패 : {{ msg }}</h1>
+  <h1 class="text-center">권한이 없습니다.</h1>
   <p class="text-center">관리자에게 문의하세요.</p>
   <a href="{% url 'home' %}" class="text-center my-3">메인 페이지로 가기</a>
-  {% endif %}
 </div>
 
 {% endblock content %}
