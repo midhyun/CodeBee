@@ -59,6 +59,7 @@ def create(request):
                 study.study_type = request.POST["study_type"]
                 study.location_type = request.POST["location_type"]
                 study.location = request.POST["location"]
+                study.content = request.POST["content"]
                 study.X = request.POST["X"]
                 study.Y = request.POST["Y"]
                 study.tag = tag
@@ -163,6 +164,7 @@ def update(request, study_pk):
                     study.study_type = request.POST["study_type"]
                     study.location_type = request.POST["location_type"]
                     study.location = request.POST["location"]
+                    study.content = request.POST["content"]
                     study.X = request.POST["X"]
                     study.Y = request.POST["Y"]
                     study.tag = tag
