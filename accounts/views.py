@@ -10,7 +10,6 @@ from .forms import (
     CustomPasswordChangeForm,
 )
 from random import randint
-from pjt.settings import DEBUG
 from dotenv import load_dotenv
 from .models import AuthPhone, User
 from django.http import JsonResponse
@@ -76,7 +75,7 @@ def social_signup_request(request, service_name):
         "kakao": {
             "base_url": "https://kauth.kakao.com/oauth/authorize",
             "client_id": KAKAO_CLIENT_ID,
-            "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
+            "redirect_uri": "runedemon.shop/accounts/login/kakao/callback",
             "response_type": "code",
         },
         # "naver": {
@@ -89,14 +88,14 @@ def social_signup_request(request, service_name):
         "google": {
             "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
             "client_id": GOOGLE_CLIENT_ID,
-            "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/google/callback",
+            "redirect_uri": "http://runedemon.shop/accounts/login/google/callback",
             "response_type": "code",
             "scope": f"{google_base_url}{google_email}+{google_base_url}{google_myinfo}",
         },
         "github": {
             "base_url": "https://github.com/login/oauth/authorize",
             "client_id": GITHUB_CLIENT_ID,
-            "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/github/callback",
+            "redirect_uri": "http://runedemon.shop/accounts/login/login/github/callback",
             "scope": "read:user",
         },
     }
@@ -113,7 +112,7 @@ def social_signup_callback(request, service_name):
         "kakao": {
             "data": {
                 "grant_type": "authorization_code",
-                "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
+                "redirect_uri": "runedemon.shop/accounts/login/kakao/callback",
                 "client_id": KAKAO_CLIENT_ID,
                 "code": request.GET.get("code"),
             },
