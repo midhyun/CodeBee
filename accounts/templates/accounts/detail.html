@@ -393,20 +393,25 @@
                                 <div style="text-align:center; font-size: larger;">
                                     <p>아직 작성된 리뷰가 없어요.</p>
                                     {% if user == person %}
-                                        <p>아래로 이동해 리뷰를 작성해보세요.</p>
-                                        <div class="box-wrapper">
+                                    {% if party %}
+                                    <p>아래로 이동해 리뷰를 작성해보세요.</p>
+                                    <div class="box-wrapper">
                                         {% for study in uncomment_study %}
-                                            {% if study.image %}
-                                                <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
-                                                   style="background-image: url('{{ study.image.url }}')">
-                                            {% endif %}
-                                            <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
-                                               style="background-image: url('{% static '/createb.png' %}')">
-                                                <p class="none-review-text">
-                                                    {{ study.title }}
-                                                </p>
-                                            </a>
-                                        {% endfor %}
+                                        {% if study.image %}
+                                        <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
+                                        style="background-image: url('{{ study.image.url }}')">
+                                        {% endif %}
+                                        <a class="none-review-box" href="{% url 'reviews:detail' study.pk %}"
+                                        style="background-image: url('{% static '/createb.png' %}')">
+                                        <p class="none-review-text">
+                                            {{ study.title }}
+                                        </p>
+                                    </a>
+                                    {% endfor %}
+                                    {% else %}
+                                    <p class="h-100">스터디에 참여하고 리뷰를 작성해보세요.</p>
+                                        <a href="{% url 'reviews:index' %}">지금 참여하러 가기</a>
+                                    {% endif %}
                                     {% endif %}
                                     </div>
                                 </div>
