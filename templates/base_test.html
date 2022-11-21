@@ -48,6 +48,11 @@
     li {
       list-style: none;
     }
+
+    .can-li {
+      border-bottom: solid 1px rgba(255, 255, 255, 0.6);
+      padding: 14px 10px;
+    }
   </style>
 </head>
 
@@ -146,7 +151,7 @@
       <hr style="color:white; border: solid 2px; margin: 0;">
       <div class="offcanvas-body">
         {% if request.user.is_authenticated %}
-        <div class="m-3 p-3">
+        <div class="m-3 p-3 mb-1">
           {% if request.user.profile_picture %}
           <img src="{{ request.user.profile_picture.url }}" alt="" class="rounded-circle border border-5"
             style="width: 300px; height: 300px;">
@@ -157,14 +162,8 @@
           <img src="https://dummyimage.com/300/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
         </div>
-        <p class="text-center">
-          <a class="anc btn" style="background-color: rgb(255 192 7);"
-            href="{% url 'accounts:detail' request.user.pk %}">
-            <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
-              margin-right: 10px;">나의 CodeBee</a>
         <div>
-          </p>
-          <p class="text-white fw-bold text-center pb-4" style="font-size: larger;">
+          <p class="text-white fw-bold text-center mb-1" style="font-size: larger;">
             {% if request.user.is_social_account %}
             {{ request.user.email }}
             {% else %}
@@ -172,7 +171,19 @@
             {% endif %}
           </p>
         </div>
-        <p class="can-li my-3">
+        <p class="text-center d-flex justify-content-evenly">
+          <a class="anc btn" style="background-color: rgb(255 192 7);"
+            href="{% url 'accounts:detail' request.user.pk %}">
+            <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
+              margin-right: 10px;">나의 CodeBee
+          </a>
+          <a class="anc btn" style="background-color: rgb(255 192 7);"
+            href="{% url 'accounts:update' request.user.pk %}">
+            <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
+              margin-right: 10px;">회원정보 수정
+          </a>
+        </p>
+        <p class="can-li">
           {% if request.user.service_name == "google" %}
           <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google" width="16"
             height="24" viewbox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -189,14 +200,14 @@
           {% endif %}
           {{ request.user.username }}
         </p>
-        <p class="can-li my-3">{{ request.user.fullname|default_if_none:"이름을 설정해주세요." }}</p>
+        <p class="can-li">{{ request.user.fullname|default_if_none:"이름을 설정해주세요." }}</p>
         {% if not request.user.is_social_account %}
         {% if request.user.eamil|length %}
-        <p class="can-li my-3">{{ request.user.email|default_if_none:"이메일을 설정해주세요." }}</p>
+        <p class="can-li">{{ request.user.email|default_if_none:"이메일을 설정해주세요." }}</p>
         {% endif %}
         {% endif %}
-        <p class="can-li my-3">{{ request.user.phone|default_if_none:"전화번호를 설정해주세요." }}</p>
-        <p>가입일 : {{ request.user.date_joined|date:"y년 m월 d일 f:s" }}</p>
+        <p class="can-li">{{ request.user.phone|default_if_none:"전화번호를 설정해주세요." }}</p>
+        <p class="can-li">가입일 : {{ request.user.date_joined|date:"y년 m월 d일 f:s" }}</p>
         {% else %}
         <h3>권한이 없습니다.</h3>
         <h3>
@@ -204,7 +215,7 @@
         </h3>
         {% endif %}
         <div class="d-flex justify-content-center">
-          <table class="table" style="width:20rem; margin-top: 2rem;">
+          <table class="table" style="width:20rem;">
             <thead>
               <tr class="text-white">
                 <th class="text-center">팔로잉</th>
@@ -213,8 +224,8 @@
             </thead>
             <tbody>
               <tr class="text-white text-center">
-                <th>{{ person.followings.count|default:"0" }}</th>
-                <th>{{ person.followers.count|default:"0" }}</th>
+                <th>{{ request.user.followings.all.count }}</th>
+                <th>{{ request.user.followers.all.count }}</th>
               </tr>
             </tbody>
           </table>

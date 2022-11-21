@@ -66,7 +66,7 @@ def test(request):
     return render(request, "accounts/test.html", context)
 
 
-def social_signup_request(request, service_name):
+def social_signup_request(request, service_name): # kakao
     google_base_url = "https://www.googleapis.com/auth"
     google_email = "/userinfo.email"
     google_myinfo = "/userinfo.profile"
@@ -277,36 +277,40 @@ def sns_logout(request, service_name):
     user = get_object_or_404(get_user_model(), social_id=social_id)
     access_token = user.token
     if request.method == "POST":
-        services = {
-            "kakao": {
-                "url": "https://kapi.kakao.com/v1/user/unlink",
-                "headers": {"Authorization": f"Bearer ${access_token}"},
-            },
-            "google": {
-                "url": "https://oauth2.googleapis.com/revoke",
-                "params": {"token": f"{access_token}"},
-            },
-        }
-        data = "headers" if service_name == "kakao" else "params"
-        try:
-            requests.post(
-                services[service_name]["url"], data=services[service_name][f"{data}"]
-            )
-            user.delete()
-            context = {
-                "success": "success",
-                "msg": "정상적으로 해지되었습니다.",
+        if request.user == user:
+            services = {
+                "kakao": {
+                    "url": "https://kapi.kakao.com/v1/user/unlink",
+                    "headers": {"Authorization": f"Bearer ${access_token}"},
+                },
+                "google": {
+                    "url": "https://oauth2.googleapis.com/revoke",
+                    "params": {"token": f"{access_token}"},
+                },
             }
-        except Exception:
-            if service_name == "github":
+            data = "headers" if service_name == "kakao" else "params"
+            try:
+                requests.post(
+                    services[service_name]["url"],
+                    data=services[service_name][f"{data}"],
+                )
+                user.delete()
                 context = {
-                    "error_msg": "깃허브 계정 탈퇴는 관리자에게 문의해주세요.",
+                    "success": "success",
+                    "msg": "정상적으로 해지되었습니다.",
                 }
-            else:
-                context = {
-                    "error_msg": "에러가 발생했습니다.",
-                }
-        return render(request, "accounts/sns-disconnect.html", context)
+            except Exception:
+                if service_name == "github":
+                    context = {
+                        "error_msg": "깃허브 계정 탈퇴는 관리자에게 문의해주세요.",
+                    }
+                else:
+                    context = {
+                        "error_msg": "에러가 발생했습니다.",
+                    }
+            return render(request, "accounts/sns-disconnect.html", context)
+        else:
+            return render(request, "accounts/access-error.html")
     else:
         context = {
             "user": user,
@@ -703,10 +707,13 @@ def cont(request):
 def delete(request, user_pk):
     user = get_object_or_404(get_user_model(), pk=user_pk)
     if request.method == "POST":
-        messages.success(request, "정상적으로 탈퇴 되었습니다.")
-        user.delete()
-        user_logout(request)
-        return redirect("reviews:index")
+        if request.user == user:
+            messages.success(request, "정상적으로 탈퇴 되었습니다.")
+            user.delete()
+            user_logout(request)
+            return redirect("reviews:index")
+        else:
+            return render(request, "accounts/access-error.html")
     else:
         context = {
             "user": user,

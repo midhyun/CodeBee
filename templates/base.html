@@ -47,6 +47,11 @@
       width: 15rem;
       z-index: 2000;
     }
+
+    .can-li {
+      border-bottom: solid 1px rgba(255, 255, 255, 0.6);
+      padding: 14px 10px;
+    }
   </style>
 </head>
 
@@ -117,7 +122,7 @@
     <nav class="navbar navbar-expand-lg nav_bg" id="bg">
       <div class="container">
         <a href="{% url 'home' %}"><img src="{% static 'logo_yw.png' %}" width="60"></a>
-        <div id="navbarSupportedContent" class="collapse navbar-collapse">
+        <div id="ul-div" class="collapse navbar-collapse" id="navbarSupportedContent">
           <li id="li1" class="nav-item ms-3">
             <a href="{% url 'reviews:index' %}">코드비 찾기</a>
           </li>
@@ -129,7 +134,8 @@
             <a class="nav-item" href="{% url 'accounts:logout' %}">로그아웃</a>
           </li>
           <li id="li4" class="nav-item">
-            <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비 정보</a>
+            <a data-bs-toggle="offcanvas" href="#offcanvasRight" role="button" aria-controls="offcanvasRight">코드비
+              정보</a>
           </li>
           {% else %}
           <li id="li3" class="nav-item ms-auto me-3">
@@ -153,7 +159,7 @@
       <hr style="color:white; border: solid 2px; margin: 0;">
       <div class="offcanvas-body">
         {% if request.user.is_authenticated %}
-        <div class="m-3 p-3">
+        <div class="m-3 p-3 mb-1">
           {% if request.user.profile_picture %}
           <img src="{{ request.user.profile_picture.url }}" alt="" class="rounded-circle border border-5"
             style="width: 300px; height: 300px;">
@@ -161,30 +167,77 @@
           <img src="{{ request.user.social_profile_picture }}" alt="" class="rounded-circle border border-5"
             style="width: 300px; height: 300px;">
           {% else %}
-          <img src="https://dummyimage.com/180/000/fff" alt="" class="rounded-circle border border-5">
+          <img src="https://dummyimage.com/300/000/fff" alt="" class="rounded-circle border border-5">
           {% endif %}
         </div>
-        <p>
-          <a class="anc" href="{% url 'accounts:detail' request.user.pk %}">회원 정보 상세보기</a>
-        </p>
         <div>
-          {% if request.user.is_social_account %}
-          <p class="text-warning ps-2">{{ request.user.email }}</p>
-          {% else %}
-          <p class="text-white ps-2">{{ request.user.nickname|default_if_none:"그저 한 마리의 꿀벌" }}</p>
-          {% endif %}
+          <p class="text-white fw-bold text-center mb-1" style="font-size: larger;">
+            {% if request.user.is_social_account %}
+            {{ request.user.email }}
+            {% else %}
+            {{ request.user.nickname|default_if_none:"그저 한 마리의 꿀벌" }}
+            {% endif %}
+          </p>
         </div>
-        <p>{{ request.user.fullname }}</p>
+        <p class="text-center d-flex justify-content-evenly">
+          <a class="anc btn" style="background-color: rgb(255 192 7);"
+            href="{% url 'accounts:detail' request.user.pk %}">
+            <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
+              margin-right: 10px;">나의 CodeBee
+          </a>
+          <a class="anc btn" style="background-color: rgb(255 192 7);"
+            href="{% url 'accounts:update' request.user.pk %}">
+            <img class="border-circle" src="{% static '/logo_white.png'%}" style="width: 24px;
+              margin-right: 10px;">회원정보 수정
+          </a>
+        </p>
+        <p class="can-li">
+          {% if request.user.service_name == "google" %}
+          <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-google" width="16"
+            height="24" viewbox="0 0 24 24" stroke-width="3" stroke="currentColor" fill="none" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+            <path d="M17.788 5.108a9 9 0 1 0 3.212 6.892h-8"></path>
+          </svg>
+          {% elif request.user.service_name == "kakao" %}
+          <img src="{% static 'kakaoauth.png' %}" alt="logo" style="width:16px">
+          {% elif request.user.service_name == "github" %}
+          <img src="{% static 'githubauth.png' %}" alt="logo" style="width:16px">
+          {% else %}
+          <img src="{% static 'm_logo.png' %}" alt="logo" style="width:16px">
+          {% endif %}
+          {{ request.user.username }}
+        </p>
+        <p class="can-li">{{ request.user.fullname|default_if_none:"이름을 설정해주세요." }}</p>
         {% if not request.user.is_social_account %}
-        <p>{{ request.user.email|default_if_none:"wha" }}</p>
+        {% if request.user.eamil|length %}
+        <p class="can-li">{{ request.user.email|default_if_none:"이메일을 설정해주세요." }}</p>
         {% endif %}
-        <p>{{ request.user.phone }}</p>
+        {% endif %}
+        <p class="can-li">{{ request.user.phone|default_if_none:"전화번호를 설정해주세요." }}</p>
+        <p class="can-li">가입일 : {{ request.user.date_joined|date:"y년 m월 d일 f:s" }}</p>
         {% else %}
         <h3>권한이 없습니다.</h3>
         <h3>
           <a class="glow-on-hover" href="{% url 'accounts:login' %}" type="button">로그인</a>
         </h3>
         {% endif %}
+        <div class="d-flex justify-content-center">
+          <table class="table" style="width:20rem;">
+            <thead>
+              <tr class="text-white">
+                <th class="text-center">팔로잉</th>
+                <th class="text-center">팔로워</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-white text-center">
+                <th>{{ request.user.followings.all.count }}</th>
+                <th>{{ request.user.followers.all.count }}</th>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

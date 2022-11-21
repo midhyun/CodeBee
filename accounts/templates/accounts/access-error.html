@@ -1,0 +1,15 @@
+{% extends 'base_test.html' %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+{% endblock css %}
+{% block content %}
+
+<div class="container my-5">
+  <h1 class="text-center">권한이 없습니다.</h1>
+  <p class="text-center">관리자에게 문의하세요.</p>
+  <a href="{% url 'home' %}" class="text-center my-3">메인 페이지로 가기</a>
+</div>
+
+{% endblock content %}
