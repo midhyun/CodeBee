@@ -144,7 +144,7 @@ nav li:nth-child(3):hover ~ #indicator { left: 37.1%; background: linear-gradien
 .can-li {
   border-bottom: solid 1px rgba(255, 255, 255, 0.6);
   padding: 14px 10px;
-
+}
 .hide {
   transition: .4s;
   display: none;

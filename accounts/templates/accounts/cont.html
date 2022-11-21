@@ -1,0 +1,24 @@
+{% extends 'base_login.html' %}
+{% load django_bootstrap5 %}
+{% load static %}
+
+{% block content %}
+
+{#"login-card-logo"#}
+<div class="login-card-container">
+  <div class="login-card">
+    <div class="login-card-logo">
+      <img src="{% static 'logo_with.png' %}" alt="logo">
+    </div>
+    <h5>소셜 가입이 아닌 일반 가입 유저는 인증을 하지 않으면 스터디 만들기를 실행 할 수 없습니다.
+      <br> 바로 인증을 진행 하시겠습니까?
+    </h5>
+    <div class="d-flex justify-content-around mt-5">
+      <a href="{% url 'accounts:update' user.pk %}">인증하러 가기</a>
+      <a href="{% url 'reviews:index' %}">그냥 이용하기</a>
+    </div>
+
+  </div>
+</div>
+
+{% endblock content %}
