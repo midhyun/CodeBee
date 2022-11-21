@@ -201,7 +201,7 @@ def delete(request, study_pk):
 @login_required
 def join(request, study_pk, user_pk):
     study = Study.objects.get(pk=study_pk)
-    accepted = Accepted.objects.filter(study_id=study_pk)
+    accepted = Accepted.objects.filter(study_id=study_pk, joined=True)
     users = Accepted.objects.filter(users_id=user_pk)
 
     token = study.host.token
@@ -224,8 +224,8 @@ def join(request, study_pk, user_pk):
                         {
                             "object_type": "feed",
                             "content": {
-                                "title": f"{request.user}님의 스터디 가입신청! ({len(accepted_now)} / {study.limits})",
-                                "description": "신청을 승인해주세요!",
+                                "title": f"{request.user}님의 스터디 가입신청! ",
+                                "description": "현재 정원({len(accepted_now)} / {study.limits}) \n 신청을 승인해주세요!",
                                 "image_url": f"{image_url}",
                                 # "image_url": f"http://localhost:8000{image_url}",
                                 "image_width": 800,
@@ -287,9 +287,55 @@ def study_kick(request, study_id, users_id):
     study = Study.objects.get(id=study_id)
     user = User.objects.get(id=users_id)
     aform = Accepted.objects.get(users=user, study=study)
+    token = user.token
     if study.isactive:
         if request.user == study.host and user != study.host:
             aform.delete()
+            if token:
+                try:
+                    image_url = study.image.url
+                except:
+                    image_url = "https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png"
+                data = {
+                    "template_object": json.dumps(
+                        {
+                            "object_type": "feed",
+                            "content": {
+                                "title": f"{user.fullname}님의 스터디 가입신청이 거부되었습니다.",
+                                "description": "다른 스터디에 참여해보세요!",
+                                "image_url": f"{image_url}",
+                                # "image_url": f"http://localhost:8000{image_url}",
+                                "image_width": 800,
+                                "image_height": 550,
+                                "link": {
+                                    "web_url": "http://localhost:8000",
+                                    "mobile_web_url": "http://localhost:8000",
+                                    "android_execution_params": "contentId=100",
+                                    "ios_execution_params": "contentId=100",
+                                },
+                            },
+                            "buttons": [
+                                {
+                                    "title": "웹으로 이동",
+                                    "link": {
+                                        "web_url": "http://localhost:8000",
+                                        "mobile_web_url": "http://localhost:8000",
+                                    },
+                                },
+                                {
+                                    "title": "앱으로 이동",
+                                    "link": {
+                                        "android_execution_params": "contentId=100",
+                                        "ios_execution_params": "contentId=100",
+                                    },
+                                },
+                            ],
+                        }
+                    )
+                }
+                headers = {"Authorization": "Bearer " + token}
+                response = requests.post(url, headers=headers, data=data)
+                print(str(response.json()))
             return redirect("reviews:detail", study_id)
         elif request.user == user and user != study.host:
             aform.delete()
