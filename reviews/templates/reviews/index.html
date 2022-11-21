@@ -28,7 +28,9 @@
       <div style="padding:20px 50px 0px">
         <div class="search-box">
           <form class="" action="{% url 'reviews:search' %}">
-            <img class="btn-search" src="{% static 'new_logo.png' %}" width="30" alt="">
+            <span class="btn-search" style="top: 10px;">
+              <img src="{% static 'new_logo.png' %}" width="30" alt="">
+            </span>
             <input name='search' type="text" id="input-search" class="input-search hide" placeholder="찾고 싶은 코드비를 검색해보세요!" style="width: 100%;">
           </form>
         </div>
