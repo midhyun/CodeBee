@@ -89,13 +89,13 @@
                         <form id="follow-form" data-user-id="{{ person.pk }}">
                             {% csrf_token %}
                             {% if request.user in person.followers.all %}
-                                <button id="follow-btn" class="btn btn-danger form-control" type="submit"
-                                        style='width:10%'>
+                                <button id="follow-btn" class="btn btn-danger form-control mx-3" type="submit"
+                                        >
                                     팔로우 취소
                                 </button>
                             {% else %}
-                                <button id="follow-btn" class="btn btn-outline-light form-control" type="submit"
-                                        style='width:10%'>팔로우
+                                <button id="follow-btn" class="btn btn-outline-light form-control mx-3" type="submit"
+                                        >팔로우
                                 </button>
                             {% endif %}
                         </form>
