@@ -93,7 +93,6 @@ SASS_OUTPUT_STYLE = "compact"
 
 WSGI_APPLICATION = "pjt.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
@@ -153,10 +152,14 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 
-STATIC_URL = '/static/'
+
+
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = [ BASE_DIR / 'static' ]
+
+STATIC_URL = '/static/'
+# STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'static'
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -169,7 +172,7 @@ STATICFILES_FINDERS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = BASE_DIR / "media"
-STATIC_ROOT = BASE_DIR / "static"
+
 
 MEDIA_URL = "/media/"
 
