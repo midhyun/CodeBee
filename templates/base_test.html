@@ -215,11 +215,13 @@
   <script>
     const target = document.querySelector("body");
     const modal = document.querySelectorAll(".modal");
+    console.log(modal)
     let i = 0;
     for (i; i < modal.length; i++) {
       let modalBtn = document.querySelector(`#modal-btn${i}`);
       const modalDict = {}
       modalDict[`modal${i}`] = [modal[i], modalBtn];
+      console.log(modalDict)
       modalDict[`modal${i}`][1].addEventListener("click", function () {
         if (document.querySelector(".modal-backdrop") !== null) {
           const modalBack = document.querySelector("#modal-back-div");
