@@ -38,7 +38,7 @@ def index(request):
 
 @login_required
 def create(request):
-    if (request.user.is_phone_active and request.user.is_email_active) or request.user.is_social_account:
+    if (request.user.is_phone_active) or request.user.is_social_account:
         if request.method == "POST":
             tag = ""
             temp = request.POST["tag"]
@@ -643,12 +643,8 @@ def search(request):
     search = request.GET.get("search")
     field = request.GET.get("field")
     if field == "1" or not field:
-        users = User.objects.filter(username__contains=search)
-        studies = []
-        for user in users:
-            studies += Study.objects.filter(host=user).order_by('-pk')
-        studies += (
-            Study.objects.filter(tag__icontains=search)
+        studies = (Study.objects.filter(host__username__contains=search)
+            or Study.objects.filter(tag__icontains=search)
             or Study.objects.filter(title__contains=search)
             or Study.objects.filter(categorie__contains=search)
         ).order_by('-pk')
@@ -656,19 +652,20 @@ def search(request):
     elif field == "2":
         studies = Study.objects.filter(title__icontains=search).order_by('-pk')
     elif field == "3":
-        users = User.objects.filter(username__icontains=search)
-        studies = []
-        for user in users:
-            studies += Study.objects.filter(host=user).order_by('-pk')
+        studies = Study.objects.filter(host__username__contains=search).order_by('-pk')
+
     elif field == "4":
         studies = Study.objects.filter(categorie__icontains=search).order_by('-pk')
     elif field == "5":
         studies = Study.objects.filter(tag__icontains=search).order_by('-pk')
     elif field == "6":
         studies = Study.objects.filter(location__icontains=search).order_by('-pk')
+    page = request.GET.get('page', '1') 
     paginator = Paginator(studies, 16)
-    posts = paginator.get_page(studies)
+    posts = paginator.get_page(page)
     context = {
-        "studies": posts,
+        'posts':posts,
+        'field': field,
+        'searched':search,
     }
     return render(request, "reviews/search.html", context)

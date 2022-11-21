@@ -353,7 +353,7 @@ def signup(request):
                 )
             user.save()
             user_login(request, user)
-            return redirect("reviews:index")
+            return redirect("accounts:cont")
     else:
         signup_form = CustomUserCreationForm()
         signup_form.fields["phone"].widget.attrs["maxlength"] = 11

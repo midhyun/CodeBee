@@ -33,7 +33,7 @@
         {% endif %} CodeBee # {{study.categorie}}
       </p>
       <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
-        <span class="badge text-bg-secondary">모집마감</span>
+        <span class="badge text-bg-danger">활동종료</span>
       </p>
       <p><span class="text-muted fs-6">마감일시: {{ study.deadline|date:'Y-m-d A h시i분' }}</span></p>
 
@@ -87,7 +87,7 @@
             <button class="nav-link text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#userlistcanvas" aria-controls="offcanvasRight">
               <i class="bi bi-list"></i>그룹원</button>
           </li>
-          <li class="nav-item" role="presentation">
+          <li id="reviewcreate" class="nav-item" role="presentation">
             {% if request.user in reviewers %}
             {% else %}
             {% if request.user in accepteduser %}
@@ -140,7 +140,7 @@
                 {% endif %}
                 <p class="my-0 fw-bold fs-5">스터디 소개</p>
                 <pre class="ms-3 fs-6 text-muted" style="font-family:'NanumSquareNeo'">{{ study.content }}</pre>
-                <p class="ms-3 fs-6 text-muted">제한 인원: {{ cnt }} / {{ study.limits }}</p>
+                <p class="ms-3 fs-6 text-muted">제한 인원: {{ accepteduser|length }} / {{ study.limits }}</p>
                 <p class="mt-3 fw-bold fs-5">태그</p>
                 <input class="mb-3 ms-3" name='tags' value='{{ study.tag }}'>
                 <div class="dropdown">
@@ -248,7 +248,10 @@
           </form>
         </div>
       <!-- 지도 정보 -->
+      {% if study.location_type %}
+      {% else %}
       <div class="mt-3" id="study_map" style="width:100%;height:350px;"></div>
+      {% endif %}
       <!-- 유저 목록 오프캔버스 -->
       <div class="offcanvas offcanvas-end" tabindex="-1" id="userlistcanvas" aria-labelledby="offcanvasRightLabel">
         <div class="offcanvas-header">
@@ -262,7 +265,7 @@
             <div class="pb-3 mt-2 border-bottom">
               <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
                   href="{% url 'accounts:detail' member.users.pk %}">
-                  {{ member.users }}                  
+                  {{ member.users }}
                   <!-- 현재 접속중인 유저인지 표시 -->
                   {% if member.users == user %}
                   <span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span>
@@ -280,6 +283,14 @@
               <p class="my-4"></p>
               {% endif %}
               {% endif %}</p>
+              {% if user != member.users %}
+              <div class="d-flex justify-content-between">
+                <div>
+                  <a class="text-warning" href="{% url 'reviews:likes' study.pk member.users.pk %}">달달해요</a>
+                  <a class="ms-2 text-secondary" href="{% url 'reviews:dislikes' study.pk member.users.pk %}">씁쓸해요</a>
+                </div>
+              </div>
+              {% endif %}
             </div>
           </div>
           {% else %}
@@ -299,6 +310,7 @@
               {% endif %}
             </div>
           </div>
+          
           {% endif %}
           {% endfor %}
         </div>
@@ -453,6 +465,7 @@ function deleteComment(event) {
     })
       .then(response => {
         document.querySelector(`#comment-${commentPk}`).remove()
+        document.querySelector('#reviewcreate').innerHTML= '<button id="reviews_modalbtn" type="button" class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#reviews_modal" data-backdrop="false"><i class="bi bi-pencil-square"></i>리뷰작성</button>'
       })
   }
 }
