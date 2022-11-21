@@ -75,7 +75,7 @@ def social_signup_request(request, service_name):
         "kakao": {
             "base_url": "https://kauth.kakao.com/oauth/authorize",
             "client_id": KAKAO_CLIENT_ID,
-            "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
+            "redirect_uri": "http://www.runedemon.shop/accounts/login/kakao/callback",
             "response_type": "code",
         },
         # "naver": {
@@ -112,7 +112,7 @@ def social_signup_callback(request, service_name):
         "kakao": {
             "data": {
                 "grant_type": "authorization_code",
-                "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
+                "redirect_uri": "http://www.runedemon.shop/accounts/login/kakao/callback",
                 "client_id": KAKAO_CLIENT_ID,
                 "code": request.GET.get("code"),
             },
