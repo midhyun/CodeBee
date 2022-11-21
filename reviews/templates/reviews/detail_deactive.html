@@ -262,7 +262,7 @@
             <div class="pb-3 mt-2 border-bottom">
               <p class="fw-bold my-0"><a style="text-decoration:none; color:black"
                   href="{% url 'accounts:detail' member.users.pk %}">
-                  {{ member.users }}                  
+                  {{ member.users }}
                   <!-- 현재 접속중인 유저인지 표시 -->
                   {% if member.users == user %}
                   <span><i style="color:forestgreen" class="bi bi-check2-circle"></i></span>
@@ -280,6 +280,14 @@
               <p class="my-4"></p>
               {% endif %}
               {% endif %}</p>
+              {% if user != member.users %}
+              <div class="d-flex justify-content-between">
+                <div>
+                  <a class="text-warning" href="{% url 'reviews:likes' study.pk member.users.pk %}">달달해요</a>
+                  <a class="ms-2 text-secondary" href="{% url 'reviews:dislikes' study.pk member.users.pk %}">씁쓸해요</a>
+                </div>
+              </div>
+              {% endif %}
             </div>
           </div>
           {% else %}
@@ -299,6 +307,7 @@
               {% endif %}
             </div>
           </div>
+          
           {% endif %}
           {% endfor %}
         </div>
