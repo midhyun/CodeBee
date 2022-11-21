@@ -66,7 +66,7 @@ def test(request):
     return render(request, "accounts/test.html", context)
 
 
-def social_signup_request(request, service_name): # kakao
+def social_signup_request(request, service_name):
     google_base_url = "https://www.googleapis.com/auth"
     google_email = "/userinfo.email"
     google_myinfo = "/userinfo.profile"
