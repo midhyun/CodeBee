@@ -50,6 +50,7 @@ def create(request):
                         Tag(tag=t["value"]).save()
                     except:
                         pass
+            print(request.POST["content"])
             study_form = StudyForm(request.POST, request.FILES)
             study_date = StudyDateForm(request.POST)
             if study_form.is_valid() and study_date.is_valid():
@@ -103,9 +104,9 @@ def create(request):
 
 def detail(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-
     comment_form = CommentForm(request.POST)
-    comments = Comment.objects.all().order_by("-pk")
+    comments = Comment.objects.filter(study=study).order_by("-pk")
+    reviewers = User.objects.filter(comment__study=study)
     if request.method =='POST':
         form = StudyDateForm(request.POST)
         if form.is_valid():
@@ -124,6 +125,7 @@ def detail(request, study_pk):
     else:
         user_accepted = False
     context = {
+        'reviewers':reviewers,
         'comments':comments,
         'comment_form':comment_form,
         'reviews': study,
@@ -428,31 +430,31 @@ def review(request, study_id):
         "comment_form": comment_form,
         "comments": comments,
     }
-
     return render(request, "reviews/review.html", context)
 
 
 @login_required
 def comment_create(request, pk):
-    review = get_object_or_404(Study, pk=pk)
-    comment_form = CommentForm(request.POST)
-    if comment_form.is_valid():
-        comment = comment_form.save(commit=False)
-        print(review.id)
-        comment.study_id = review.id
-        comment.user = request.user
-
-        comment.save()
-
+    accepted = Accepted.objects.filter(study_id=pk, users=request.user)
+    if accepted.exists() and not Comment.objects.filter(study_id=pk, user=request.user).exists():
+        review = get_object_or_404(Study, pk=pk)
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            print(review.id)
+            comment.study_id = review.id
+            comment.user = request.user
+            comment.save()
+            return redirect('reviews:detail', pk)
+    else:
+        messages.warning(request,'한개의 스터디에 한개의 리뷰만 남길 수 있습니다.')
         return redirect('reviews:detail', pk)
-
 
 @login_required
 def comment_update(request, pk, comment_pk):
-    if request.user.is_authenticated:
+    comment = Comment.objects.get(pk=comment_pk)
+    if request.user == comment.user:
         jsonObject = json.loads(request.body)
-
-        comment = Comment.objects.get(pk=comment_pk)
         comment.content = jsonObject.get("content")
         comment.save()
         upcomment = Comment.objects.get(pk=comment_pk)
@@ -460,8 +462,9 @@ def comment_update(request, pk, comment_pk):
             "comments_date": upcomment.updated_at,
         }
         return JsonResponse(context)
-
-
+    else:
+        messages.warning(request,'잘못된 요청입니다.')
+        return redirect('reviews:detail', pk)
 @login_required
 def comment_delete(request, pk, comment_pk):
     if request.user.is_authenticated:

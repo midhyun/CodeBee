@@ -29,7 +29,7 @@
         <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=2">온라인</a>
         {% else %}
         <a style="text-decoration:none; color:black" href="{% url 'reviews:index' %}?fill=1">오프라인</a>
-        {% endif %} CodeBee
+        {% endif %} CodeBee # {{study.categorie}}
       </p>
       <p class="my-0"><span class="fs-1 fw-bold">{{study.title}}</span>
         <span class="badge text-bg-secondary">모집마감</span>
@@ -87,10 +87,12 @@
               <i class="bi bi-list"></i>그룹원</button>
           </li>
           <li class="nav-item" role="presentation">
-
+            {% if request.user in reviewers %}
+            {% else %}
             <button type="button" class="nav-link text-dark" data-bs-toggle="modal" data-bs-target="#reviews_modal">
               <i class="bi bi-pencil-square"></i>리뷰작성
             </button>
+            {% endif %}
           </li>
             <!-- Modal -->
             <div class="modal fade" id="reviews_modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -121,7 +123,7 @@
         <!-- NAVTAP-CONTENT -->
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-            <div class=" p-3 border border-3">
+            <div class=" p-3 border-top border-3">
               {% if post.image %} 
                 <img src="{{ study.image.url }}" alt="">
               {% endif %}
@@ -134,30 +136,33 @@
                   <p class="ms-3 fs-6 text-muted">{{ study.location }}</p>
                 {% endif %}
                 <p class="my-0 fw-bold fs-5">스터디 소개</p>
-                <p class="ms-3 fs-6 text-muted">{{ study.content }}</p>
+                <pre class="ms-3 fs-6 text-muted" style="font-family:'NanumSquareNeo'">{{ study.content }}</pre>
                 <p>제한 인원: {{ cnt }} / {{ study.limits }}</p>
               </ul>
             </div>
           </div>
           <!-- 후기 댓글 탭 -->
           <div class="tab-pane fade" id="reviews-tab-pane" role="tabpanel" aria-labelledby="reviews-tab" tabindex="0">
-            <div class=" p-3 border border-3">
+            <div class=" p-3 border-top border-3">
                 {% for comment in comments %}
-                <div id="comment-{{ comment.pk }}">
-                <p>{{ comment.user }} | <span id="created_at-{{ comment.pk }}">{{ comment.created_at }}</span></p>
-                <p>
-                  <div class="" id="comment-{{comment.pk}}-content" >{{ comment.content }}</div>
+                <div class="mt-3" id="comment-{{ comment.pk }}">
+                <p><span class="fw-bold fs-5">{{ comment.user }}</span> | <span class="text-muted fs-6" id="created_at-{{ comment.pk }}">{{ comment.created_at }}</span></p>
+                <div class="d-flex justify-content-between">
+                  <div class="ms-3" id="comment-{{comment.pk}}-content" >{{ comment.content }}</div>
                   <div id="comment-{{ comment.pk }}-updateform" class="input-group mb-3 d-none">
                     <input class="form-control" id="comment-{{ comment.pk }}-update-content" type="text" value="{{ comment.content }}">
                     <button id="comment-{{ comment.pk }}-update-btn" class="btn btn-primary" data-study-id="{{ study.pk }}"
                       data-comment-id="{{ comment.pk }}" onclick="updateComment(this)">확인</button>
+                    </div>
                   </div>
-                {% if user.pk == comment.user_id %}
-                <button id="updatebtn" data-study-id="{{ study.pk }}" data-comment-id="{{ comment.pk }}" class="btn btn-outline-success" onclick="getUpdateComment(this)">수정
-                </button>
-                <button id="deletebtn" data-study-id="{{ study.pk }}" data-comment-id="{{ comment.pk }}" class="btn btn-outline-danger" onclick="deleteComment(this)">삭제
-                </button>
-                {% endif %}</p>
+                  <div class="d-flex justify-content-end">
+                    {% if user.pk == comment.user_id %}
+                    <span id="updatebtn" data-study-id="{{ study.pk }}" data-comment-id="{{ comment.pk }}" class="mx-2 text-muted" style="cursor:pointer" onclick="getUpdateComment(this)">수정
+                    </span>
+                    <span id="deletebtn" data-study-id="{{ study.pk }}" data-comment-id="{{ comment.pk }}" class="mx-2 text-muted" style="cursor:pointer" onclick="deleteComment(this)">삭제
+                    </span>
+                    {% endif %}
+                  </div>
               </div>
                 {% endfor %}
             </div>
