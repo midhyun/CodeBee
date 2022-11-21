@@ -3,205 +3,197 @@
 {% load static %}
 {% load sass_tags %}
 {% block css %}
-<link href="{% sass_src 'css/menu.scss' %}" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="{% static 'css/menu.css' %}">
-<link rel="stylesheet" href="{% static 'css/style.css' %}">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
+  <link href="{% sass_src 'css/menu.scss' %}" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="{% static 'css/menu.css' %}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.2/font/bootstrap-icons.css">
 {% endblock css %}
 {% block content %}
 
-<header class="container align-items-center">
+  <header class="container align-items-center">
     <div class="d-flex justify-content-between">
-        <!-- 인덱스 카테고리 -->
-        <div style="padding: 20px 50px 0px; transform: translateY(12px)">
-            <form id="category_form" action="" method="GET">
-            <select name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
-                <option selected>스터디 카테고리</option>
-                <option >모든 스터디</option>
-                <option value="1">오프라인 스터디</option>
-                <option value="2">온라인 스터디</option>
-              </select>
-            </form>
-        </div>
-        <!-- 검색바 -->
+      <!-- 인덱스 카테고리 -->
+      <div style="padding: 20px 50px 0px; transform: translateY(12px)">
+        <form id="category_form" action="" method="GET">
+          <select name="fill" class="form-select" aria-label="Default select example" onchange="this.form.submit()">
+            <option selected="selected">스터디 카테고리</option>
+            <option>모든 스터디</option>
+            <option value="1">오프라인 스터디</option>
+            <option value="2">온라인 스터디</option>
+          </select>
+        </form>
+      </div>
+      <!-- 검색바 -->
 
-        <div style="padding:20px 50px 0px">
-            <div class="search-box">
-                <form  class="" action="{% url 'reviews:search' %}">
-                    <img class="btn-search" src="{% static 'new_logo.png' %}" width="30" alt="">
-                    <input name='search' type="text" id="input-search" class="input-search hide" placeholder="찾고 싶은 코드비를 검색해보세요!" style="width: 100%;">
-                </form>
-            </div>
+      <div style="padding:20px 50px 0px">
+        <div class="search-box">
+          <form class="" action="{% url 'reviews:search' %}">
+            <img class="btn-search" src="{% static 'new_logo.png' %}" width="30" alt="">
+            <input name='search' type="text" id="input-search" class="input-search hide" placeholder="찾고 싶은 코드비를 검색해보세요!" style="width: 100%;">
+          </form>
         </div>
-        
+      </div>
+
     </div>
-</header>
-<!-- 헤더 이미지 영역 -->
+  </header>
+  <!-- 헤더 이미지 영역 -->
 
-<!-- 스터디 제목, 기간, 설명 -->
-<div class="container content mt-3" style="padding: 50px;">
+  <!-- 스터디 제목, 기간, 설명 -->
+  <div class="container content mt-3" style="padding: 50px;">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
 
-        {% for study in studies %}
+      {% for study in studies %}
         <div class="col">
-            <a class="cardlink link" href="{% url 'reviews:detail' study.pk %}">
-                <div class="card h-100 w-100 shadow h-100 p-3">
-                    <div class="image-wrapper">
-                        {% if study.image %}
-                        <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
-                        {% else %}
-                        <img src="{% static 'logo_with.png' %}" class="card-img-top card-image" alt="...">
-                        {% endif %}
+          <a class="cardlink link" href="{% url 'reviews:detail' study.pk %}">
+            <div class="card h-100 w-100 shadow h-100 p-3">
+              <div class="image-wrapper">
+                {% if study.image %}
+                  <img src="{{ study.image.url }}" class="card-img-top card-image" alt="...">
+                {% else %}
+                  <img src="{% static 'logo_with.png' %}" class="card-img-top card-image" alt="...">
+                {% endif %}
+              </div>
+              <div class="card-body ">
+                <h5 class="card-title text-center mb-5">{{ study.title }}</h5>
+
+                <div class="d-flex justify-content-between m-auto" style="color: black; height: 64px">
+
+                  <!-- 장단기 -->
+                  <div class="icon-box">
+                    <div style="height:100%;">
+                      {% if study.study_type == "그룹" %}
+                        <i class="bi bi-calendar-week" style="font-size: 24px;"></i>
+                      {% else %}
+                        <i class="bi bi-calendar-check" style="font-size: 24px;"></i>
+                      {% endif %}
                     </div>
-                    <div class="card-body ">
-                        <h5 class="card-title text-center mb-5">{{ study.title }}</h5>
+                    <p class="text-center">
+                      {{ study.study_type }}
+                    </p>
+                  </div>
 
-                        <div class="d-flex justify-content-between m-auto" style="color: black; height: 64px">
+                  <!-- 언어 -->
+                  <div class="icon-box">
+                    {% if study.categorie == "Python" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-python ms-1" width="44" height="44" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3"/>
+                        <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3"/>
+                        <path d="M8 9v-4a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v5a2 2 0 0 1 -2 2h-4a2 2 0 0 0 -2 2v5a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4"/>
+                        <line x1="11" y1="6" x2="11" y2="6.01"/>
+                        <line x1="13" y1="18" x2="13" y2="18.01"/>
+                      </svg>
+                    {% elif study.categorie == "Javascript" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-javascript" width="60" height="60" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M20 4l-2 14.5l-6 2l-6 -2l-2 -14.5z"/>
+                        <path d="M7.5 8h3v8l-2 -1"/>
+                        <path d="M16.5 8h-2.5a0.5 .5 0 0 0 -.5 .5v3a0.5 .5 0 0 0 .5 .5h1.423a0.5 .5 0 0 1 .495 .57l-.418 2.93l-2 .5"/>
+                      </svg>
+                    {% elif study.categorie == "Django" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="100%" enable-background="new 0 0 24 24" viewbox="0 0 24 24">
+                        <path d="M21.25,6.06V6.059h-3.897v7.747c0,3.414-0.177,4.714-0.734,5.835c-0.531,1.096-1.367,1.81-3.088,2.625L17.15,24c1.721-0.866,2.556-1.656,3.189-2.905c0.683-1.299,0.911-2.803,0.911-5.937V6.06z"/>
+                        <path d="M15.049,18.166V0h-3.897v5.984C10.57,5.831,10.089,5.78,9.457,5.78c-4.075,0-6.707,2.599-6.707,6.6c0,4.154,2.48,6.32,7.238,6.32C11.582,18.701,13.05,18.548,15.049,18.166z M6.723,12.304c0-2.141,1.138-3.364,3.113-3.364H9.832C9.86,8.938,9.887,8.938,9.914,8.938c0.443,0,0.868,0.075,1.237,0.205v6.294c-0.556,0.077-0.911,0.102-1.341,0.102C7.812,15.54,6.723,14.394,6.723,12.304z"/>
+                        <rect width="3.897" height="4.026" x="17.353" y=".021"/>
+                      </svg>
+                    {% elif study.categorie == "React" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-react-native" width="44" height="44" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M6.357 9c-2.637 .68 -4.357 1.845 -4.357 3.175c0 2.107 4.405 3.825 9.85 3.825c.74 0 1.26 -.039 1.95 -.097"/>
+                        <path d="M9.837 15.9c-.413 -.596 -.806 -1.133 -1.18 -1.8c-2.751 -4.9 -3.488 -9.77 -1.63 -10.873c1.15 -.697 3.047 .253 4.974 2.254"/>
+                        <path d="M6.429 15.387c-.702 2.688 -.56 4.716 .56 5.395c1.783 1.08 5.387 -1.958 8.043 -6.804c.36 -.67 .683 -1.329 .968 -1.978"/>
+                        <path d="M12 18.52c1.928 2 3.817 2.95 4.978 2.253c1.85 -1.102 1.121 -5.972 -1.633 -10.873c-.384 -.677 -.777 -1.204 -1.18 -1.8"/>
+                        <path d="M17.66 15c2.612 -.687 4.34 -1.85 4.34 -3.176c0 -2.11 -4.408 -3.824 -9.845 -3.824c-.747 0 -1.266 .029 -1.955 .087"/>
+                        <path d="M8 12c.285 -.66 .607 -1.308 .968 -1.978c2.647 -4.844 6.253 -7.89 8.046 -6.801c1.11 .679 1.262 2.706 .56 5.393"/>
+                        <path d="M12.26 12.015h-.01c-.01 .13 -.12 .24 -.26 .24a0.263 .263 0 0 1 -.25 -.26c0 -.14 .11 -.25 .24 -.25h-.01c.13 -.01 .25 .11 .25 .24"/>
+                      </svg>
+                    {% elif study.categorie == "Vue" %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-vue" width="44" height="44" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M16.5 4l-4.5 8l-4.5 -8"></path>
+                        <path d="M3 4l9 16l9 -16"></path>
+                      </svg>
+                    {% else %}
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-code" width="44" height="44" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <polyline points="7 8 3 12 7 16"></polyline>
+                        <polyline points="17 8 21 12 17 16"></polyline>
+                        <line x1="14" y1="4" x2="10" y2="20"></line>
+                      </svg>
+                    {% endif %}
+                    <p class="text-center" style="white-space: nowrap">
+                      {{ study.categorie }}
+                    </p>
+                  </div>
 
-                            <!-- 장단기 -->
-                            <div class="icon-box">
-                                <div style="height:100%;">
-                                    {% if study.study_type == "그룹" %}
-                                    <i class="bi bi-calendar-week" style="font-size: 24px;"></i>
-                                    {% else %}
-                                    <i class="bi bi-calendar-check" style="font-size: 24px;"></i>
-                                    {% endif %}
-                                </div>
-                                <p class="text-center">
-                                    {{ study.study_type }}
-                                </p>
-                            </div>
-
-                            <!-- 언어 -->
-                            <div class="icon-box">
-                                {% if study.categorie == "Python" %}
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="icon icon-tabler icon-tabler-brand-python ms-1" width="44" height="44"
-                                    viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M12 9h-7a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h3" />
-                                    <path d="M12 15h7a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-3" />
-                                    <path
-                                        d="M8 9v-4a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v5a2 2 0 0 1 -2 2h-4a2 2 0 0 0 -2 2v5a2 2 0 0 0 2 2h4a2 2 0 0 0 2 -2v-4" />
-                                    <line x1="11" y1="6" x2="11" y2="6.01" />
-                                    <line x1="13" y1="18" x2="13" y2="18.01" />
-                                </svg>
-                                {% elif study.categorie == "Javascript" %}
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="icon icon-tabler icon-tabler-brand-javascript" width="60" height="60"
-                                    viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path d="M20 4l-2 14.5l-6 2l-6 -2l-2 -14.5z" />
-                                    <path d="M7.5 8h3v8l-2 -1" />
-                                    <path
-                                        d="M16.5 8h-2.5a0.5 .5 0 0 0 -.5 .5v3a0.5 .5 0 0 0 .5 .5h1.423a0.5 .5 0 0 1 .495 .57l-.418 2.93l-2 .5" />
-                                </svg>
-                                {% elif study.categorie == "Django" %}
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="100%"
-                                    enable-background="new 0 0 24 24" viewbox="0 0 24 24">
-                                    <path
-                                        d="M21.25,6.06V6.059h-3.897v7.747c0,3.414-0.177,4.714-0.734,5.835c-0.531,1.096-1.367,1.81-3.088,2.625L17.15,24c1.721-0.866,2.556-1.656,3.189-2.905c0.683-1.299,0.911-2.803,0.911-5.937V6.06z" />
-                                    <path
-                                        d="M15.049,18.166V0h-3.897v5.984C10.57,5.831,10.089,5.78,9.457,5.78c-4.075,0-6.707,2.599-6.707,6.6c0,4.154,2.48,6.32,7.238,6.32C11.582,18.701,13.05,18.548,15.049,18.166z M6.723,12.304c0-2.141,1.138-3.364,3.113-3.364H9.832C9.86,8.938,9.887,8.938,9.914,8.938c0.443,0,0.868,0.075,1.237,0.205v6.294c-0.556,0.077-0.911,0.102-1.341,0.102C7.812,15.54,6.723,14.394,6.723,12.304z" />
-                                    <rect width="3.897" height="4.026" x="17.353" y=".021" />
-                                </svg>
-                                {% elif study.categorie == "React" %}
-                                <svg xmlns="http://www.w3.org/2000/svg"
-                                    class="icon icon-tabler icon-tabler-brand-react-native" width="44" height="44"
-                                    viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <path
-                                        d="M6.357 9c-2.637 .68 -4.357 1.845 -4.357 3.175c0 2.107 4.405 3.825 9.85 3.825c.74 0 1.26 -.039 1.95 -.097" />
-                                    <path
-                                        d="M9.837 15.9c-.413 -.596 -.806 -1.133 -1.18 -1.8c-2.751 -4.9 -3.488 -9.77 -1.63 -10.873c1.15 -.697 3.047 .253 4.974 2.254" />
-                                    <path
-                                        d="M6.429 15.387c-.702 2.688 -.56 4.716 .56 5.395c1.783 1.08 5.387 -1.958 8.043 -6.804c.36 -.67 .683 -1.329 .968 -1.978" />
-                                    <path
-                                        d="M12 18.52c1.928 2 3.817 2.95 4.978 2.253c1.85 -1.102 1.121 -5.972 -1.633 -10.873c-.384 -.677 -.777 -1.204 -1.18 -1.8" />
-                                    <path
-                                        d="M17.66 15c2.612 -.687 4.34 -1.85 4.34 -3.176c0 -2.11 -4.408 -3.824 -9.845 -3.824c-.747 0 -1.266 .029 -1.955 .087" />
-                                    <path
-                                        d="M8 12c.285 -.66 .607 -1.308 .968 -1.978c2.647 -4.844 6.253 -7.89 8.046 -6.801c1.11 .679 1.262 2.706 .56 5.393" />
-                                    <path
-                                        d="M12.26 12.015h-.01c-.01 .13 -.12 .24 -.26 .24a0.263 .263 0 0 1 -.25 -.26c0 -.14 .11 -.25 .24 -.25h-.01c.13 -.01 .25 .11 .25 .24" />
-                                </svg>
-                                {% else %}
-                                <img style="height: 100%; padding: 0px 5px;" src="{% static '/image/coding_study.svg'%}"
-                                    alt="">
-                                {% endif %}
-                                <p class="text-center" style="white-space: nowrap">
-                                    {{ study.categorie }}
-                                </p>
-                            </div>
-
-                            <!-- 정원 -->
-                            <div class="icon-box">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user"
-                                    width="36" height="36" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50"
-                                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-                                    <circle cx="12" cy="7" r="4" />
-                                    <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
-                                </svg>
-                                <p class="text-center">
-                                    {{ study.accepted.all|length }}/{{ study.limits }}
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+                  <!-- 정원 -->
+                  <div class="icon-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="36" height="36" viewbox="0 0 24 24" stroke-width="1.5" stroke="#2c3e50" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                      <circle cx="12" cy="7" r="4"/>
+                      <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2"/>
+                    </svg>
+                    <p class="text-center">
+                      {{ study.accepted.all|length }}/{{ study.limits }}
+                    </p>
+                  </div>
                 </div>
-            </a>
+              </div>
+            </div>
+          </a>
         </div>
-        {% endfor %}
+      {% endfor %}
     </div>
     <div class="row">
-        <div name="pagination" class="text-center mx-auto my-3">
-            {% if studies.has_previous %}
-            <a href="?page=1">맨 앞으로</a>
-            <a href="?page={{studies.previous_page_number}}">이전으로</a>
-            {% endif %}
-            <span>{{studies.number}}</span>
-            <span>/</span>
-            <span>{{studies.paginator.num_pages}}</span>
-            {% if studies.has_next %}
-                <a href="?page={{studies.next_page_number}}">다음으로</a>
-                <a href="?page={{studies.paginator.num_pages}}">맨 뒤로</a>
-            {% endif %}
-        </div>
+      <div name="pagination" class="text-center mx-auto my-3">
+        {% if studies.has_previous %}
+          <a href="?page=1">맨 앞으로</a>
+          <a href="?page={{studies.previous_page_number}}">이전으로</a>
+        {% endif %}
+        <span>{{studies.number}}</span>
+        <span>/</span>
+        <span>{{studies.paginator.num_pages}}</span>
+        {% if studies.has_next %}
+          <a href="?page={{studies.next_page_number}}">다음으로</a>
+          <a href="?page={{studies.paginator.num_pages}}">맨 뒤로</a>
+        {% endif %}
+      </div>
     </div>
-</div>
-<!-- 멀미 방지 -->
-<div style="min-height: 200px;" ></div>
-<script>
+  </div>
+  <!-- 멀미 방지 -->
+  <div style="min-height: 200px;"></div>
+  <script>
     function study_onchange() {
-        document.querySelector('#category_form').submit()
+      document
+        .querySelector('#category_form')
+        .submit()
     }
-</script>
+  </script>
 
-<script>
+  <script>
     var searchimage = document.querySelector('.btn-search');
     var input = document.getElementById('input-search');
-    searchimage.addEventListener('click', function() {
-    input.classList.toggle('hide');
-  
-    
-   input.animate([
-  // keyframes
-      { width: '0%' }, 
-      { width: '100%' }
-    ], { 
-      // timing options
-      duration: 200,
-      easing: "ease-in",
-      iterations: 1
-    });
-  
-  input.style.width = "380px";
-  input.select();
-  });
+    searchimage.addEventListener('click', function () {
+      input
+        .classList
+        .toggle('hide');
 
-</script>
+      input.animate([
+        // keyframes
+        {
+          width: '0%'
+        }, {
+          width: '100%'
+        }
+      ], {
+        // timing options
+        duration: 200,
+        easing: "ease-in",
+        iterations: 1
+      });
+
+      input.style.width = "380px";
+      input.select();
+    });
+  </script>
 {% endblock content %}
