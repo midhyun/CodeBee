@@ -72,6 +72,17 @@
             <span>i</span></button>
         </span>
       </div>
+      <!-- 팔로우 -->
+      {% if user != person %}
+      <form id="follow-form" data-user-id="{{ person.pk }}">
+        {% csrf_token %}
+        {% if request.user in person.followers.all %}
+        <button id="follow-btn" class="btn btn-danger form-control" type="submit" style='width:10%'>팔로우 취소</button>
+        {% else %}
+        <button id="follow-btn" class="btn btn-outline-primary form-control" type="submit" style='width:10%'>팔로우</button>
+        {% endif %}
+      </form>
+      {% endif %}
     </div>
     <div class="col-5 d-flex justify-content-start align-items-center">
       <div>
@@ -384,5 +395,54 @@
   const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
   const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+  const followUrl = "{% url 'accounts:follow' person.pk %}";
+</script>
+<script>
+  const followForm = document.querySelector("#follow-form")
+  const csrftoken = document
+    .querySelector('[name=csrfmiddlewaretoken]')
+    .value
+  followForm
+    .addEventListener("submit", function (event) {
+      event.preventDefault()
+      axios({
+        method: "POST",
+        url: followUrl,
+        headers: {
+          'X-CSRFToken': csrftoken
+        }
+      })
+        .then(response => {
+          const isFollowed = response.data.is_followed
+          const followBtn = document.querySelector('#follow-form > #follow-btn')
+          const followerCountTag = document.querySelector('#follower-count')
+          const followingCountTag = document.querySelector('#following-count')
 
+          if (isFollowed) {
+            followBtn
+              .classList
+              .add("btn-danger")
+            followBtn
+              .classList
+              .remove("btn-outline-primary")
+            followBtn.innerText = "팔로우 취소"
+          } else {
+            followBtn
+              .classList
+              .add("btn-outline-primary")
+            followBtn
+              .classList
+              .remove("btn-danger")
+            followBtn.innerText = "팔로우"
+          }
+          followerCountTag.innerText = response.data.followers_count
+          followingCountTag.innerText = response.data.followings_count
+        })
+        .catch(error => {
+          console.log(error.response)
+        })
+    })
+</script>
 {% endblock content %}

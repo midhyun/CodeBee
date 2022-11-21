@@ -240,7 +240,7 @@ def social_signup_callback(request, service_name):
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
         user_login(request, user)
-        return redirect(request.GET.get("next") or "accounts:test")
+        return redirect(request.GET.get("next") or "reviews:index")
     else:
         social_data = {
             # 소셜 서비스 구분
@@ -353,7 +353,7 @@ def signup(request):
                 )
             user.save()
             user_login(request, user)
-            return redirect("accounts:test")
+            return redirect("reviews:index")
     else:
         signup_form = CustomUserCreationForm()
         signup_form.fields["phone"].widget.attrs["maxlength"] = 11
@@ -434,7 +434,7 @@ def login(request):
 @login_required
 def logout(request):
     user_logout(request)
-    return redirect("accounts:test")
+    return redirect("reviews:index")
 
 
 # test용도
@@ -749,3 +749,26 @@ def delete(request, user_pk):
             "user": user,
         }
     return render(request, "accounts/delete.html", context)
+
+
+@login_required
+def follow(request, following_pk):
+    user = get_object_or_404(get_user_model(), pk=following_pk)
+    # 스스로를 팔로우하려는 경우
+    if request.user == user:
+        messages.warning(request, "스스로 팔로우 할 수 없습니다.")
+        return redirect("accounts:detail", following_pk)
+    # 팔로우하고 있는 상태인 경우
+    if request.user in user.followers.all():
+        user.followers.remove(request.user)
+        is_followed = False
+    # 팔로우하고 있지 않았을때
+    else:
+        user.followers.add(request.user)
+        is_followed = True
+    context = {
+        "is_followed": is_followed,
+        "followers_count": user.followers.count(),
+        "followings_count": user.followings.count(),
+    }
+    return JsonResponse(context)

@@ -156,8 +156,6 @@ USE_TZ = False
 STATIC_URL = '/static/'
 SASS_PROCESSOR_ROOT = os.path.join(BASE_DIR, 'static')
 
-STATICFILES_DIRS = [ BASE_DIR / 'static' ]
-
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -169,6 +167,7 @@ STATICFILES_FINDERS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = BASE_DIR / "media"
+STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
 
