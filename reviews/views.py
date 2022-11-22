@@ -199,8 +199,11 @@ def update(request, study_pk):
 @login_required
 def delete(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    if study.isactive:
-        study.delete()
+    if request.user == study.host:
+        if study.isactive:
+            study.delete()
+    else:
+        messages.warning(request, '권한이 없습니다.')
     return redirect("reviews:index")
 
 
@@ -419,8 +422,11 @@ def gathering(request, study_pk):
 
 def done(request, study_pk):
     study = Study.objects.get(pk=study_pk)
-    study.isactive = False
-    study.save()
+    if request.user == study.host:
+        study.isactive = False
+        study.save()
+    else:
+        messages.warning(request, '권한이 없습니다.')
     return redirect("reviews:detail", study_pk)
 
 
