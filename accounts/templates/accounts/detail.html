@@ -96,7 +96,8 @@
           </form>
           {% endif %}
           <div class="d-flex justify-content-start align-content-center">
-            <a href="{% url 'accounts:delete' person.pk %}" class="btn btn-lg btn-secondary mx-3">회원 탈퇴</a>
+            <a href="{% url 'accounts:password' person.pk %}" class="btn btn-lg btn-secondary m-3">비밀번호 변경</a>
+            <a href="{% url 'accounts:delete' person.pk %}" class="btn btn-lg btn-secondary m-3">회원 탈퇴</a>
           </div>
         </div>
       </div>
