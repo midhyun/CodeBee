@@ -5,7 +5,7 @@
 
 <div class="container mt-5 w-50">
   <h1 class="text-center my-5">회원정보 수정</h1>
-  <form action="" class="form" method="POST">
+  <form action="" class="form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {% for update_field in update_form %}
     {% bootstrap_field update_field %}
