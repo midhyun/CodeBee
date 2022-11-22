@@ -7,17 +7,27 @@
 {% block content %}
 
 <div class="container my-5">
-  <h1 class="text-center">현재 {{ service_name }} 계정으로 로그인 중입니다.</h1>
-  <form action="" method="POST">
-    {% csrf_token %}
-    <h2 class="card-title mb-5 text-center">정말로 탈퇴 하시겠습니까?</h2>
-    <h3 class="card-title mb-5 text-center">탈퇴 시 모든 추억들이 사라집니다...</h3>
-    <div class="mt-5 text-center">
-      <input class="btn btn-secondary btn-small" type="submit" value="네..." style="width: 3rem;">
-      <a href="{% url 'accounts:detail' user.pk %}" class="btn btn-lg btn-success ms-2" style="width: 12rem;">아니오</a>
-    </div>
-  </form>
 
+  <div>
+    {% if request.user.is_social_account %}
+    <h1 class="text-center">현재 {{ service_name }} 계정으로 로그인 중입니다.</h1>
+    <form action="" method="POST">
+      {% csrf_token %}
+      <h2 class="card-title mb-5 text-center">정말로 탈퇴 하시겠습니까?</h2>
+      <h3 class="card-title mb-5 text-center">탈퇴 시 모든 추억들이 사라집니다...</h3>
+      <div class="mt-5 text-center">
+        <input class="btn btn-secondary btn-small" type="submit" value="네..." style="width: 3rem;">
+        <a href="{% url 'accounts:detail' user.pk %}" class="btn btn-lg btn-success ms-2" style="width: 12rem;">아니오</a>
+      </div>
+    </form>
+    {% else %}
+    <h1 class="text-center">현재 일반 계정으로 로그인 중입니다.</h1>
+    <h3 class="text-center">일반 계정 탈퇴를 이용해주세요.</h3>
+    <div class="mt-5 text-center">
+      <a href="{% url 'accounts:detail' user.pk %}" class="btn btn-lg btn-success ms-2" style="width: 12rem;">돌아가기</a>
+    </div>
+    {% endif %}
+  </div>
 </div>
 
 {% endblock content %}

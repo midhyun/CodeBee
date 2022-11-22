@@ -197,7 +197,9 @@ def social_signup_callback(request):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
-    print(u_info)
+    print(
+        u_info, 111111111111111111111111111111111111111111111111111111111111111111111111
+    )
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -250,7 +252,10 @@ def social_signup_callback(request):
             },
         }
     user_info = login_data[service_name]
-    print(user_info,'11111111111111111111111111')
+    print(
+        user_info,
+        222222222222222222222222222222222222222222222222222222222222222222222222,
+    )
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
         user_login(request, user)
@@ -377,7 +382,10 @@ def signup(request):
                 )
             user.save()
             user_login(request, user)
-            return redirect("accounts:cont")
+            if user.is_social_account:
+                return redirect("reviews:index")
+            else:
+                return redirect("accounts:cont")
     else:
         signup_form = CustomUserCreationForm()
         signup_form.fields["phone"].widget.attrs["maxlength"] = 11
