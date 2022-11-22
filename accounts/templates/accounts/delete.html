@@ -12,7 +12,9 @@
     {% csrf_token %}
     <h1 class="card-title mb-5 text-center">정말로 탈퇴 하시겠습니까?</h1>
     <h2 class="card-title mb-5 text-center">탈퇴 시 모든 추억들이 사라집니다...</h2>
-    <h6 class="card-title mb-5 text-center">주의 : SNS 회원의 경우는 일반 탈퇴시 <span class="text-danger">계정 정보가 유지됩니다.</span></h6>
+    {% if request.user.is_social_account %}
+    <h6 class="card-title mb-5 text-center">주의 : 이 안내 메세지는 SNS 회원에게만 보여집니다.</h6>
+    <h6 class="card-title mb-5 text-center">SNS 회원의 경우는 일반 탈퇴시 <span class="text-danger">계정 정보가 유지됩니다.</span></h6>
     <h6 class="card-title mb-5 text-center text-warning">
       SNS 계정 정보를 초기화 하고 싶으신 경우
       <a href="{% url 'accounts:sns-logout' request.user.service_name %}">
@@ -20,6 +22,7 @@
       </a>
       로 가주세요.
     </h6>
+    {% endif %}
     <div class="mt-5 text-center">
       <input class="btn btn-secondary btn-small" type="submit" value="네..." style="width: 3rem;">
       <a href="{% url 'accounts:detail' user.pk %}" class="btn btn-lg btn-success ms-2" style="width: 12rem;">아니오</a>
