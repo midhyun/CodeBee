@@ -67,8 +67,8 @@
       var eObj = window.event
         ? window.event
         : e; // IE, FF 에 따라 이벤트 처리 하기
-      mouseX = eObj.clientX + 15;
-      mouseY = eObj.clientY + document.documentElement.scrollTop + 15; // 화면을 스크롤 했을때를 위한 처리 (스크롤 한 만큼 마우스 Y좌표에 + )
+      mouseX = eObj.clientX + 20;
+      mouseY = eObj.clientY + document.documentElement.scrollTop + 20; // 화면을 스크롤 했을때를 위한 처리 (스크롤 한 만큼 마우스 Y좌표에 + )
       // documentElement 가 안된다면 body 바꿔야 한다. 크롬의 경우.. (자동파악 로직 필요)
     }
 

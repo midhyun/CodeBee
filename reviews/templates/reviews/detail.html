@@ -51,6 +51,9 @@
             {% if study.host.profile_picture %}
             <img style="width:50px; height:50px;" class="rounded-circle" src="{{ study.host.profile_picture.url }}"
               alt="">
+            {% elif study.host.social_profile_picture %}
+            <img style="width:50px; height:50px;" class="rounded-circle" src="{{ study.host.social_profile_picture }}"
+              alt="">
             {% else %}
             <img class="rounded-circle" src="https://dummyimage.com/50x50/000/fff" alt="">
             {% endif %}
@@ -310,13 +313,13 @@
               {% else %}
               <span class="badge bg-success">참여중</span>
 
-                {% if study.host == user %}
-                <a class="text-danger me-5" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
-                {% else %}
-                {% endif %}
+              {% if study.host == user %}
+              <a class="text-danger me-5" href="{% url 'reviews:study_kick' study.pk member.users.id %}">강퇴</a>
+              {% else %}
+              {% endif %}
               <p class="my-4"></p>
               {% endif %}
-            </p>
+              </p>
 
             </div>
           </div>
@@ -423,50 +426,50 @@
   };
 </script>
 <script>
-var input = document.querySelector('input[name=tags]')
-new Tagify(input, {
-  transformTag: transformTag,
-  userInput: false,
-})
-document.querySelector('.tagify').classList.add('border-0')
+  var input = document.querySelector('input[name=tags]')
+  new Tagify(input, {
+    transformTag: transformTag,
+    userInput: false,
+  })
+  document.querySelector('.tagify').classList.add('border-0')
 
-function getRandomColor(){
+  function getRandomColor() {
     function rand(min, max) {
-        return min + Math.random() * (max - min);
+      return min + Math.random() * (max - min);
     }
 
-    var h = rand(1, 360)|0,
-        s = rand(40, 70)|0,
-        l = rand(65, 72)|0;
+    var h = rand(1, 360) | 0,
+      s = rand(40, 70) | 0,
+      l = rand(65, 72) | 0;
 
     return 'hsl(' + h + ',' + s + '%,' + l + '%)';
-}
+  }
 
-function getRandomColor(){
+  function getRandomColor() {
     function rand(min, max) {
-        return min + Math.random() * (max - min);
+      return min + Math.random() * (max - min);
     }
 
-    var h = rand(1, 360)|0,
-        s = rand(40, 70)|0,
-        l = rand(65, 72)|0;
+    var h = rand(1, 360) | 0,
+      s = rand(40, 70) | 0,
+      l = rand(65, 72) | 0;
 
     return 'hsl(' + h + ',' + s + '%,' + l + '%)';
-}
+  }
 
-function transformTag( tagData ){
+  function transformTag(tagData) {
     tagData.style = "--tag-bg:" + getRandomColor();
 
-    if( tagData.value.toLowerCase() == 'shit' )
-       tagData.value = 's✲✲t'
-}
+    if (tagData.value.toLowerCase() == 'shit')
+      tagData.value = 's✲✲t'
+  }
 
-tagify.on('add', function(e){
+  tagify.on('add', function (e) {
     console.log(e.detail)
-})
+  })
 
-tagify.on('invalid', function(e){
+  tagify.on('invalid', function (e) {
     console.log(e, e.detail);
-})
+  })
 </script>
 {% endblock %}

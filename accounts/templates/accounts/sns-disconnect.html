@@ -6,11 +6,15 @@
 <div class="container my-5">
   {% if success %}
   <h1 class="text-center">{{ msg }}</h1>
-  <a href="{% url 'home' %}" class="text-center my-3">메인 페이지로 가기</a>
+  <div class="text-center my-5">
+    <a href="{% url 'home' %}">메인 페이지로 가기</a>
+  </div>
   {% else %}
   <h1 class="text-center">{{ error_msg }}</h1>
   <p class="text-center">관리자에게 문의하세요.</p>
-  <a href="{% url 'home' %}" class="text-center my-3">메인 페이지로 가기</a>
+  <div class="text-center my-5">
+    <a href="{% url 'home' %}">메인 페이지로 가기</a>
+  </div>
   {% endif %}
 </div>
 

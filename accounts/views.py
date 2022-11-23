@@ -66,7 +66,14 @@ def test(request):
     return render(request, "accounts/test.html", context)
 
 
-def social_signup_request(request, service_name):
+def social_signup_request(request):
+    if "kakao" in request.path:
+        service_name = "kakao"
+    elif "google" in request.path:
+        service_name = "google"
+    elif "github" in request.path:
+        service_name = "github"
+
     google_base_url = "https://www.googleapis.com/auth"
     google_email = "/userinfo.email"
     google_myinfo = "/userinfo.profile"
@@ -75,7 +82,7 @@ def social_signup_request(request, service_name):
         "kakao": {
             "base_url": "https://kauth.kakao.com/oauth/authorize",
             "client_id": KAKAO_CLIENT_ID,
-            "redirect_uri": "runedemon.shop/accounts/login/kakao/callback",
+            "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
             "response_type": "code",
         },
         # "naver": {
@@ -88,14 +95,14 @@ def social_signup_request(request, service_name):
         "google": {
             "base_url": "https://accounts.google.com/o/oauth2/v2/auth",
             "client_id": GOOGLE_CLIENT_ID,
-            "redirect_uri": "http://runedemon.shop/accounts/login/google/callback",
+            "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/google/callback",
             "response_type": "code",
             "scope": f"{google_base_url}{google_email}+{google_base_url}{google_myinfo}",
         },
         "github": {
             "base_url": "https://github.com/login/oauth/authorize",
             "client_id": GITHUB_CLIENT_ID,
-            "redirect_uri": "http://runedemon.shop/accounts/login/login/github/callback",
+            "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/github/callback",
             "scope": "read:user",
         },
     }
@@ -107,12 +114,18 @@ def social_signup_request(request, service_name):
     return redirect(res)
 
 
-def social_signup_callback(request, service_name):
+def social_signup_callback(request):
+    if "kakao" in request.path:
+        service_name = "kakao"
+    elif "google" in request.path:
+        service_name = "google"
+    elif "github" in request.path:
+        service_name = "github"
     services = {
         "kakao": {
             "data": {
                 "grant_type": "authorization_code",
-                "redirect_uri": "runedemon.shop/accounts/login/kakao/callback",
+                "redirect_uri": "http://codebee-env-1.eba-ybm4hjsv.ap-northeast-2.elasticbeanstalk.com/accounts/login/kakao/callback",
                 "client_id": KAKAO_CLIENT_ID,
                 "code": request.GET.get("code"),
             },
@@ -184,7 +197,9 @@ def social_signup_callback(request, service_name):
         u_info = requests.get(
             services[service_name]["user_api"], headers=headers
         ).json()
-    print(u_info)
+    print(
+        u_info, 111111111111111111111111111111111111111111111111111111111111111111111111
+    )
     if service_name == "kakao":
         login_data = {
             "kakao": {
@@ -237,6 +252,10 @@ def social_signup_callback(request, service_name):
             },
         }
     user_info = login_data[service_name]
+    print(
+        user_info,
+        222222222222222222222222222222222222222222222222222222222222222222222222,
+    )
     if get_user_model().objects.filter(social_id=user_info["social_id"]).exists():
         user = get_user_model().objects.get(social_id=user_info["social_id"])
         user_login(request, user)
@@ -357,7 +376,10 @@ def signup(request):
                 )
             user.save()
             user_login(request, user)
-            return redirect("accounts:cont")
+            if user.is_social_account:
+                return redirect("reviews:index")
+            else:
+                return redirect("accounts:cont")
     else:
         signup_form = CustomUserCreationForm()
         signup_form.fields["phone"].widget.attrs["maxlength"] = 11
