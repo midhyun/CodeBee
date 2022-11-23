@@ -227,6 +227,7 @@ def join(request, study_pk, user_pk):
                 if token:
                     try:
                         image_url = study.image.url
+                        print('11111111111111111')
                     except:
                         image_url = "https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png"
                     data = {
@@ -365,7 +366,7 @@ def gathering(request, study_pk):
         try:
             image_url = study.image.url
         except:
-            image_url = ""
+            image_url = "https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png"
         data = {
             "template_object": json.dumps(
                 {
@@ -373,7 +374,7 @@ def gathering(request, study_pk):
                     "content": {
                         "title": f"{request.user}님의 메시지",
                         "description": f"{message}",
-                        "image_url": f"https://user-images.githubusercontent.com/108651809/201609398-060cbab1-1ff4-440f-a989-9ab77965eb94.png",
+                        "image_url": image_url,
                         # "image_url": f"{link_url}{image_url}",
                         "image_width": 800,
                         "image_height": 550,

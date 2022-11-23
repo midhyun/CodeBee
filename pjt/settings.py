@@ -119,7 +119,6 @@ DATABASES = {
         "HOST": os.getenv("DATABASE_HOST"),  # .env 파일에 value 작성
         "PORT": "5432",
     }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
