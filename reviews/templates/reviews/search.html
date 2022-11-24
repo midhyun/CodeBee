@@ -31,7 +31,7 @@
 <div class="container content mt-3" style="padding: 50px;">
     <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
 
-        {% for study in studies %}
+        {% for study in posts %}
         <div class="col">
             <a class="cardlink link" href="{% url 'reviews:detail' study.pk %}">
                 <div class="card h-100 w-100 shadow h-100 p-3">
